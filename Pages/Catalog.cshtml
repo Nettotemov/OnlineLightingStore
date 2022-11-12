@@ -1,0 +1,145 @@
+@page "{productPage?}"
+@model CatalogModel
+
+<h1>Каталог</h1>
+
+<form method="get" asp-route-productPage="1">
+	<div class="form-inline form-group">
+		<div>
+			<label class="control-label">Название: </label>
+			<input type="search" name="name" value="@Model.Name" class="form-control" />
+			<input type="submit" value="Поиск по названию" asp-route-productPage="1"
+				class="element_a btn btn-default" />
+		</div>
+
+		<label class="control-label">Категория: </label>
+		<select name="category" asp-items="Model.Category" SelectedValue="@Model.CategoryName" class="form-select"
+			onChange="this.form.submit()">
+			<option value="">Все</option>
+		</select>
+
+		<label class="control-label">Цена от: </label>
+		<input name="minPrice" placeholder="@Model.PagingInfo.PlaceholderMinPrice" value="@Model.MinPrice"
+			class="form-control" type="number" min="0" onChange="this.form.submit()" />
+
+		<label class="control-label">Цена до: </label>
+		<input name="maxPrice" placeholder="@Model.PagingInfo.PlaceholderMaxPrice" value="@Model.MaxPrice"
+			class="form-control" type="number" max="1000000000" onChange="this.form.submit()" />
+
+
+		<label class="control-label">Теги: </label>
+
+		<p class="d-none">@Model.OnGetTags()</p>
+		<div class="row">
+			@foreach (string tags in Model.DisplayedTags ?? Enumerable.Empty<string>())
+			{
+				<div class="col-2">
+					<ul>
+						<input type="checkbox" name="tags" value="@tags" id="@tags" data-check="@tags"
+						onChange="this.form.submit()" class="" />
+						<label class="control-label">@tags</label>
+					</ul>
+				</div>
+			}
+		</div>
+		<select name="sortOrder" asp-items="Html.GetEnumSelectList<SortCatalog>()" SelectedValue="@Model.SortedCatalog"
+			class="form-select" onChange="this.form.submit()">
+			<option value="@Model.SortedCatalog">
+				@Model.SortedName
+			</option>
+		</select>
+	</div>
+
+	<div>
+		@for (int i = 1; i <= @Model.PagingInfo.TotalPages; i++)
+		{
+			<button asp-route-productPage="@i" asp-route-name="@Model.Name" asp-route-minPrice="@Model.MinPrice"
+			asp-route-maxPrice="@Model.MaxPrice" asp-route-sortOrder="@Model.SortedCatalog"
+			asp-route-category="@Model.CategoryName" class="btn btn-default" type="submit" value="Фильтр">@i
+			</button>
+		}
+	</div>
+</form>
+
+<table class="table table-striped">
+	@if (@Model.DisplayedProducts.Count() == 0)
+	{
+		<div class="row">
+			<div class="col text-center p-2">Нет товаров</div>
+		</div>
+	}
+	else
+	{
+		<tr>
+			<th>Id</th>
+			<th>Название</th>
+			<th>Тип</th>
+			<th>Категория</th>
+			<th>Теги</th>
+			<th>Цена</th>
+		</tr>
+		@if (string.IsNullOrEmpty(@Model.Name) && string.IsNullOrEmpty(@Model.CategoryName) && @Model.MaxPrice == null &&
+				@Model.MinPrice == null && @Model?.Tags!.Count() == 0)
+		{
+			@foreach (Product pr in @Model.AllProducts)
+			{
+				<tr>
+					<td>
+						@pr.ProductID
+					</td>
+					<td>
+						@pr.Name
+					</td>
+					<td>
+						@pr.Type
+					</td>
+					<td>
+						<p class="d-none">@Model!.DisplayedCategories</p>
+						@pr.Category!.CategoryName
+					</td>
+					<td>
+						@pr.Tags
+					</td>
+					<td>
+						@pr.Price
+					</td>
+					<td>
+						<a asp-page="CardProduct" asp-route-CategoryName="@pr.Category!.CategoryName"
+				asp-route-ProductID="@pr.ProductID" asp-route-Name="@pr.Name">Подробнее</a>
+					</td>
+				</tr>
+			}
+		}
+		else
+		{
+			@foreach (Product pr in @Model!.DisplayedProducts)
+			{
+				<tr>
+					<td>
+						@pr.ProductID
+					</td>
+					<td>
+						@pr.Name
+					</td>
+					<td>
+						@pr.Type
+					</td>
+					<td>
+						<p class="d-none">@Model!.DisplayedCategories</p>
+						@pr.Category!.CategoryName
+					</td>
+					<td>
+						@pr.Tags
+					</td>
+					<td>
+						@pr.Price
+					</td>
+					<td>
+						<a asp-page="CardProduct" asp-route-CategoryName="@pr.Category!.CategoryName"
+				asp-route-ProductID="@pr.ProductID" asp-route-Name="@pr.Name">Подробнее</a>
+					</td>
+				</tr>
+			}
+		}
+	}
+</table>
