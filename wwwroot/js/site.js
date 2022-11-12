@@ -22,15 +22,26 @@ $(document).ready(function () {
 function autoCheck() {
 	const urlParams = new URL(window.location.href);
 	let checked = urlParams.searchParams.getAll("tags");
-	if (!checked) {
+	let colorChecked = urlParams.searchParams.getAll("color");
+	let typesChecked = urlParams.searchParams.getAll("types");
+	if (!checked || !colorChecked || !typesChecked) {
 		return;
 	}
 	console.log(checked);
+	console.log(colorChecked);
+	console.log(typesChecked);
 	for (let i = 0; i < checked.length; i++) {
 		var target = document.querySelector('input[type="checkbox"][id="' + checked[i] + '"]').checked = true;
 		console.log(checked[i]);
 	}
-
+	for (let i = 0; i < colorChecked.length; i++) {
+		var target = document.querySelector('input[type="checkbox"][id="' + colorChecked[i] + '"]').checked = true;
+		console.log(colorChecked[i]);
+	}
+	for (let i = 0; i < typesChecked.length; i++) {
+		var target = document.querySelector('input[type="checkbox"][id="' + typesChecked[i] + '"]').checked = true;
+		console.log(typesChecked[i]);
+	}
 	if (!target) {
 		return;
 	}

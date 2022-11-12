@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "bKxAMk1QDV6kl6n5qf6i9ZoYn6wfR+unHAQfybt6S5FcBSf2Ox6RwHZL3lEFYVjB7Vd9/wHCs7C1rFFVv2HUhQ==",
+  "dgSpecHash": "KfKGJIyHt4pZUXP5Z8eyl1UmbMt5usyNw5f7Nv5/CTcLjK5y16sVGYrfjlJlmkX7CzabU78M+/++4fgclEU3Tw==",
   "success": true,
   "projectFilePath": "/Users/konstantinermakov/Projects/LampStore/LampStore/LampStore.csproj",
   "expectedPackageFiles": [
     "/Users/konstantinermakov/.nuget/packages/humanizer.core/2.8.26/humanizer.core.2.8.26.nupkg.sha512",
+    "/Users/konstantinermakov/.nuget/packages/jquery/1.8.0/jquery.1.8.0.nupkg.sha512",
     "/Users/konstantinermakov/.nuget/packages/microsoft.csharp/4.5.0/microsoft.csharp.4.5.0.nupkg.sha512",
     "/Users/konstantinermakov/.nuget/packages/microsoft.data.sqlclient/2.1.4/microsoft.data.sqlclient.2.1.4.nupkg.sha512",
     "/Users/konstantinermakov/.nuget/packages/microsoft.data.sqlclient.sni.runtime/2.1.1/microsoft.data.sqlclient.sni.runtime.2.1.1.nupkg.sha512",
@@ -29,6 +30,7 @@
     "/Users/konstantinermakov/.nuget/packages/microsoft.identitymodel.protocols/6.8.0/microsoft.identitymodel.protocols.6.8.0.nupkg.sha512",
     "/Users/konstantinermakov/.nuget/packages/microsoft.identitymodel.protocols.openidconnect/6.8.0/microsoft.identitymodel.protocols.openidconnect.6.8.0.nupkg.sha512",
     "/Users/konstantinermakov/.nuget/packages/microsoft.identitymodel.tokens/6.8.0/microsoft.identitymodel.tokens.6.8.0.nupkg.sha512",
+    "/Users/konstantinermakov/.nuget/packages/microsoft.jquery.unobtrusive.ajax/3.2.6/microsoft.jquery.unobtrusive.ajax.3.2.6.nupkg.sha512",
     "/Users/konstantinermakov/.nuget/packages/microsoft.netcore.platforms/3.1.0/microsoft.netcore.platforms.3.1.0.nupkg.sha512",
     "/Users/konstantinermakov/.nuget/packages/microsoft.win32.registry/4.7.0/microsoft.win32.registry.4.7.0.nupkg.sha512",
     "/Users/konstantinermakov/.nuget/packages/microsoft.win32.systemevents/4.7.0/microsoft.win32.systemevents.4.7.0.nupkg.sha512",

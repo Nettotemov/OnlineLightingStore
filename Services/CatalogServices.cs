@@ -17,6 +17,16 @@ namespace LampStore.Services
 			return products.Where(p => tags.All(tag => p.Tags.Contains(tag))).ToList();
 		}
 
+		public List<Product> ProductsByColors(List<Product> products, string[] colors) //проверка цвета
+		{
+			return products.Where(p => colors.Any(color => p.Color.Contains(color))).ToList();
+		}
+
+		public List<Product> ProductsByTypes(List<Product> products, string[] types) //проверка типа
+		{
+			return products.Where(p => types.Any(type => p.Type.Contains(type))).ToList();
+		}
+
 		public List<Product> ProductsByCategory(List<Product> products, string category) //проверка по категории
 		{
 			return products.Where(p => p.Category!.CategoryName == category).ToList();

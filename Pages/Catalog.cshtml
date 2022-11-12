@@ -26,10 +26,36 @@
 		<input name="maxPrice" placeholder="@Model.PagingInfo.PlaceholderMaxPrice" value="@Model.MaxPrice"
 			class="form-control" type="number" max="1000000000" onChange="this.form.submit()" />
 
+		<label class="control-label">Цвет: </label>
+		<div class="row">
+			@foreach (string color in Model.DisplayedColors ?? Enumerable.Empty<string>())
+			{
+				<div class="col-2">
+					<ul>
+						<input type="checkbox" name="color" value="@color" id="@color" data-check="@color"
+						onChange="this.form.submit()" class="" />
+						<label class="control-label">@color</label>
+					</ul>
+				</div>
+			}
+		</div>
+
+		<label class="control-label">Тип: </label>
+		<div class="row">
+			@foreach (string types in Model.DisplayedTypes ?? Enumerable.Empty<string>())
+			{
+				<div class="col-2">
+					<ul>
+						<input type="checkbox" name="types" value="@types" id="@types" data-check="@types"
+						onChange="this.form.submit()" class="" />
+						<label class="control-label">@types</label>
+					</ul>
+				</div>
+			}
+		</div>
+
 
 		<label class="control-label">Теги: </label>
-
-		<p class="d-none">@Model.OnGetTags()</p>
 		<div class="row">
 			@foreach (string tags in Model.DisplayedTags ?? Enumerable.Empty<string>())
 			{
@@ -42,6 +68,7 @@
 				</div>
 			}
 		</div>
+		
 		<select name="sortOrder" asp-items="Html.GetEnumSelectList<SortCatalog>()" SelectedValue="@Model.SortedCatalog"
 			class="form-select" onChange="this.form.submit()">
 			<option value="@Model.SortedCatalog">
@@ -78,68 +105,33 @@
 			<th>Теги</th>
 			<th>Цена</th>
 		</tr>
-		@if (string.IsNullOrEmpty(@Model.Name) && string.IsNullOrEmpty(@Model.CategoryName) && @Model.MaxPrice == null &&
-				@Model.MinPrice == null && @Model?.Tags!.Count() == 0)
+		@foreach (Product pr in @Model!.DisplayedProducts)
 		{
-			@foreach (Product pr in @Model.AllProducts)
-			{
-				<tr>
-					<td>
-						@pr.ProductID
-					</td>
-					<td>
-						@pr.Name
-					</td>
-					<td>
-						@pr.Type
-					</td>
-					<td>
-						<p class="d-none">@Model!.DisplayedCategories</p>
-						@pr.Category!.CategoryName
-					</td>
-					<td>
-						@pr.Tags
-					</td>
-					<td>
-						@pr.Price
-					</td>
-					<td>
-						<a asp-page="CardProduct" asp-route-CategoryName="@pr.Category!.CategoryName"
-				asp-route-ProductID="@pr.ProductID" asp-route-Name="@pr.Name">Подробнее</a>
-					</td>
-				</tr>
-			}
-		}
-		else
-		{
-			@foreach (Product pr in @Model!.DisplayedProducts)
-			{
-				<tr>
-					<td>
-						@pr.ProductID
-					</td>
-					<td>
-						@pr.Name
-					</td>
-					<td>
-						@pr.Type
-					</td>
-					<td>
-						<p class="d-none">@Model!.DisplayedCategories</p>
-						@pr.Category!.CategoryName
-					</td>
-					<td>
-						@pr.Tags
-					</td>
-					<td>
-						@pr.Price
-					</td>
-					<td>
-						<a asp-page="CardProduct" asp-route-CategoryName="@pr.Category!.CategoryName"
-				asp-route-ProductID="@pr.ProductID" asp-route-Name="@pr.Name">Подробнее</a>
-					</td>
-				</tr>
-			}
+			<tr>
+				<td>
+					@pr.ProductID
+				</td>
+				<td>
+					@pr.Name
+				</td>
+				<td>
+					@pr.Type
+				</td>
+				<td>
+					<p class="d-none">@Model!.DisplayedCategories</p>
+					@pr.Category!.CategoryName
+				</td>
+				<td>
+					@pr.Tags
+				</td>
+				<td>
+					@pr.Price
+				</td>
+				<td>
+					<a asp-page="CardProduct" asp-route-CategoryName="@pr.Category!.CategoryName"
+					asp-route-ProductID="@pr.ProductID" asp-route-Name="@pr.Name">Подробнее</a>
+				</td>
+			</tr>
 		}
 	}
 </table>
