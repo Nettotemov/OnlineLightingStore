@@ -7,16 +7,16 @@ $('input[data-check]').on('input', function () {
 });
 
 /* Установка состояний чекбоксов, после загрузки страницы */
-$(document).ready(function () {
-	if (localStorage.getItem('CheckboxChecked')) {
-		$('input[data-check]').prop('checked', false);
-		let aChecked = localStorage.getItem('CheckboxChecked').split(';');
-		aChecked.forEach(function (str) { $('input[data-check="' + str + '"]').prop('checked', true); });
-	}
-	if (localStorage.getItem('PasswordLength')) {
-		$('#height_opt').val(localStorage.getItem('PasswordLength'));
-	}
-});
+// $(document).ready(function () {
+// 	if (localStorage.getItem('CheckboxChecked')) {
+// 		$('input[data-check]').prop('checked', false);
+// 		let aChecked = localStorage.getItem('CheckboxChecked').split(';');
+// 		aChecked.forEach(function (str) { $('input[data-check="' + str + '"]').prop('checked', true); });
+// 	}
+// 	if (localStorage.getItem('PasswordLength')) {
+// 		$('#height_opt').val(localStorage.getItem('PasswordLength'));
+// 	}
+// });
 
 /* Установка состояний чекбоксов, при переходе на сайт по ссылке */
 function autoCheck() {
@@ -48,6 +48,7 @@ function autoCheck() {
 	target.checked = true;
 }
 autoCheck();
+
 
 // /* Обработчик клика на чекбоксах */
 // $('input').on('input', function () {

@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 
 <head>
 	<meta charset="utf-8" />
@@ -28,7 +28,10 @@
 							<a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-page="/Catalog">Каталог</a>
+							<a class="nav-link text-dark" id="clear" asp-area="" asp-page="/Catalog">Каталог</a>
+						</li>
+						<li class="nav nav-pills justify-content-end">
+							<vc:cart-summary /> @* корзина *@
 						</li>
 					</ul>
 				</div>

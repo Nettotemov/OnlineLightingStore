@@ -1,0 +1,24 @@
+@model Cart
+
+<ul class="nav" style="align-content: center;">
+	@if (Model?.Lines.Count() > 0)
+	{
+		<small class="navbar-text text-success">
+			<b>Ваша корзина:</b>
+			@Model?.Lines.Sum(x => x.Quantity) item(s)
+			@Model?.ComputeTotalValue().ToString("c")
+		</small>
+	}
+	<a class="btn btn-sm btn-success navbar-btn" style="margin-left: 15px;" asp-page="/Cart"
+		asp-route-returnurl="@ViewContext.HttpContext.Request.PathAndQuery()">
+		<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shopping-cart" width="24"
+			height="24" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" fill="none" stroke-linecap="round"
+			stroke-linejoin="round">
+			<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+			<circle cx="6" cy="19" r="2"></circle>
+			<circle cx="17" cy="19" r="2"></circle>
+			<path d="M17 17h-11v-14h-2"></path>
+			<path d="M6 5l14 1l-1 7h-13"></path>
+		</svg>
+	</a>
+</ul>

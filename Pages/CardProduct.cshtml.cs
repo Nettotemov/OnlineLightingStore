@@ -17,6 +17,7 @@ namespace LampStore.Pages
 
 		public Product? productCard; //вывод карточки товара
 		public List<Category> DisplayedCategories { get; private set; } = new();
+		public long ProductID { get; private set; }
 		public void OnGet(long productId) //инициализация карточки товара
 		{
 			DisplayedCategories = repository.Categorys.Select(c => c).Distinct().ToList();

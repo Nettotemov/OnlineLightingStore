@@ -130,6 +130,16 @@
 				<td>
 					<a asp-page="CardProduct" asp-route-CategoryName="@pr.Category!.CategoryName"
 					asp-route-ProductID="@pr.ProductID" asp-route-Name="@pr.Name">Подробнее</a>
+
+					<form id="ProductID" asp-page="/Cart" method="post">
+						<input type="hidden" name="ProductID" asp-for="@pr.ProductID" />
+						<input type="hidden" name="returnUrl" value="@ViewContext.HttpContext.Request.PathAndQuery()" />
+						<span class="card-text p-1">
+							<button type="submit" class="btn btn-success btn-sm pull-right" style="float:right">
+								Добавить в корзину
+							</button>
+						</span>
+					</form>
 				</td>
 			</tr>
 		}
