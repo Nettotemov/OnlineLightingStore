@@ -12,6 +12,7 @@
 
 <body>
 	<header>
+		@Html.AntiForgeryToken()
 		<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
 			<div class="container">
 				<a class="navbar-brand" asp-area="" asp-page="/Index">LampStore</a>
@@ -30,7 +31,7 @@
 						<li class="nav-item">
 							<a class="nav-link text-dark" id="clear" asp-area="" asp-page="/Catalog">Каталог</a>
 						</li>
-						<li class="nav nav-pills justify-content-end">
+						<li class="col-10 d-flex" style="justify-content: flex-end;">
 							<vc:cart-summary /> @* корзина *@
 						</li>
 					</ul>

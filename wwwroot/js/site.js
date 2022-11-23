@@ -49,6 +49,129 @@ function autoCheck() {
 }
 autoCheck();
 
+const createURL = () => {
+	let urlSearch = new URLSearchParams()
+	let types = $("[name=types]:checked").map((_, chk) => chk.value).get()
+	let tags = $("[name=tags]:checked").map((_, chk) => chk.value).get()
+	let color = $("[name=color]:checked").map((_, chk) => chk.value).get()
+	if (types.length > 0) urlSearch.set("types", types.join("&types="))
+	if (tags.length > 0) urlSearch.set("tags", tags.join("&tags="))
+	if (color.length > 0) urlSearch.set("color", color.join("&color="))
+	const srch = '?' + urlSearch.toString();
+	console.log(srch);
+	window.history.pushState({}, '', srch.replace(/%26/g, "&").replace(/%3D/g, "="));
+};
+$(function () {
+	$("input:checkbox").on("change", createURL)
+});
+
+$(document).ready(function () {
+	$('.addToCart').on("submit", function (ev) {
+		var frm = $(this);
+		$.ajax({
+			type: 'POST',
+			url: '/Cart',
+			data: frm.serialize(),
+			dataType: "json",
+			success: function (str) {
+				console.log(str);
+				let jsonCart = str;
+				$('#quantity').html(jsonCart.quantity);
+				$('#sumcart').html(new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(jsonCart.sumCart));
+			}
+		});
+		ev.preventDefault();
+		console.log(ev);
+	});
+});
+
+
+
+$('#catalogForm').on('change', 'input[type=checkbox]', function (ev) {
+	$('#spinner-border').show();
+	let url = document.location.href + "&handler=Products";
+	console.log(url);
+	var token = GetAntiForgeryToken();
+	let prodview = document.getElementById('prod-view');
+	console.log(prodview);
+	let response = fetch(url)
+		.then((response) => response.json())
+		.then(data => {
+			console.log(data.json)
+			let productJson = JSON.parse(data.json)
+			let postWrp;
+			if (productJson.length == 0) {
+				$('#prod-view').empty();
+				postWrp = document.createElement("div");
+				postWrp.classList.add("col-12");
+				postWrp.innerHTML = `<div class="" id="">
+					<p class="">Нет товаров</p>
+				</div>`
+				prodview.append(postWrp);
+				$('#spinner-border').hide();
+			}
+			if (productJson.length > 0) {
+				$('#prod-view').empty();
+				for (let i = 0; i < productJson.length; i++) {
+					postWrp = document.createElement("div");
+					postWrp.classList.add("col-3");
+					postWrp.innerHTML = `<div class="" id="">
+					<div id="img-container">
+    					<div class="title-wrp">${productJson[i].Name}</div>
+    						<div class="post-and-image">
+    							<img class="col-12" src="${productJson[i].MainPhoto}">
+    							<div class="description-wrp">${productJson[i].Description}
+ 							</div>
+  						</div>
+  						<div class="footer-row">
+        					<div class="tags-wrp">${productJson[i].Tags}</div>
+							<div class="tags-wrp">${productJson[i].Price}</div>
+    					</div>
+					</div>
+					<a href="/Catalog/${productJson[i].Category.CategoryName}/${productJson[i].Name}/${productJson[i].ProductID}">Подробнее</a>
+					<form id="ProductID=${productJson[i].ProductID}" class="addToCart" method="post" action="/Cart" >
+						<input type="hidden" name="ProductID" id="pr_ProductID" value="${productJson[i].ProductID}" />
+						<input type="hidden" name="returnUrl" value="/Catalog" />
+							<input name="${token.name}" type="hidden" value="${token.value}">
+					</form>
+					<button type="submit" form="ProductID=${productJson[i].ProductID}" class="btn addToCart btn-success btn-sm pull-right" style="float:right">
+						Добавить в корзину
+					</button>`
+					prodview.append(postWrp);
+					$('#spinner-border').hide();
+				}
+			}
+			$('.addToCart').on("submit", function (ev) {
+				var frm = $(this);
+				$.ajax({
+					type: 'POST',
+					url: '/Cart',
+					data: frm.serialize(),
+					dataType: "json",
+					success: function (str) {
+						console.log(str);
+						let jsonCart = str;
+						$('#quantity').html(jsonCart.quantity);
+						$('#sumcart').html(new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(jsonCart.sumCart));
+					}
+				});
+				ev.preventDefault();
+				console.log(ev);
+			});
+		})
+});
+
+function GetAntiForgeryToken() {
+	var tokenField = $("input[type='hidden'][name$='RequestVerificationToken']");
+	if (tokenField.length == 0) {
+		return null;
+	} else {
+		return {
+			name: tokenField[0].name,
+			value: tokenField[0].value
+		};
+	}
+}
 
 // /* Обработчик клика на чекбоксах */
 // $('input').on('input', function () {

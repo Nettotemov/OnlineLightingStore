@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "KfKGJIyHt4pZUXP5Z8eyl1UmbMt5usyNw5f7Nv5/CTcLjK5y16sVGYrfjlJlmkX7CzabU78M+/++4fgclEU3Tw==",
+  "dgSpecHash": "lSU6ChB9AXFUQtD93+sB6QgAdbcOTFmUpQ7QAjJcfv7kaQ4kM1andEMV8Rq0mHYtJdsm37GlZGJrTt8qh+K1UA==",
   "success": true,
   "projectFilePath": "/Users/konstantinermakov/Projects/LampStore/LampStore/LampStore.csproj",
   "expectedPackageFiles": [
@@ -34,6 +34,7 @@
     "/Users/konstantinermakov/.nuget/packages/microsoft.netcore.platforms/3.1.0/microsoft.netcore.platforms.3.1.0.nupkg.sha512",
     "/Users/konstantinermakov/.nuget/packages/microsoft.win32.registry/4.7.0/microsoft.win32.registry.4.7.0.nupkg.sha512",
     "/Users/konstantinermakov/.nuget/packages/microsoft.win32.systemevents/4.7.0/microsoft.win32.systemevents.4.7.0.nupkg.sha512",
+    "/Users/konstantinermakov/.nuget/packages/newtonsoft.json/13.0.1/newtonsoft.json.13.0.1.nupkg.sha512",
     "/Users/konstantinermakov/.nuget/packages/system.collections.immutable/6.0.0/system.collections.immutable.6.0.0.nupkg.sha512",
     "/Users/konstantinermakov/.nuget/packages/system.configuration.configurationmanager/4.7.0/system.configuration.configurationmanager.4.7.0.nupkg.sha512",
     "/Users/konstantinermakov/.nuget/packages/system.diagnostics.diagnosticsource/6.0.0/system.diagnostics.diagnosticsource.6.0.0.nupkg.sha512",

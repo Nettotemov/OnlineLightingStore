@@ -6,6 +6,9 @@ using System.Linq;
 using LampStore.Services;
 using LampStore.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 
 namespace LampStore.Pages
 {
@@ -126,9 +129,12 @@ namespace LampStore.Pages
 					PlaceholderMaxPrice = DisplayedProducts.Select(p => p.Price).Max(),
 					PlaceholderMinPrice = DisplayedProducts.Select(p => p.Price).Min()
 				};
+
 				DisplayedProducts = DisplayedProducts.Skip((productPage - 1) * PageSize).Take(PageSize).ToList();
 
 				SortViewModel = new SortViewModel(sortOrder);
+
+
 			}
 			catch (Exception)
 			{
@@ -143,5 +149,57 @@ namespace LampStore.Pages
 				};
 			}
 		}
+
+
+
+		public JsonResult? Json { get; set; }
+		public List<Product> DPs { get; private set; } = new();
+		public IActionResult OnGetProducts(string name, string category, string maxPrice, string minPrice, string[] tags, string[] color, string[] types, SortCatalog sortOrder, int productPage = 1)
+		{
+			var dp = repository.Products.Select(p => p).ToList();
+
+			DPs.AddRange(dp);
+			DisplayedCategories = repository.Categorys.Select(c => c).Distinct().ToList(); //получение категорий
+
+			if (!string.IsNullOrEmpty(name))
+			{
+				DPs = catalogServices.ProductsByName(DPs, name);
+			}
+			if (!string.IsNullOrEmpty(category))
+			{
+				DPs = catalogServices.ProductsByCategory(DPs, category);
+			}
+			if (tags.Count() > 0)
+			{
+				DPs = catalogServices.ProductsByTags(DPs, tags);
+			}
+			if (color.Count() > 0)
+			{
+				DPs = catalogServices.ProductsByColors(DPs, color);
+			}
+			if (types.Count() > 0)
+			{
+				DPs = catalogServices.ProductsByTypes(DPs, types);
+			}
+			if (!string.IsNullOrEmpty(maxPrice))
+			{
+				DPs = catalogServices.ProductsUpMaxPrice(DPs, maxPrice);
+			}
+			if (!string.IsNullOrEmpty(minPrice))
+			{
+				DPs = catalogServices.ProductsUpMinPrice(DPs, minPrice);
+			}
+			if (!string.IsNullOrEmpty(maxPrice) && !string.IsNullOrEmpty(minPrice))
+			{
+				DPs = catalogServices.ProductsFromMinToMaxPrice(DPs, minPrice, maxPrice);
+			}
+
+			
+			string json = JsonConvert.SerializeObject(DPs, Formatting.Indented);
+
+			return Json = new JsonResult(new { json });
+			
+		}
+
 	}
 }
