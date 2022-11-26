@@ -13,6 +13,7 @@ builder.Services.AddDbContext<StoreDbContext>(opts =>
 });
 builder.Services.AddScoped<IStoreRepository, EFStoreRepository>();
 builder.Services.AddScoped<ICatalogRepository, EFCatalogRepository>();
+builder.Services.AddScoped<IOrderRepository, EFOrderRepository>();
 builder.Services.AddDistributedMemoryCache(); //добавляем кеш в приложение
 builder.Services.AddSession(); //добавление сохранения сессии пользователя
 builder.Services.AddScoped<Cart>(sp => SessionCart.GetCart(sp)); //указывает, что один и тот же объект должен использоваться для удовлетворения связанных запросов для экземпляров Корзины

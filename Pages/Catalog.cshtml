@@ -126,7 +126,7 @@
 	@for (int i = 1; i <= @Model.PagingInfo.TotalPages; i++)
 	{
 		<button form="catalogForm" asp-route-productPage="@i" asp-route-name="@Model.Name" asp-route-minPrice="@Model.MinPrice"
-		asp-route-maxPrice="@Model.MaxPrice"
+		asp-route-maxPrice="@Model.MaxPrice" asp-route-sortOrder="@Model.SortedCatalog"
 		asp-route-category="@Model.CategoryName" class="btn pagination-btn btn-default" type="submit" value="@i">@i
 		</button>
 	}
