@@ -51,45 +51,118 @@ autoCheck();
 
 const createURL = () => {
 	let urlSearch = new URLSearchParams()
+	let category = $("[name=category]").map((_, select) => select.value).get()
 	let types = $("[name=types]:checked").map((_, chk) => chk.value).get()
 	let tags = $("[name=tags]:checked").map((_, chk) => chk.value).get()
 	let color = $("[name=color]:checked").map((_, chk) => chk.value).get()
+	let sorted = $("[name=sortOrder]").map((_, select) => select.value).get()
+	let minPrice = $("[name=minPrice]:input").map((_, minPrice) => minPrice.value).get()
+	let maxPrice = $("[name=maxPrice]:input").map((_, maxPrice) => maxPrice.value).get()
+	if (category.length > 0) urlSearch.set("category", category.join("&category="))
 	if (types.length > 0) urlSearch.set("types", types.join("&types="))
 	if (tags.length > 0) urlSearch.set("tags", tags.join("&tags="))
 	if (color.length > 0) urlSearch.set("color", color.join("&color="))
+	if (sorted.length > 0) urlSearch.set("sortOrder", sorted.join("&sortOrder="))
+	if (minPrice > 0) urlSearch.set("minPrice", minPrice.join("&minPrice="))
+	if (maxPrice > 0) urlSearch.set("maxPrice", maxPrice.join("&maxPrice="))
 	const srch = '?' + urlSearch.toString();
 	console.log(srch);
 	window.history.pushState({}, '', srch.replace(/%26/g, "&").replace(/%3D/g, "="));
 };
 $(function () {
-	$("input:checkbox").on("change", createURL)
+	$("input:checkbox, [name=category], [name=sortOrder], [name=minPrice], [name=maxPrice]").on("change", createURL)
 });
 
-$(document).ready(function () {
-	$('.addToCart').on("submit", function (ev) {
-		var frm = $(this);
+
+$(document).on("submit", ".addToCart", function (ev) {
+	var frm = $(this);
+	$.ajax({
+		type: 'POST',
+		url: '/Cart',
+		data: frm.serialize(),
+		dataType: "json",
+		success: function (str) {
+			console.log(str);
+			let jsonCart = str;
+			$('#quantity').html(jsonCart.quantity);
+			$('#sumcart').html(new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(jsonCart.sumCart));
+		}
+	});
+	ev.preventDefault();
+	console.log(ev);
+});
+
+$(document).on("click", ".pagination-btn", function (ev) {
+	$('#spinner-border').show();
+	let path = ev.target.baseURI.split("?"); // забираем путь
+	let page = ev.target.value;
+	var token = GetAntiForgeryToken();
+	let prodview = document.getElementById('prod-view');
+	if (typeof page !== 'undefined') {
 		$.ajax({
-			type: 'POST',
-			url: '/Cart',
-			data: frm.serialize(),
-			dataType: "json",
-			success: function (str) {
-				console.log(str);
-				let jsonCart = str;
-				$('#quantity').html(jsonCart.quantity);
-				$('#sumcart').html(new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(jsonCart.sumCart));
+			type: 'GET',
+			url: '/Catalog/' + page + "?handler=Products",
+			data: path[1], // забираем страницу, которую нужно отобразить
+			dataType: 'json',
+			success: function (pages) {
+				console.log(pages);
+				let getUrl = '/Catalog/' + page + "?" + path[1];
+				window.history.pushState({}, '', getUrl); // устанавливаем URL в строку браузера
+
+				let productJson = JSON.parse(pages.json)
+				let postWrp;
+				if (productJson.length == 0) {
+					$('#prod-view').empty();
+					postWrp = document.createElement("div");
+					postWrp.classList.add("col-12");
+					postWrp.innerHTML = `<div class="" id="">
+					<p class="">Нет товаров</p></div>`
+					prodview.append(postWrp);
+					$('#spinner-border').hide();
+				}
+				if (productJson.length > 0) {
+					$('#prod-view').empty();
+					for (let i = 0; i < productJson.length; i++) {
+						postWrp = document.createElement("div");
+						postWrp.classList.add("col-3");
+						postWrp.innerHTML = `<div class="" id="">
+						<div id="img-container">
+    						<div class="title-wrp">${productJson[i].Name}</div>
+    							<div class="post-and-image">
+    								<img class="col-12" src="${productJson[i].MainPhoto}">
+    								<div class="description-wrp">${productJson[i].Description}
+ 								</div>
+  							</div>
+  							<div class="footer-row">
+        						<div class="tags-wrp">${productJson[i].Tags}</div>
+								<div class="tags-wrp">${productJson[i].Price}</div>
+    						</div>
+						</div>
+						<a href="/Catalog/${productJson[i].Category.CategoryName}/${productJson[i].Name}/${productJson[i].ProductID}">Подробнее</a>
+						<form id="ProductID=${productJson[i].ProductID}" class="addToCart" method="post" action="/Cart" >
+							<input type="hidden" name="ProductID" id="pr_ProductID" value="${productJson[i].ProductID}" />
+							<input type="hidden" name="returnUrl" value="${document.location.href}" />
+							<button type="submit" class="btn btn-success btn-sm pull-right" style="float:right">
+								Добавить в корзину
+							</button>
+							<input name="${token.name}" type="hidden" value="${token.value}">
+						</form>`
+						prodview.append(postWrp);
+						$('#spinner-border').hide();
+					}
+
+				}
 			}
 		});
-		ev.preventDefault();
-		console.log(ev);
-	});
+	}
+	ev.preventDefault();
 });
 
-
-
-$('#catalogForm').on('change', 'input[type=checkbox]', function (ev) {
+$('#catalogForm').on('change', 'input[type=checkbox], [name=category], [name=sortOrder], [name=minPrice], [name=maxPrice]', '', function (ev) {
 	$('#spinner-border').show();
-	let url = document.location.href + "&handler=Products";
+	let path = ev.target.baseURI.split("?"); // забираем путь
+	let getUrl = '/Catalog/' + 1 + "?" + path[1];
+	let url = getUrl + "&handler=Products";
 	console.log(url);
 	var token = GetAntiForgeryToken();
 	let prodview = document.getElementById('prod-view');
@@ -98,15 +171,30 @@ $('#catalogForm').on('change', 'input[type=checkbox]', function (ev) {
 		.then((response) => response.json())
 		.then(data => {
 			console.log(data.json)
-			let productJson = JSON.parse(data.json)
+			console.log(data.pagingInfoJson)
+			let pagingJson = JSON.parse(data.pagingInfoJson)
+			window.history.pushState({}, '', getUrl); // устанавливаем URL в строку браузера
+			let paging = document.getElementById('pagingbuttons');
+			$('#pagingbuttons').empty();
+			for (let i = 1; i <= pagingJson.TotalPages; i++) {
+				pagingButtons = document.createElement("li");
+				pagingButtons.classList.add("page-item");
+				pagingButtons.innerHTML = `<button form="catalogForm" class="btn pagination-btn btn-default" type="submit" value="${i}" formaction="/${i}">${i}</button>`
+				paging.appendChild(pagingButtons);
+			}
+			let placeholderMinPrice = document.getElementById('minPrice')
+			placeholderMinPrice.placeholder = pagingJson.PlaceholderMinPrice;
+			let placeholderMaxPrice = document.getElementById('maxPrice')
+			placeholderMaxPrice.placeholder = pagingJson.PlaceholderMaxPrice;
+
+			let productJson = JSON.parse(data.json);
 			let postWrp;
 			if (productJson.length == 0) {
 				$('#prod-view').empty();
 				postWrp = document.createElement("div");
 				postWrp.classList.add("col-12");
 				postWrp.innerHTML = `<div class="" id="">
-					<p class="">Нет товаров</p>
-				</div>`
+				<p class="">Нет товаров</p></div>`
 				prodview.append(postWrp);
 				$('#spinner-border').hide();
 			}
@@ -131,33 +219,17 @@ $('#catalogForm').on('change', 'input[type=checkbox]', function (ev) {
 					<a href="/Catalog/${productJson[i].Category.CategoryName}/${productJson[i].Name}/${productJson[i].ProductID}">Подробнее</a>
 					<form id="ProductID=${productJson[i].ProductID}" class="addToCart" method="post" action="/Cart" >
 						<input type="hidden" name="ProductID" id="pr_ProductID" value="${productJson[i].ProductID}" />
-						<input type="hidden" name="returnUrl" value="/Catalog" />
-							<input name="${token.name}" type="hidden" value="${token.value}">
-					</form>
-					<button type="submit" form="ProductID=${productJson[i].ProductID}" class="btn addToCart btn-success btn-sm pull-right" style="float:right">
-						Добавить в корзину
-					</button>`
+						<input type="hidden" name="returnUrl" value="${document.location.href}" />
+						<button type="submit" class="btn btn-success btn-sm pull-right" style="float:right">
+							Добавить в корзину
+						</button>
+						<input name="${token.name}" type="hidden" value="${token.value}">
+					</form>`
 					prodview.append(postWrp);
 					$('#spinner-border').hide();
 				}
+
 			}
-			$('.addToCart').on("submit", function (ev) {
-				var frm = $(this);
-				$.ajax({
-					type: 'POST',
-					url: '/Cart',
-					data: frm.serialize(),
-					dataType: "json",
-					success: function (str) {
-						console.log(str);
-						let jsonCart = str;
-						$('#quantity').html(jsonCart.quantity);
-						$('#sumcart').html(new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(jsonCart.sumCart));
-					}
-				});
-				ev.preventDefault();
-				console.log(ev);
-			});
 		})
 });
 

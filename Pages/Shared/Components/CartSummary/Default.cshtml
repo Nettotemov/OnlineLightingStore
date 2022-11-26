@@ -1,14 +1,6 @@
 @model Cart
 
 <ul class="d-inline-flex" style="align-items: center;">
-	@* @if (Model?.Lines.Count() > 0)
-		{
-		<div class="d-inline-flex text-success">
-		<b>Ваша корзина:</b>
-		<p id="quantity">@Model?.Lines.Sum(x => x.Quantity)</p> item(s)
-		<p id="sumcart">@Model?.ComputeTotalValue().ToString("c") ₽</p>
-		</div>
-		} *@
 	<div class="d-inline-flex text-success">
 		<b>Ваша корзина:</b>
 		<b id="quantity">@Model?.Lines.Sum(x => x.Quantity)</b>

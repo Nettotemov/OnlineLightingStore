@@ -36,7 +36,7 @@ namespace LampStore.Pages
 
 		public SortViewModel? SortViewModel { get; private set; }
 
-		public int PageSize = 2; //количество товаров на странице
+		public int PageSize = 3; //количество товаров на странице
 		public PagingInfo PagingInfo { get; private set; } = new(); //для вывода информации пагинации для страниц
 
 		CatalogServices catalogServices = new CatalogServices(); //ссылка на сервисы каталога
@@ -150,9 +150,6 @@ namespace LampStore.Pages
 			}
 		}
 
-
-
-		public JsonResult? Json { get; set; }
 		public List<Product> DPs { get; private set; } = new();
 		public IActionResult OnGetProducts(string name, string category, string maxPrice, string minPrice, string[] tags, string[] color, string[] types, SortCatalog sortOrder, int productPage = 1)
 		{
@@ -160,45 +157,101 @@ namespace LampStore.Pages
 
 			DPs.AddRange(dp);
 			DisplayedCategories = repository.Categorys.Select(c => c).Distinct().ToList(); //получение категорий
-
-			if (!string.IsNullOrEmpty(name))
-			{
-				DPs = catalogServices.ProductsByName(DPs, name);
-			}
-			if (!string.IsNullOrEmpty(category))
-			{
-				DPs = catalogServices.ProductsByCategory(DPs, category);
-			}
-			if (tags.Count() > 0)
-			{
-				DPs = catalogServices.ProductsByTags(DPs, tags);
-			}
-			if (color.Count() > 0)
-			{
-				DPs = catalogServices.ProductsByColors(DPs, color);
-			}
-			if (types.Count() > 0)
-			{
-				DPs = catalogServices.ProductsByTypes(DPs, types);
-			}
-			if (!string.IsNullOrEmpty(maxPrice))
-			{
-				DPs = catalogServices.ProductsUpMaxPrice(DPs, maxPrice);
-			}
-			if (!string.IsNullOrEmpty(minPrice))
-			{
-				DPs = catalogServices.ProductsUpMinPrice(DPs, minPrice);
-			}
-			if (!string.IsNullOrEmpty(maxPrice) && !string.IsNullOrEmpty(minPrice))
-			{
-				DPs = catalogServices.ProductsFromMinToMaxPrice(DPs, minPrice, maxPrice);
-			}
-
 			
-			string json = JsonConvert.SerializeObject(DPs, Formatting.Indented);
+			try 
+			{
+				switch (sortOrder) //сортировка
+				{
+					case SortCatalog.NameAsc:
+						DPs = DPs.OrderBy(s => s.Name).ToList();
+						break;
+					case SortCatalog.NameDesc:
+						DPs = DPs.OrderByDescending(s => s.Name).ToList();
+						break;
+					case SortCatalog.PriceAsc:
+						DPs = DPs.OrderBy(s => s.Price).ToList();
+						break;
+					case SortCatalog.PriceDesc:
+						DPs = DPs.OrderByDescending(s => s.Price).ToList();
+						break;
+					case SortCatalog.AvailabilitySt:
+						DPs = DPs.OrderByDescending(s => s.Availability).ToList();
+						break;
+					case SortCatalog.Novelties:
+						DPs = DPs.OrderByDescending(t => t.Tags.Contains("Новинки")).ToList();
+						break;
+					default:
+						DPs = DPs.OrderBy(s => s.ProductID).ToList();
+						break;
+				}
 
-			return Json = new JsonResult(new { json });
+				if (!string.IsNullOrEmpty(name))
+				{
+					DPs = catalogServices.ProductsByName(DPs, name);
+				}
+				if (!string.IsNullOrEmpty(category))
+				{
+					DPs = catalogServices.ProductsByCategory(DPs, category);
+				}
+				if (tags.Count() > 0)
+				{
+					DPs = catalogServices.ProductsByTags(DPs, tags);
+				}
+				if (color.Count() > 0)
+				{
+					DPs = catalogServices.ProductsByColors(DPs, color);
+				}
+				if (types.Count() > 0)
+				{
+					DPs = catalogServices.ProductsByTypes(DPs, types);
+				}
+				if (!string.IsNullOrEmpty(maxPrice))
+				{
+					DPs = catalogServices.ProductsUpMaxPrice(DPs, maxPrice);
+				}
+				if (!string.IsNullOrEmpty(minPrice))
+				{
+					DPs = catalogServices.ProductsUpMinPrice(DPs, minPrice);
+				}
+				if (!string.IsNullOrEmpty(maxPrice) && !string.IsNullOrEmpty(minPrice))
+				{
+					DPs = catalogServices.ProductsFromMinToMaxPrice(DPs, minPrice, maxPrice);
+				}
+
+				PagingInfo = new PagingInfo
+				{
+					CurrentPage = productPage,
+					ItemsPerPage = PageSize,
+					TotalItems = repository.Products.Count(),
+					TotalPages = (int)Math.Ceiling((decimal)DPs.Count() / PageSize), //всего страниц
+					PlaceholderMaxPrice = DPs.Select(p => p.Price).Max(),
+					PlaceholderMinPrice = DPs.Select(p => p.Price).Min()
+				};
+
+				DPs = DPs.Skip((productPage - 1) * PageSize).Take(PageSize).ToList();
 			
+				string json = JsonConvert.SerializeObject(DPs, Formatting.Indented);
+				string PagingInfoJson = JsonConvert.SerializeObject(PagingInfo, Formatting.Indented);
+
+				return new JsonResult(new { json, PagingInfoJson });
+			}
+			catch (Exception)
+			{
+				PagingInfo = new PagingInfo
+				{
+					CurrentPage = productPage,
+					ItemsPerPage = PageSize,
+					TotalItems = 0,
+					TotalPages = (int)Math.Ceiling((decimal)1 / PageSize), //всего страниц
+					PlaceholderMaxPrice = 0,
+					PlaceholderMinPrice = 0
+				};
+
+				string json = JsonConvert.SerializeObject(DPs, Formatting.Indented);
+				string PagingInfoJson = JsonConvert.SerializeObject(PagingInfo, Formatting.Indented);
+
+				return new JsonResult(new { json, PagingInfoJson });
+			}
 		}
 
 	}

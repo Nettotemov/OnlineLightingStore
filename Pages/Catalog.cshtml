@@ -16,18 +16,17 @@
 			</div>
 
 			<label class="control-label">Категория: </label>
-			<select name="category" asp-items="Model.Category" SelectedValue="@Model.CategoryName" class="form-select"
-				onChange="this.form.submit()">
+			<select name="category" asp-items="Model.Category" SelectedValue="@Model.CategoryName" class="form-select">
 				<option value="">Все</option>
 			</select>
 
 			<label class="control-label">Цена от: </label>
-			<input name="minPrice" placeholder="@Model.PagingInfo.PlaceholderMinPrice" value="@Model.MinPrice"
-				class="form-control" type="number" min="0" onChange="this.form.submit()" />
+			<input id="minPrice" name="minPrice" placeholder="@Model.PagingInfo.PlaceholderMinPrice" value="@Model.MinPrice"
+				class="form-control" type="number" min="0" />
 
 			<label class="control-label">Цена до: </label>
-			<input name="maxPrice" placeholder="@Model.PagingInfo.PlaceholderMaxPrice" value="@Model.MaxPrice"
-				class="form-control" type="number" max="1000000000" onChange="this.form.submit()" />
+			<input id="maxPrice" name="maxPrice" placeholder="@Model.PagingInfo.PlaceholderMaxPrice" value="@Model.MaxPrice"
+				class="form-control" type="number" max="1000000000" />
 
 			<label class="control-label">Цвет: </label>
 			<div id="color" class="row">
@@ -71,27 +70,17 @@
 			</div>
 
 			<select name="sortOrder" asp-items="Html.GetEnumSelectList<SortCatalog>()"
-				SelectedValue="@Model.SortedCatalog" class="form-select" onChange="this.form.submit()">
+				SelectedValue="@Model.SortedCatalog" class="form-select">
 				<option value="@Model.SortedCatalog">
 					@Model.SortedName
 				</option>
 			</select>
 		</div>
 
-		<div>
-			@for (int i = 1; i <= @Model.PagingInfo.TotalPages; i++)
-			{
-				<button asp-route-productPage="@i" asp-route-name="@Model.Name" asp-route-minPrice="@Model.MinPrice"
-				asp-route-maxPrice="@Model.MaxPrice" asp-route-sortOrder="@Model.SortedCatalog"
-				asp-route-category="@Model.CategoryName" class="btn btn-default" type="submit" value="Фильтр">@i
-				</button>
-			}
-		</div>
 	</form>
 </div>
 
 <div id="productview">
-	<table class="table table-striped">
 		@if (@Model.DisplayedProducts.Count() == 0)
 		{
 			<div class="row">
@@ -100,56 +89,49 @@
 		}
 		else
 		{
-			<tr>
-				<th>Id</th>
-				<th>Название</th>
-				<th>Тип</th>
-				<th>Категория</th>
-				<th>Теги</th>
-				<th>Цена</th>
-			</tr>
 			<div class="row" id="prod-view">
 				@foreach (Product pr in @Model!.DisplayedProducts)
 				{
-					<tr id="@pr.ProductID">
-						<td>
-							<p id="productid">@pr.ProductID</p>
-						</td>
-						<td>
-							<p id="productname">@pr.Name</p>
-						</td>
-						<td>
-							<p id="producttype">@pr.Type</p>
-						</td>
-						<td>
-							<p class="d-none">@Model!.DisplayedCategories</p>
-							@pr.Category!.CategoryName
-						</td>
-						<td>
-							@pr.Tags
-						</td>
-						<td>
-							@pr.Price
-						</td>
-						<td>
-							<a asp-page="CardProduct" asp-route-CategoryName="@pr.Category!.CategoryName"
+					<div class="col-3">
+						<div class="" id="">
+							<div id="img-container">
+    							<div class="title-wrp">@pr.Name</div>
+    								<div class="post-and-image">
+    									<img class="col-12" src="@pr.MainPhoto">
+    									<div class="description-wrp">@pr.Description</div>
+ 									</div>
+  							</div>
+  								<div class="footer-row">
+        							<div class="tags-wrp">@pr.Tags</div>
+									<div class="tags-wrp">@pr.Price</div>
+    							</div>
+						</div>
+						<a asp-page="CardProduct" asp-route-CategoryName="@pr.Category!.CategoryName"
 						asp-route-ProductID="@pr.ProductID" asp-route-Name="@pr.Name">Подробнее</a>
 
-							<form id="ProductID=@pr.ProductID" class="addToCart" asp-page="/Cart" method="post">
-								<input type="hidden" name="ProductID" asp-for="@pr.ProductID" />
-								<input type="hidden" name="returnUrl" value="@ViewContext.HttpContext.Request.PathAndQuery()" />
-									<button type="submit" class="btn btn-success btn-sm pull-right" style="float:right">
-										Добавить в корзину
-									</button>
-							</form>
-						</td>
-					</tr>
+						<form id="ProductID=@pr.ProductID" class="addToCart" asp-page="/Cart" method="post">
+							<input type="hidden" name="ProductID" asp-for="@pr.ProductID" />
+							<input type="hidden" name="returnUrl" value="@ViewContext.HttpContext.Request.PathAndQuery()" />
+								<button type="submit" class="btn btn-success btn-sm pull-right" style="float:right">
+									Добавить в корзину
+								</button>
+						</form>
+					</div>
 				}
 			</div>
 		}
-	</table>
 </div>
 
-<div id="spinner-border" type="hidden" class="spinner-border" role="status">
+<ul id="pagingbuttons" class="pagination">
+	@for (int i = 1; i <= @Model.PagingInfo.TotalPages; i++)
+	{
+		<button form="catalogForm" asp-route-productPage="@i" asp-route-name="@Model.Name" asp-route-minPrice="@Model.MinPrice"
+		asp-route-maxPrice="@Model.MaxPrice"
+		asp-route-category="@Model.CategoryName" class="btn pagination-btn btn-default" type="submit" value="@i">@i
+		</button>
+	}
+</ul>
+
+<div id="spinner-border" class="hidden spinner-border" style="display: none;" role="status">
 	<span class="visually-hidden">Loading...</span>
 </div>
