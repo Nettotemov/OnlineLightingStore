@@ -10,6 +10,7 @@ namespace LampStore.Models
 		}
 
 		public IQueryable<Product> Products => context.Products;
+		public IQueryable<Category> Category => context.Categorys;
 
 		public void CreateProduct(Product p)
 		{

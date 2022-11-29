@@ -4,6 +4,7 @@ using LampStore.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LampStore.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    partial class StoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221127124920_StatusOrders")]
+    partial class StatusOrders
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,11 +59,9 @@ namespace LampStore.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long?>("ID"), 1L, 1);
 
                     b.Property<string>("CategoryImg")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CategoryName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
@@ -69,7 +69,6 @@ namespace LampStore.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long?>("ParentID")
-                        .IsRequired()
                         .HasColumnType("bigint");
 
                     b.HasKey("ID");
@@ -145,7 +144,6 @@ namespace LampStore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<long?>("CategoryId")
-                        .IsRequired()
                         .HasColumnType("bigint");
 
                     b.Property<string>("Color")
@@ -155,9 +153,6 @@ namespace LampStore.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Discount")
-                        .HasColumnType("int");
 
                     b.Property<string>("Kelvins")
                         .IsRequired()
@@ -179,11 +174,7 @@ namespace LampStore.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("OldPrice")
-                        .HasColumnType("bigint");
-
                     b.Property<long?>("ParentCategoryId")
-                        .IsRequired()
                         .HasColumnType("bigint");
 
                     b.Property<string>("Photos")
@@ -227,9 +218,7 @@ namespace LampStore.Migrations
                 {
                     b.HasOne("LampStore.Models.Category", "Category")
                         .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CategoryId");
 
                     b.Navigation("Category");
                 });

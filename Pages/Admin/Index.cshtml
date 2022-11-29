@@ -1,0 +1,25 @@
+@page "/admin"
+@{
+	Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width" />
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/LampStore.styles.css" asp-append-version="true" />
+    <link href="BlazorApp.styles.css" rel="stylesheet" />
+	<title>@ViewData["Title"] - LampStore</title>
+	<base href="/" />
+</head>
+
+<body>
+	<component type="typeof(Routed)" render-mode="Server" />
+	<script src="/_framework/blazor.server.js"></script>
+</body>
+
+</html>

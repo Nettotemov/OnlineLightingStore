@@ -1,0 +1,84 @@
+<table class="table table-sm table-striped table-bordered">
+	<thead>
+		<tr class="@StyleTable">
+			<th colspan="12" class="text-center text-white">@TableTitle</th>
+		</tr>
+		<tr>
+			<th class="text-center">№</th>
+			<th class="text-center">Имя</th>
+			<th class="text-center">Телефон</th>
+			<th class="text-center">Email</th>
+			<th class="text-center">Индекс</th>
+			<th class="text-center">Город</th>
+			<th class="text-center">Статус заказа</th>
+			<th colspan="2" class="text-center">Информация о заказе</th>
+			<th class="text-center">Редактировать</th>
+			<th class="text-center">Выполнение</th>
+		</tr>
+	</thead>
+	<tbody>
+		@if (Orders?.Count() > 0)
+		{
+			@foreach (Order o in Orders)
+			{
+				<tr>
+					<td class="text-center">@o.OrderID</td>
+					<td class="text-center">@o.Name</td>
+					<td class="text-center">@o.Phone</td>
+					<td class="text-center">@o.Email</td>
+					<td class="text-center">@o.Zip</td>
+					<td class="text-center">@o.City</td>
+					<td class="text-center">@EnumExtensions.GetDisplayName(@o.StatusOrders)</td>
+					<th class="text-center">Продукты</th>
+					<th class="text-center">Количество</th>
+					<td class="text-center">
+						<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(o.OrderID)">
+							Изменить
+						</NavLink>
+					</td>
+					<td class="text-center">
+						<button class="btn btn-sm btn-danger" @onclick="@(e => OrderSelected.InvokeAsync(o.OrderID))">
+							@ButtonLabel
+						</button>
+					</td>
+				</tr>
+				@foreach (CartLine line in o.Lines)
+				{
+					<tr>
+						<td colspan="7"></td>
+						<td class="text-center">@line.Product.Name</td>
+						<td class="text-center">@line.Quantity</td>
+						<td></td>
+					</tr>
+				}
+			}
+		}
+		else
+		{
+			<tr>
+				<td colspan="11" class="text-center">Нет заказов</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+@code
+{
+	[Parameter]
+	public string TableTitle { get; set; } = "Orders";
+
+	[Parameter]
+	public IEnumerable<Order> Orders { get; set; } = Enumerable.Empty<Order>();
+
+	[Parameter]
+	public string ButtonLabel { get; set; } = "Выполнен";
+
+	[Parameter]
+	public EventCallback<int> OrderSelected { get; set; }
+
+	[Parameter]
+	public string StyleTable { get; set; } = "bg-danger";
+
+	public string GetEditUrl(long id) => $"/admin/orders/edit/{id}";
+
+}

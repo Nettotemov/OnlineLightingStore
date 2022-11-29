@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using LampStore.Services;
+using LampStore.Pages;
 
 namespace LampStore.Models
 {
@@ -37,5 +39,8 @@ namespace LampStore.Models
 
 		[BindNever]
 		public bool Shipped { get; set; }
+
+		[BindNever]
+		public StatusOrder StatusOrders { get; set; }
 	}
 }

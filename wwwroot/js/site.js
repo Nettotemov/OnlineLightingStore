@@ -123,6 +123,8 @@ $(document).on("click", ".pagination-btn", function (ev) {
 				if (productJson.length > 0) {
 					$('#prod-view').empty();
 					for (let i = 0; i < productJson.length; i++) {
+						let price = productJson[i].Price;
+						let oldPrice = productJson[i].OldPrice;
 						postWrp = document.createElement("div");
 						postWrp.classList.add("col-3");
 						postWrp.innerHTML = `<div class="" id="">
@@ -135,7 +137,9 @@ $(document).on("click", ".pagination-btn", function (ev) {
   							</div>
   							<div class="footer-row">
         						<div class="tags-wrp">${productJson[i].Tags}</div>
-								<div class="tags-wrp">${productJson[i].Price}</div>
+								<div class="tags-wrp">${price.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' })}</div>
+								<div class="tags-wrp">${productJson[i]?.Discount ?? ""}</div>
+								<div class="tags-wrp"><s>${oldPrice?.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' }) ?? ""}</s></div>
     						</div>
 						</div>
 						<a href="/Catalog/${productJson[i].Category.CategoryName}/${productJson[i].Name}/${productJson[i].ProductID}">Подробнее</a>
@@ -201,6 +205,8 @@ $('#catalogForm').on('change', 'input[type=checkbox], [name=category], [name=sor
 			if (productJson.length > 0) {
 				$('#prod-view').empty();
 				for (let i = 0; i < productJson.length; i++) {
+					let price = productJson[i].Price;
+					let oldPrice = productJson[i].OldPrice;
 					postWrp = document.createElement("div");
 					postWrp.classList.add("col-3");
 					postWrp.innerHTML = `<div class="" id="">
@@ -213,7 +219,9 @@ $('#catalogForm').on('change', 'input[type=checkbox], [name=category], [name=sor
   						</div>
   						<div class="footer-row">
         					<div class="tags-wrp">${productJson[i].Tags}</div>
-							<div class="tags-wrp">${productJson[i].Price}</div>
+							<div class="tags-wrp">${price.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' })}</div>
+							<div class="tags-wrp">${productJson[i]?.Discount ?? ""}</div>
+							<div class="tags-wrp"><s>${oldPrice?.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' }) ?? ""}</s></div>
     					</div>
 					</div>
 					<a href="/Catalog/${productJson[i].Category.CategoryName}/${productJson[i].Name}/${productJson[i].ProductID}">Подробнее</a>

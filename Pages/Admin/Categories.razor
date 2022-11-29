@@ -1,0 +1,69 @@
+@page "/admin/categories"
+@inherits OwningComponentBase<ICategoryRepository>
+
+
+<table class="table table-sm table-striped table-bordered">
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Название категории</th>
+			<th>Изображение</th>
+			<th>ID родительской категории</th>
+			<th>Описание категории</th>
+			<td />
+		</tr>
+	</thead>
+	<tbody>
+		@if (CategoryData?.Count() > 0)
+		{
+			@foreach (Category c in CategoryData)
+			{
+				<tr>
+					<td>@c.ID</td>
+					<td>@c.CategoryName</td>
+					<td><img class="img-fluid" style="height: 80px;" src=@c.CategoryImg></td>
+					<td>@c.ParentID</td>
+					<td>@c.Description</td>
+					<td class="text-center">
+						<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(c.ID ?? 0)">
+							Изменить
+						</NavLink>
+						<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteCategory(c))">
+							Удалить
+						</button>
+					</td>
+				</tr>
+			}
+		}
+		else
+		{
+			<tr>
+				<td colspan="5" class="text-center">Категории, не найдены.</td>
+			</tr>
+		}
+	</tbody>
+</table>
+<NavLink class="btn btn-primary" href="/admin/categories/create">Добавить</NavLink>
+
+@code {
+	public ICategoryRepository Repository => Service;
+	public IEnumerable<Category> CategoryData { get; set; } = Enumerable.Empty<Category>();
+
+	protected async override Task OnInitializedAsync()
+	{
+		await UpdateData();
+	}
+
+	public async Task UpdateData()
+	{
+		CategoryData = await Repository.Categorys.ToListAsync();
+	}
+	
+	public async Task DeleteCategory(Category category)
+	{
+		Repository.DeleteCategory(category);
+		await UpdateData();
+	}
+
+	public string GetEditUrl(long id) => $"/admin/categories/edit/{id}";
+}

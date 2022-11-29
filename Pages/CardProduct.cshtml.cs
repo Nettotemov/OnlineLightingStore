@@ -18,6 +18,7 @@ namespace LampStore.Pages
 		public Product? productCard; //вывод карточки товара
 		public List<Category> DisplayedCategories { get; private set; } = new();
 		public long ProductID { get; private set; }
+
 		public void OnGet(long productId) //инициализация карточки товара
 		{
 			DisplayedCategories = repository.Categorys.Select(c => c).Distinct().ToList();
@@ -29,10 +30,13 @@ namespace LampStore.Pages
 					productCard = new Product()
 					{
 						MainPhoto = product.MainPhoto,
+						Photos = product.Photos,
 						Name = product.Name,
 						MinDescription = product.MinDescription,
 						Description = product.Description,
 						Price = product.Price,
+						Discount = product.Discount,
+						OldPrice = product.OldPrice,
 						ProductID = product.ProductID,
 						Tags = product.Tags,
 						Color = product.Color,
@@ -40,7 +44,7 @@ namespace LampStore.Pages
 						Type = product.Type,
 						Material = product.Material,
 						Availability = product.Availability,
-						Category = product.Category
+						Category = product.Category,
 					};
 				}
 			}

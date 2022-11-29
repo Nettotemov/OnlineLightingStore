@@ -1,0 +1,103 @@
+@page "/admin/products/details/{id:long}"
+
+<h3 class="bg-info text-white text-center p-1">Details</h3>
+<table class="table table-sm table-bordered table-striped">
+	<tbody>
+		<tr>
+			<th>ID</th>
+			<td>@Product?.ProductID</td>
+		</tr>
+		<tr>
+			<th>Изображение</th>
+			<img class="img-fluid" style="height: 250px;" src=@Product?.MainPhoto>
+		</tr>
+		<tr>
+			<th>Галерея</th>
+			@foreach (var img in @Product?.Photos?.Split(',').ToArray())
+			{
+				<img class="img-thumbnail col-2" src=@img>
+			}
+		</tr>
+		<tr>
+			<th>Название</th>
+			<td>@Product?.Name</td>
+		</tr>
+		<tr>
+			<th>Описание</th>
+			<td>@Product?.Description</td>
+		</tr>
+		<tr>
+			<th>Короткое описание</th>
+			<td>@Product?.MinDescription</td>
+		</tr>
+		<tr>
+			<th>Категория</th>
+			<td>@Product?.Category!.CategoryName</td>
+		</tr>
+		<tr>
+			<th>Цена</th>
+			<td>@Product?.Price.ToString("C")</td>
+		</tr>
+		<tr>
+			<th>Скидка %</th>
+			<td>@Product?.Discount</td>
+		</tr>
+		<tr>
+			<th>Старая цена</th>
+			<td>@Product?.OldPrice?.ToString("C")</td>
+		</tr>
+		<tr>
+			<th>Тип</th>
+			<td>@Product?.Type</td>
+		</tr>
+		<tr>
+			<th>Теги</th>
+			<td>@Product?.Tags</td>
+		</tr>
+		<tr>
+			<th>Цвет</th>
+			<td>@Product?.Color</td>
+		</tr>
+		<tr>
+			<th>Материал</th>
+			<td>@Product?.Material</td>
+		</tr>
+		<tr>
+			<th>Цветовая температура</th>
+			<td>@Product?.Kelvins</td>
+		</tr>
+		<tr>
+			<th>Наличие</th>
+			<td>@Product?.Availability</td>
+		</tr>
+		<tr>
+			<th>Category</th>
+			<td>@Product?.Category!.CategoryName</td>
+		</tr>
+	</tbody>
+</table>
+
+<NavLink class="btn btn-warning" href="@EditUrl">Изменить</NavLink>
+<NavLink class="btn btn-secondary" href="/admin/products">Назад</NavLink>
+
+@code
+{
+	[Inject]
+	public IStoreRepository? Repository { get; set; }
+
+	public List<Category>? DisplayedCategories { get; set; }
+
+	[Parameter]
+	public long Id { get; set; }
+
+	public Product? Product { get; set; }
+	public Category? Category { get; set; }
+
+
+	protected override void OnParametersSet()
+	{
+		Product = Repository?.Products.FirstOrDefault(p => p.ProductID == Id);
+		DisplayedCategories = Repository?.Category.Select(c => c).Distinct().ToList(); //получение категорий
+	}
+	public string EditUrl => $"/admin/products/edit/{Product?.ProductID}";
+}

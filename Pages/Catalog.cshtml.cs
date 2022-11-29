@@ -36,7 +36,7 @@ namespace LampStore.Pages
 
 		public SortViewModel? SortViewModel { get; private set; }
 
-		public int PageSize = 3; //количество товаров на странице
+		public int PageSize = 4; //количество товаров на странице
 		public PagingInfo PagingInfo { get; private set; } = new(); //для вывода информации пагинации для страниц
 
 		CatalogServices catalogServices = new CatalogServices(); //ссылка на сервисы каталога

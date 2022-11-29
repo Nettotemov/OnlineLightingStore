@@ -1,0 +1,81 @@
+@page "/admin/products"
+@page "/admin"
+@inherits OwningComponentBase<IStoreRepository>
+
+<table class="table table-sm table-striped table-bordered">
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Изображение</th>
+			<th>Название</th>
+			<th>Категория</th>
+			<th>Цена</th>
+			<th>Скидка %</th>
+			<th>Старая цена</th>
+			<td />
+		</tr>
+	</thead>
+	<tbody>
+		@if (ProductData?.Count() > 0)
+		{
+			@foreach (Product p in ProductData)
+			{
+				<tr>
+					<td>@p.ProductID</td>
+					<td><img class="img-fluid" style="height: 80px;" src=@p.MainPhoto></td>
+					<td>@p.Name</td>
+					<td>@p.Category?.CategoryName</td>
+					<td>@p.Price.ToString("c")</td>
+					<td>@p.Discount</td>
+					<td>@p.OldPrice?.ToString("C")</td>
+					<td class="text-center">
+						<NavLink class="btn btn-info btn-sm" href="@GetDetailsUrl(p.ProductID ?? 0)">
+							Подробнее
+						</NavLink>
+						<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(p.ProductID ?? 0)">
+							Изменить
+						</NavLink>
+						<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteProduct(p))">
+							Удалить
+						</button>
+					</td>
+				</tr>
+			}
+		}
+		else
+		{
+			<tr>
+				<td colspan="5" class="text-center">Товары, не найдены.</td>
+			</tr>
+		}
+	</tbody>
+</table>
+<NavLink class="btn btn-primary" href="/admin/products/create">Добавить</NavLink>
+
+@code {
+	public IStoreRepository Repository => Service;
+	public IEnumerable<Product> ProductData { get; set; } = Enumerable.Empty<Product>();
+
+	public List<Category>? DisplayedCategories { get; set; }
+	
+
+	protected async override Task OnInitializedAsync()
+	{
+		DisplayedCategories = Repository?.Category.Select(c => c).Distinct().ToList(); //получение категорий
+		await UpdateData();
+	}
+
+	public async Task UpdateData()
+	{
+		ProductData = await Repository.Products.ToListAsync();
+	}
+	
+	public async Task DeleteProduct(Product p)
+	{
+		Repository.DeleteProduct(p);
+		await UpdateData();
+	}
+
+	public string GetDetailsUrl(long id) => $"/admin/products/details/{id}";
+	public string GetEditUrl(long id) => $"/admin/products/edit/{id}";
+}

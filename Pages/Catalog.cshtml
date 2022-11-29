@@ -103,7 +103,12 @@
   							</div>
   								<div class="footer-row">
         							<div class="tags-wrp">@pr.Tags</div>
-									<div class="tags-wrp">@pr.Price</div>
+									<div class="tags-wrp">@pr.Price.ToString("C")</div>
+									@if (@pr.Discount != null && @pr.OldPrice != null)
+									{
+										<div class="tags-wrp">-@pr.Discount%</div>
+										<div class="tags-wrp"><s>@pr.OldPrice?.ToString("C")</s></div>
+									}
     							</div>
 						</div>
 						<a asp-page="CardProduct" asp-route-CategoryName="@pr.Category!.CategoryName"

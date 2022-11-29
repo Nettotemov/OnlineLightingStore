@@ -7,6 +7,10 @@
 
 <div class="col-6" style="margin-top: 20px;">
 	<img class="img-fluid" src=@Model.productCard?.MainPhoto>
+	@foreach (var img in @Model.productCard?.Photos?.Split(',').ToArray())
+	{
+		<img class="img-thumbnail col-2" src=@img>
+	}
 	<h1>@Model.productCard?.Name</h1>
 	<p class="h6" style="margin-top: 15px;">Цвет: @Model.productCard?.Color</p>
 	<p class="h6" style="margin-top: 15px;">Цветовая температура: @Model.productCard?.Kelvins</p>
@@ -17,6 +21,11 @@
 	<p class="h6" style="margin-top: 15px;">Материал: @Model.productCard?.Material</p>
 	<p class="h6" style="margin-top: 15px;">Наличие: @Model.productCard?.Availability</p>
 	<p class="h5" style="margin-top: 15px;">Цена: @Model.productCard?.Price.ToString("c")</p>
+	@if (@Model.productCard?.Discount != null && @Model.productCard?.OldPrice != null)
+	{
+		<div class="h6" style="margin-top: 15px;">Скидка: @Model.productCard?.Discount%</div>
+		<div class="h6" style="margin-top: 15px;">Cтрая цена: <s>@Model.productCard?.OldPrice?.ToString("c")</s></div>
+	}
 	<p class="h6" style="margin-top: 15px;">@Model.productCard?.ProductID.ToString()</p>
 	<p class="h6" style="margin-top: 15px;">Теги: @Model.productCard?.Tags</p>
 	<form id="ProductID" class="addToCart" asp-page="/Cart" method="post">

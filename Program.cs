@@ -14,10 +14,12 @@ builder.Services.AddDbContext<StoreDbContext>(opts =>
 builder.Services.AddScoped<IStoreRepository, EFStoreRepository>();
 builder.Services.AddScoped<ICatalogRepository, EFCatalogRepository>();
 builder.Services.AddScoped<IOrderRepository, EFOrderRepository>();
+builder.Services.AddScoped<ICategoryRepository, EFCategoryRepository>();
 builder.Services.AddDistributedMemoryCache(); //добавляем кеш в приложение
 builder.Services.AddSession(); //добавление сохранения сессии пользователя
 builder.Services.AddScoped<Cart>(sp => SessionCart.GetCart(sp)); //указывает, что один и тот же объект должен использоваться для удовлетворения связанных запросов для экземпляров Корзины
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); //указывает, что всегда должен использоваться один и тот же объект
+builder.Services.AddServerSideBlazor(); //создает службы, которые использует Blazor
 
 var app = builder.Build();
 app.UseSession(); //включения фукции сессии
@@ -39,5 +41,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapRazorPages();
+app.MapBlazorHub();//регистрирует компоненты промежуточного программного обеспечения Blazor.
+app.MapFallbackToPage("/admin/{*catchall}", "/Admin/Index"); //усовершенствовании системы маршрутизации, чтобы гарантировать бесперебойную работу Blazor с остальной частью приложения.
 
 app.Run();

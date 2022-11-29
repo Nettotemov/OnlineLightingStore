@@ -1,0 +1,165 @@
+@page "/admin/products/edit/{id:long}"
+@page "/admin/products/create"
+@inherits OwningComponentBase<IStoreRepository>
+
+<style>
+	div.validation-message {
+		color: rgb(220, 53, 69);
+		font-weight: 500
+	}
+</style>
+
+<h3 class="bg-@ThemeColor text-white text-center p-1">@TitleText a Product</h3>
+<EditForm Model="Product" OnValidSubmit="SaveProduct">
+	<DataAnnotationsValidator />
+	@if (Product.ProductID != 0)
+	{
+		<div class="form-group">
+			<label>ID</label>
+			<input class="form-control" disabled value="@Product.ProductID" />
+		</div>
+	}
+	<div class="form-group">
+		<img class="img-fluid" style="height: 250px;" src=@Product.MainPhoto>
+		<label>Изображение</label>
+		<ValidationMessage For="@(() => Product.MainPhoto)" />
+		<InputText class="form-control" @bind-Value="Product.MainPhoto" />
+	</div>
+	<div class="form-group">
+		@foreach (var img in @Product?.Photos?.Split(',').ToArray())
+		{
+			<img class="img-thumbnail col-2" src=@img>
+		}
+		<label>Галерея</label>
+		<ValidationMessage For="@(() => Product.Photos)" />
+		<InputText class="form-control" @bind-Value="Product.Photos" />
+	</div>
+	<div class="form-group">
+		<label>Название</label>
+		<ValidationMessage For="@(() => Product.Name)" />
+		<InputText class="form-control" @bind-Value="Product.Name" />
+	</div>
+	<div class="form-group">
+		<label>Описание</label>
+		<ValidationMessage For="@(() => Product.Description)" />
+		<InputText class="form-control" @bind-Value="Product.Description" />
+	</div>
+	<div class="form-group">
+		<label>Короткое описание</label>
+		<ValidationMessage For="@(() => Product.MinDescription)" />
+		<InputText class="form-control" @bind-Value="Product.MinDescription" />
+	</div>
+	<div class="form-group">
+		<label>ID Категории</label>
+		<ValidationMessage For="@(() => Product.CategoryId)" />
+		<InputNumber class="form-control" @bind-Value="Product.CategoryId" />
+	</div>
+	<div class="form-group">
+		<label>ID Родительской категории</label>
+		<ValidationMessage For="@(() => Product.ParentCategoryId)" />
+		<InputNumber class="form-control" @bind-Value="Product.ParentCategoryId" />
+	</div>
+	<div class="form-group">
+		<label>Название Категории</label>
+		<label>@Product?.Category?.CategoryName</label>
+	</div>
+	<div class="form-group">
+		<label>Цена</label>
+		<ValidationMessage For="@(() => Product.Price)" />
+		@if (Product.Discount != null && Product.OldPrice != null)
+		{
+			Product.Price = @PriceProduct((long)Product.OldPrice, (int)Product.Discount);
+		}
+		else { Product.Price = Product.Price; }
+		<InputNumber class="form-control" @bind-Value="Product.Price" />
+	</div>
+	<div class="form-group">
+		<label>Скидка %</label>
+		<InputNumber class="form-control" @bind-Value="Product.Discount" />
+	</div>
+	<div class="form-group">
+		<label>Старая цена</label>
+		<InputNumber class="form-control" @bind-Value="Product.OldPrice" />
+	</div>
+	<div class="form-group">
+		<label>Тип</label>
+		<ValidationMessage For="@(() => Product.Type)" />
+		<InputText class="form-control" @bind-Value="Product.Type" />
+	</div>
+	<div class="form-group">
+		<label>Теги</label>
+		<ValidationMessage For="@(() => Product.Tags)" />
+		<InputText class="form-control" @bind-Value="Product.Tags" />
+	</div>
+	<div class="form-group">
+		<label>Цвет</label>
+		<ValidationMessage For="@(() => Product.Color)" />
+		<InputText class="form-control" @bind-Value="Product.Color" />
+	</div>
+	<div class="form-group">
+		<label>Материал</label>
+		<ValidationMessage For="@(() => Product.Material)" />
+		<InputText class="form-control" @bind-Value="Product.Material" />
+	</div>
+	<div class="form-group">
+		<label>Цветовая температура</label>
+		<ValidationMessage For="@(() => Product.Kelvins)" />
+		<InputText class="form-control" @bind-Value="Product.Kelvins" />
+	</div>
+	<div class="form-group">
+		<label>Наличие</label>
+		<ValidationMessage For="@(() => Product.Availability)" />
+		<InputCheckbox class="" @bind-Value="Product.Availability" />
+	</div>
+	<div class="mt-2">
+		<button type="submit" class="btn btn-@ThemeColor">Сохранить</button>
+		<NavLink class="btn btn-secondary" href="/admin/products">Отмена</NavLink>
+	</div>
+</EditForm>
+
+@code {
+
+	public IStoreRepository Repository => Service;
+
+	[Inject]
+	public NavigationManager? NavManager { get; set; }
+
+	[Parameter]
+	public long Id { get; set; } = 0;
+	public Product Product { get; set; } = new Product();
+
+	public List<Category>? DisplayedCategories { get; set; }
+	public Category? Category { get; set; }
+	
+
+	protected override void OnParametersSet()
+	{
+		if (Id != 0)
+		{
+			Product = Repository.Products.FirstOrDefault(p => p.ProductID == Id) ?? new();
+			DisplayedCategories = Repository?.Category.Select(c => c).Distinct().ToList(); //получение категорий
+		}
+	}
+
+	public void SaveProduct()
+	{
+		if (Id == 0)
+		{
+			Repository.CreateProduct(Product);
+		}
+		else
+		{
+			Repository.SaveProduct(Product);
+		}
+		NavManager?.NavigateTo("/admin/products");
+	}
+
+	public string ThemeColor => Id == 0 ? "primary" : "warning";
+	public string TitleText => Id == 0 ? "Create" : "Edit";
+
+	public long PriceProduct(long oldPrice, int discount)
+	{
+		long price;
+		return price = oldPrice - oldPrice * discount / 100;
+	}
+}

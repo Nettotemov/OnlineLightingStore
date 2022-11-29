@@ -12,6 +12,11 @@ namespace LampStore.Models
 		}
 		public IQueryable<Order> Orders => context.Orders.Include(o => o.Lines).ThenInclude(l => l.Product);
 
+		public void CreateOrder(Order order)
+		{
+			context.SaveChanges();
+		}
+
 		public void SaveOrder(Order order)
 		{
 			context.AttachRange(order.Lines.Select(l => l.Product));
