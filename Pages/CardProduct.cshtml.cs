@@ -19,6 +19,8 @@ namespace LampStore.Pages
 		public List<Category> DisplayedCategories { get; private set; } = new();
 		public long ProductID { get; private set; }
 
+		public List<string> DisplayedPhotos { get; private set; } = new();
+
 		public void OnGet(long productId) //инициализация карточки товара
 		{
 			DisplayedCategories = repository.Categorys.Select(c => c).Distinct().ToList();
@@ -27,6 +29,8 @@ namespace LampStore.Pages
 			{
 				if (product.ProductID == productId)
 				{
+					DisplayedPhotos = product?.Photos.Split(',').ToList();
+					
 					productCard = new Product()
 					{
 						MainPhoto = product.MainPhoto,

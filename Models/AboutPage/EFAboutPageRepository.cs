@@ -4,21 +4,21 @@ namespace LampStore.Models
 	{
 		private StoreDbContext context;
 
-		public EFCategoryRepository(StoreDbContext ctx) => context = ctx;
+		public EFAboutPageRepository(StoreDbContext ctx) => context = ctx;
 
-		public IQueryable<Category> Categorys => context.Categorys;
+		public IQueryable<AboutPage> AboutPages => context.AboutPages;
 
-		public void CreateCategory(Category category)
+		public void CreateAboutPage(AboutPage aboutPage)
 		{
-			context.Add(category);
+			context.Add(aboutPage);
 			context.SaveChanges();
 		}
-		public void DeleteCategory(Category category)
+		public void DeleteAboutPage(AboutPage aboutPage)
 		{
-			context.Remove(category);
+			context.Remove(aboutPage);
 			context.SaveChanges();
 		}
-		public void SaveCategory(Category category)
+		public void SaveAboutPage(AboutPage aboutPage)
 		{
 			context.SaveChanges();
 		}

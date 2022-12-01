@@ -7,7 +7,7 @@
 
 <div class="col-6" style="margin-top: 20px;">
 	<img class="img-fluid" src=@Model.productCard?.MainPhoto>
-	@foreach (var img in @Model.productCard?.Photos?.Split(',').ToArray())
+	@foreach (var img in @Model.DisplayedPhotos)
 	{
 		<img class="img-thumbnail col-2" src=@img>
 	}
@@ -16,7 +16,7 @@
 	<p class="h6" style="margin-top: 15px;">Цветовая температура: @Model.productCard?.Kelvins</p>
 	<p class="h6" style="margin-top: 15px;">Короткое описание: @Model.productCard?.MinDescription</p>
 	<p class="h6" style="margin-top: 15px;">Описание: @Model.productCard?.Description</p>
-	<p class="h6" style="margin-top: 15px;">Категория товара: @Model.productCard!.Category?.CategoryName</p>
+	<p class="h6" style="margin-top: 15px;">Категория товара: @Model.productCard?.Category?.CategoryName</p>
 	<p class="h6" style="margin-top: 15px;">Тип: @Model.productCard?.Type</p>
 	<p class="h6" style="margin-top: 15px;">Материал: @Model.productCard?.Material</p>
 	<p class="h6" style="margin-top: 15px;">Наличие: @Model.productCard?.Availability</p>

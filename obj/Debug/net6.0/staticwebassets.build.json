@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "h1SaJ0QGMh28QnXPD4sf3aTy0ykE676aixYIexg/YVo=",
+  "Hash": "dMZx0ew1Iwn0f5QMq2BFwQcEoqnShXyVi0069IcU8Fg=",
   "Source": "LampStore",
   "BasePath": "_content/LampStore",
   "Mode": "Default",
@@ -83,6 +83,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/favicon.ico"
+    },
+    {
+      "Identity": "/Users/konstantinermakov/Projects/LampStore/LampStore/wwwroot/imegs/img-category/spots.jpeg",
+      "SourceId": "LampStore",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/konstantinermakov/Projects/LampStore/LampStore/wwwroot/",
+      "BasePath": "_content/LampStore",
+      "RelativePath": "imegs/img-category/spots.jpeg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/imegs/img-category/spots.jpeg"
     },
     {
       "Identity": "/Users/konstantinermakov/Projects/LampStore/LampStore/wwwroot/js/site.js",

@@ -11,6 +11,7 @@ builder.Services.AddDbContext<StoreDbContext>(opts =>
 {
 	opts.UseSqlServer(builder.Configuration["ConnectionStrings:LampStoreConnection"]);
 });
+builder.Services.AddScoped<IAboutPageRepository, EFAboutPageRepository>();
 builder.Services.AddScoped<IStoreRepository, EFStoreRepository>();
 builder.Services.AddScoped<ICatalogRepository, EFCatalogRepository>();
 builder.Services.AddScoped<IOrderRepository, EFOrderRepository>();

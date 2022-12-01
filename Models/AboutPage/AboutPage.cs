@@ -2,7 +2,7 @@ namespace LampStore.Models
 {
 	public class AboutPage
 	{
-		public long? NodeID { get; set; }
+		public long? ID { get; set; }
 
 		public string? ImgOneUrl { get; set; } = string.Empty;
 
