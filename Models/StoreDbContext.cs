@@ -11,5 +11,7 @@ namespace LampStore.Models
 		public DbSet<Category> Categorys => Set<Category>();
 
 		public DbSet<Order> Orders => Set<Order>();
+
+		public DbSet<AboutPage> AboutPages => Set<AboutPage>();
 	}
 }

@@ -21,6 +21,9 @@ builder.Services.AddScoped<Cart>(sp => SessionCart.GetCart(sp)); //указыв�
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); //указывает, что всегда должен использоваться один и тот же объект
 builder.Services.AddServerSideBlazor(); //создает службы, которые использует Blazor
 
+builder.Services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlServer(builder.Configuration["ConnectionStrings:IdentityConnection"])); //подключение к БД для админа
+builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppIdentityDbContext>(); //добавление идентифкации для админа
+
 var app = builder.Build();
 app.UseSession(); //включения фукции сессии
 
@@ -38,10 +41,14 @@ app.UseStaticFiles();
 app.MapDefaultControllerRoute(); //рассказывает ASP.NET Core, как сопоставить URL
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapRazorPages();
 app.MapBlazorHub();//регистрирует компоненты промежуточного программного обеспечения Blazor.
 app.MapFallbackToPage("/admin/{*catchall}", "/Admin/Index"); //усовершенствовании системы маршрутизации, чтобы гарантировать бесперебойную работу Blazor с остальной частью приложения.
+
+IdentitySeedData.EnsurePopulated(app);
 
 app.Run();

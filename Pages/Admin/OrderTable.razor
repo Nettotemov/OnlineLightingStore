@@ -1,7 +1,7 @@
 <table class="table table-sm table-striped table-bordered">
 	<thead>
 		<tr class="@StyleTable">
-			<th colspan="12" class="text-center text-white">@TableTitle</th>
+			<th colspan="13" class="text-center text-white">@TableTitle</th>
 		</tr>
 		<tr>
 			<th class="text-center">№</th>
@@ -11,7 +11,8 @@
 			<th class="text-center">Индекс</th>
 			<th class="text-center">Город</th>
 			<th class="text-center">Статус заказа</th>
-			<th colspan="2" class="text-center">Информация о заказе</th>
+			<th class="text-center">Сумма заказа</th>
+			<th colspan="3" class="text-center">Информация о заказе</th>
 			<th class="text-center">Редактировать</th>
 			<th class="text-center">Выполнение</th>
 		</tr>
@@ -29,8 +30,10 @@
 					<td class="text-center">@o.Zip</td>
 					<td class="text-center">@o.City</td>
 					<td class="text-center">@EnumExtensions.GetDisplayName(@o.StatusOrders)</td>
+					<td class="text-center">@o.Lines.Select(p => p.Product).Sum(e => e.Price).ToString("C")</td>
 					<th class="text-center">Продукты</th>
 					<th class="text-center">Количество</th>
+					<th class="text-center">Цена товара</th>
 					<td class="text-center">
 						<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(o.OrderID)">
 							Изменить
@@ -45,9 +48,10 @@
 				@foreach (CartLine line in o.Lines)
 				{
 					<tr>
-						<td colspan="7"></td>
+						<td colspan="8"></td>
 						<td class="text-center">@line.Product.Name</td>
 						<td class="text-center">@line.Quantity</td>
+						<td class="text-center">@line.Product.Price.ToString("C")</td>
 						<td></td>
 					</tr>
 				}

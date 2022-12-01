@@ -61,3 +61,4 @@
 /Users/konstantinermakov/Projects/LampStore/LampStore/bin/Debug/net6.0/Newtonsoft.Json.dll
 /Users/konstantinermakov/Projects/LampStore/LampStore/bin/Debug/net6.0/Microsoft.DotNet.PlatformAbstractions.dll
 /Users/konstantinermakov/Projects/LampStore/LampStore/bin/Debug/net6.0/Microsoft.Extensions.DependencyModel.dll
+/Users/konstantinermakov/Projects/LampStore/LampStore/bin/Debug/net6.0/Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
