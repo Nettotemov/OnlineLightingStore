@@ -19,5 +19,9 @@ namespace LampStore.Models
 		public string HeadingTwoNode { get; set; } = string.Empty;
 		
 		public string ParagraphTwoNode { get; set; } = string.Empty;
+
+		public bool DisplayHomePage { get; set; }
+
+
 	}
 }

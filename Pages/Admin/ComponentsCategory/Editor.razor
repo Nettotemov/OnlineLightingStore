@@ -12,7 +12,7 @@
 <h3 class="bg-@ThemeColor text-white text-center p-1">@TitleText категорий</h3>
 <EditForm Model="Category" OnValidSubmit="SaveCategory">
 	<DataAnnotationsValidator />
-	@if (Category.ID != 0)
+	@if (Category!.ID != 0)
 	{
 		<div class="form-group">
 			<label>ID</label>
@@ -40,6 +40,52 @@
 		<ValidationMessage For="@(() => Category.Description)" />
 		<InputText class="form-control" @bind-Value="Category.Description" />
 	</div>
+	<div class="form-group">
+		<label>Заголовок 2го блока</label>
+		<InputText class="form-control" @bind-Value="Category.HeadingTwo" />
+	</div>
+	<div class="form-group">
+		<img class="img-fluid" style="height: 250px;" src=@Category.ImgTwoUrl>
+		<label>Картинка для 2го блока</label>
+		<InputText class="form-control" @bind-Value="Category.ImgTwoUrl" />
+	</div>
+	<div class="form-group">
+		<label>Описнаие для 2го блока</label>
+		<InputText class="form-control" @bind-Value="Category.DescriptionTwo" />
+	</div>
+	<div class="form-group">
+		<label>Заголовок 3го блока</label>
+		<InputText class="form-control" @bind-Value="Category.HeadingThree" />
+	</div>
+	<div class="form-group">
+		<label>Картинка для 3го блока</label>
+		<img class="img-fluid" style="height: 250px;" src=@Category.ImgThreeUrl>
+		<InputText class="form-control" @bind-Value="Category.ImgThreeUrl" />
+	</div>
+	<div class="form-group">
+		<label>Описнаие для 3го блока</label>
+		<InputText class="form-control" @bind-Value="Category.DescriptionThree" />
+	</div>
+	<div class="form-group">
+		@if ( Category?.Slider != string.Empty )
+		{
+			var slider = Category?.Slider?.Split(',').ToList();
+			@foreach (var sl in slider ?? new List<string>())
+			{
+				<img class="img-thumbnail col-2" src=@sl>
+			}
+		}
+		<label>Слайдер картинок</label>
+		<InputText class="form-control" @bind-Value="Category!.Slider" />
+	</div>
+	<div class="form-group">
+		<label>Показывать слайдер</label>
+		<InputCheckbox class="" @bind-Value="Category.DisplaySlider" />
+	</div>
+	<div class="form-group">
+		<label>Показывать на главной</label>
+		<InputCheckbox class="" @bind-Value="Category.DisplayHomePage" />
+	</div>
 	<div class="mt-2">
 		<button type="submit" class="btn btn-@ThemeColor">Сохранить</button>
 		<NavLink class="btn btn-secondary" href="/admin/categories">Отмена</NavLink>
@@ -55,7 +101,7 @@
 
 	[Parameter]
 	public long Id { get; set; } = 0;
-	public Category? Category { get; set; } = new Category();
+	public Category Category { get; set; } = new Category();
 	
 
 	protected override void OnParametersSet()

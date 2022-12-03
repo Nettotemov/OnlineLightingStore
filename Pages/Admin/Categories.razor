@@ -10,6 +10,7 @@
 			<th>Изображение</th>
 			<th>ID родительской категории</th>
 			<th>Описание категории</th>
+			<th>Показывать на главной</th>
 			<td />
 		</tr>
 	</thead>
@@ -24,6 +25,7 @@
 					<td><img class="img-fluid" style="height: 80px;" src=@c.CategoryImg></td>
 					<td>@c.ParentID</td>
 					<td>@c.Description</td>
+					<td>@c.DisplayHomePage</td>
 					<td class="text-center">
 						<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(c.ID ?? 0)">
 							Изменить

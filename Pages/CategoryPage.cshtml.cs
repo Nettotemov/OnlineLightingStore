@@ -25,7 +25,7 @@ namespace LampStore.Pages
 		{
 			try
 			{
-				DisplayedProducts = repository.Products.Where(p => p.Category.ID == categoryID).ToList();
+				DisplayedProducts = repository.Products.Where(p => p.Category!.ID == categoryID).ToList();
 				
 				foreach (var category in repository.Categorys)
 				{
@@ -35,7 +35,15 @@ namespace LampStore.Pages
 						{
 							CategoryName = category.CategoryName,
 							CategoryImg = category.CategoryImg,
-							Description = category.Description
+							Description = category.Description,
+							HeadingTwo = category.HeadingTwo,
+							ImgTwoUrl = category.ImgTwoUrl,
+							DescriptionTwo = category.DescriptionTwo,
+							HeadingThree = category.HeadingThree,
+							ImgThreeUrl = category.ImgThreeUrl,
+							DescriptionThree = category.DescriptionThree,
+							DisplaySlider = category.DisplaySlider,
+							Slider = category.Slider
 						};
 					}
 				}
