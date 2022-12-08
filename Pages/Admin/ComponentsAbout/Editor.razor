@@ -1,0 +1,106 @@
+@page "/admin/about/edit/{id:long}"
+@page "/admin/about/create"
+@inherits OwningComponentBase<IAboutPageRepository>
+
+<style>
+	div.validation-message {
+		color: rgb(220, 53, 69);
+		font-weight: 500
+	}
+</style>
+
+<h3 class="bg-@ThemeColor text-white text-center p-1">@TitleText о компании</h3>
+<EditForm Model="AboutPage" OnValidSubmit="SaveAboutPage">
+	<DataAnnotationsValidator />
+	@if (AboutPage!.ID != 0)
+	{
+		<div class="form-group">
+			<label>ID</label>
+			<input class="form-control" disabled value="@AboutPage.ID" />
+		</div>
+	}
+	<div class="form-group">
+		<label>Заголовок 1го блока</label>
+		<ValidationMessage For="@(() => AboutPage.HeadingOneNode)" />
+		<InputText class="form-control" @bind-Value="AboutPage.HeadingOneNode" />
+	</div>
+	<div class="form-group">
+		<img class="img-fluid" style="height: 250px;" src=@AboutPage.ImgOneUrl>
+		<label>Изображение</label>
+		<ValidationMessage For="@(() => AboutPage.ImgOneUrl)" />
+		<InputText class="form-control" @bind-Value="AboutPage.ImgOneUrl" />
+	</div>
+	<div class="form-group">
+		<label>Описание страницы 1го блока</label>
+		<ValidationMessage For="@(() => AboutPage.ParagraphOneNode)" />
+		<InputText class="form-control" @bind-Value="AboutPage.ParagraphOneNode" />
+	</div>
+	<div class="form-group">
+		<label>Заголовок 2го блока</label>
+		<InputText class="form-control" @bind-Value="AboutPage.HeadingTwoNode" />
+	</div>
+	<div class="form-group">
+		<img class="img-fluid" style="height: 250px;" src=@AboutPage.ImgTwoUrl>
+		<label>Картинка для 2го блока</label>
+		<InputText class="form-control" @bind-Value="AboutPage.ImgTwoUrl" />
+	</div>
+	<div class="form-group">
+		<label>Описнаие для 2го блока</label>
+		<InputText class="form-control" @bind-Value="AboutPage.ParagraphTwoNode" />
+	</div>
+	<div class="form-group">
+		<label>Ссылка на видео 1</label>
+		<img class="img-fluid" style="height: 250px;" src=@AboutPage.VideoOneUrl>
+		<InputText class="form-control" @bind-Value="AboutPage.VideoOneUrl" />
+	</div>
+	<div class="form-group">
+		<label>Ссылка на видео 2</label>
+		<img class="img-fluid" style="height: 250px;" src=@AboutPage.VideoTwoUrl>
+		<InputText class="form-control" @bind-Value="AboutPage.VideoTwoUrl" />
+	</div>
+	<div class="form-group">
+		<label>Показывать на главной</label>
+		<InputCheckbox class="" @bind-Value="AboutPage.DisplayHomePage" />
+	</div>
+	<div class="mt-2">
+		<button type="submit" class="btn btn-@ThemeColor">Сохранить</button>
+		<NavLink class="btn btn-secondary" href="/admin/about">Отмена</NavLink>
+	</div>
+</EditForm>
+
+@code {
+
+	public IAboutPageRepository Repository => Service;
+
+	[Inject]
+	public NavigationManager? NavManager { get; set; }
+
+	[Parameter]
+	public long Id { get; set; } = 0;
+	public AboutPage AboutPage { get; set; } = new AboutPage();
+	
+
+	protected override void OnParametersSet()
+	{
+		if (Id != 0)
+		{
+			AboutPage = Repository.AboutPages.FirstOrDefault(с => с.ID == Id) ?? new();
+		}
+	}
+
+	public void SaveAboutPage()
+	{
+		if (Id == 0)
+		{
+			Repository.CreateAboutPage(AboutPage);
+		}
+		else
+		{
+			Repository.SaveAboutPage(AboutPage);
+		}
+		NavManager?.NavigateTo("/admin/about");
+	}
+
+	public string ThemeColor => Id == 0 ? "primary" : "warning";
+	public string TitleText => Id == 0 ? "Создание" : "Редактирование";
+}

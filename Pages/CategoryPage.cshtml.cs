@@ -20,13 +20,15 @@ namespace LampStore.Pages
 		public long CategoryID { get; private set; }
 
 		public List<Product> DisplayedProducts { get; private set; } = new();
+		public List<string> DisplayedTypes { get; private set; } = new();
 
 		public void OnGet(long categoryID) //инициализация категории
 		{
 			try
 			{
 				DisplayedProducts = repository.Products.Where(p => p.Category!.ID == categoryID).ToList();
-				
+				DisplayedTypes = repository.Products.Select(p => p.Type).ToList();
+
 				foreach (var category in repository.Categorys)
 				{
 					if (category.ID == categoryID)

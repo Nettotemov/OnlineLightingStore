@@ -11,35 +11,39 @@
 </head>
 
 <body>
-	<header>
-		@Html.AntiForgeryToken()
-		<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-			<div class="container">
-				<a class="navbar-brand" asp-area="" asp-page="/Index">LampStore</a>
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-					aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-					<ul class="navbar-nav flex-grow-1">
+	<header class="header">
+		<div class="container">
+			<div class="header__wrapper">
+				@Html.AntiForgeryToken()
+				<a class="logo" asp-area="" asp-page="/Index">Lights 4 Apart</a>
+				<nav id="navWrapper" class="nav__wrapper">
+					<ul class="nav">
 						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+							<a class="nav-link a-btn__header" asp-area="" asp-page="/Index">Home</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
+							<a class="nav-link a-btn__header" asp-area="" asp-page="/Privacy">Privacy</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link text-dark" href="/Catalog/1?sortOrder=0">Каталог</a>
+							<a class="nav-link a-btn__header" href="/About/1">Компания</a>
 						</li>
-						<li class="d-flex" style="width: 100%; justify-content: flex-end;">
-							<vc:cart-summary /> @* корзина *@
+						<li class="nav-item">
+							<a class="nav-link a-btn__header" href="/Catalog/1?sortOrder=0">Каталог</a>
 						</li>
 					</ul>
-				</div>
+					<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+						data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false"
+						aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+					<div class="cart__wrapper">
+						<vc:cart-summary /> @* корзина *@
+					</div>
+				</nav>
 			</div>
-		</nav>
+		</div>
 	</header>
-	<div class="container">
+	<div class="container mt-per-5">
 		<main role="main" class="pb-3">
 			@RenderBody()
 		</main>

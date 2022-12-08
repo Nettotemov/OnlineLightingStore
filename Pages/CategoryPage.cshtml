@@ -103,25 +103,36 @@
 	</div>
 }
 
-<div class="catalog-list__wrapper">
-		@foreach (Product pr in @Model!.DisplayedProducts)
+
+@{
+	var productsAndType = from product in @Model!.DisplayedProducts
+								group product by product.Type;
+}
+@foreach (var type in productsAndType)
+{
+	<h3 class="h3__caption fw-bold">@type.Key</h3>
+	<div class="catalog-list__wrapper mb-per-2">
+	@foreach (var pr in type)
 		{
 			<a asp-page="CardProduct" class="product__wrapper" asp-route-CategoryName="@pr.Category!.CategoryName"
-			asp-route-ProductID="@pr.ProductID" asp-route-Name="@pr.Name">
+		asp-route-ProductID="@pr.ProductID" asp-route-Name="@pr.Name">
 				<div class="">
 					<div class="product-img__wrapper">
 						<img class="img-center" src="@pr.MainPhoto">
 					</div>
 					<div class="product-desc__wrapper">
 						<p class="title-wrp">@pr.Name</p>
-						<p class="tags-wrp">@pr.Price.ToString("C")</p>
-						@if (@pr.Discount != null && @pr.OldPrice != null)
-						{
-							<p class="tags-wrp">-@pr.Discount%</p>
-							<p class="tags-wrp"><s>@pr.OldPrice?.ToString("C")</s></p>
-						}
+						<div class="product-price__wrapper">
+							@if (@pr.Discount != null && @pr.OldPrice != null)
+							{
+								@* <p class="tags-wrp">-@pr.Discount%</p> *@
+								<p class="tags-wrp"><s>@pr.OldPrice?.ToString("C")</s></p>
+							}
+							<p class="product-price">@pr.Price.ToString("C")</p>
+						</div>
 					</div>
 				</div>
 			</a>
 		}
-</div>
+	</div>
+}

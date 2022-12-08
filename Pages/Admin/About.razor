@@ -1,0 +1,68 @@
+@page "/admin/about"
+@inherits OwningComponentBase<IAboutPageRepository>
+
+<table class="table table-sm table-striped table-bordered">
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Заголовок 1</th>
+			<th>Изображение</th>
+			<th>Описание страницы 1</th>
+			<th>Показывать на главной</th>
+			<td />
+		</tr>
+	</thead>
+	<tbody>
+		@if (AboutPageData?.Count() > 0)
+		{
+			@foreach (AboutPage a in AboutPageData)
+			{
+				<tr>
+					<td>@a.ID</td>
+					<td>@a.HeadingOneNode</td>
+					<td><img class="img-fluid" style="height: 80px;" src=@a.ImgOneUrl></td>
+					<td>@a.ParagraphOneNode</td>
+					<td>@a.DisplayHomePage</td>
+					<td class="text-center">
+						<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(a.ID ?? 0)">
+							Изменить
+						</NavLink>
+						<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteAboutPage(a))">
+							Удалить
+						</button>
+					</td>
+				</tr>
+			}
+		}
+		else
+		{
+			<tr>
+				<td colspan="5" class="text-center">Категории, не найдены.</td>
+			</tr>
+		}
+	</tbody>
+</table>
+<NavLink class="btn btn-primary" href="/admin/about/create">Добавить</NavLink>
+
+@code {
+	public IAboutPageRepository Repository => Service;
+	public IEnumerable<AboutPage> AboutPageData { get; set; } = Enumerable.Empty<AboutPage>();
+
+	protected async override Task OnInitializedAsync()
+	{
+		await UpdateData();
+	}
+
+	public async Task UpdateData()
+	{
+		AboutPageData = await Repository.AboutPages.ToListAsync();
+	}
+	
+	public async Task DeleteAboutPage(AboutPage aboutPage)
+	{
+		Repository.DeleteAboutPage(aboutPage);
+		await UpdateData();
+	}
+
+	public string GetEditUrl(long id) => $"/admin/about/edit/{id}";
+}

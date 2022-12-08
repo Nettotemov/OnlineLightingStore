@@ -16,11 +16,30 @@ namespace LampStore.Pages
 			repository = repo;
 		}
 
-		public void OnGet(long categoryID) //инициализация категории
+		public AboutPage? aboutPage;
+
+		public void OnGet(long ID) //инициализация категории
 		{
 			try
 			{
-				
+				foreach (var page in repository.AboutPages)
+				{
+					if (page.ID == ID)
+					{
+						aboutPage = new AboutPage()
+						{
+							ImgOneUrl = page.ImgOneUrl,
+							VideoOneUrl = page.VideoOneUrl,
+							HeadingOneNode = page.HeadingOneNode,
+							ParagraphOneNode = page.ParagraphOneNode,
+							ImgTwoUrl = page.ImgTwoUrl,
+							VideoTwoUrl = page.VideoTwoUrl,
+							HeadingTwoNode = page.HeadingTwoNode,
+							ParagraphTwoNode = page.ParagraphTwoNode
+						};
+					}
+
+				}
 			}
 			catch (Exception)
 			{

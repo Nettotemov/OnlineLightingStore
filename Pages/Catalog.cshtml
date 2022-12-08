@@ -2,141 +2,168 @@
 @model CatalogModel
 
 
-<h1>Каталог</h1>
-
-<div>
-	<form id="catalogForm" method="get" asp-page="/Catalog" asp-page-handler="Products" class="catalogForm"
-		asp-route-productPage="1">
-		<div class="form-inline form-group">
-			<div>
-				<label class="control-label">Название: </label>
-				<input type="search" name="name" value="@Model.Name" class="form-control" />
-				<input type="submit" value="Поиск по названию" asp-route-productPage="1"
-					class="element_a btn btn-default" />
-			</div>
-
-			<label class="control-label">Категория: </label>
-			<select name="category" asp-items="Model.Category" SelectedValue="@Model.CategoryName" class="form-select">
-				<option value="">Все</option>
-			</select>
-
-			<label class="control-label">Цена от: </label>
-			<input id="minPrice" name="minPrice" placeholder="@Model.PagingInfo.PlaceholderMinPrice" value="@Model.MinPrice"
-				class="form-control" type="number" min="0" />
-
-			<label class="control-label">Цена до: </label>
-			<input id="maxPrice" name="maxPrice" placeholder="@Model.PagingInfo.PlaceholderMaxPrice" value="@Model.MaxPrice"
-				class="form-control" type="number" max="1000000000" />
-
-			<label class="control-label">Цвет: </label>
-			<div id="color" class="row">
-				@foreach (string color in Model.DisplayedColors ?? Enumerable.Empty<string>())
-				{
-					<div class="col-2">
-						<ul>
-							<input type="checkbox" name="color" value="@color" id="@color" data-check="@color" class="" />
-							<label class="control-label">@color</label>
-						</ul>
-					</div>
-				}
-			</div>
-
-			<label class="control-label">Тип: </label>
-			<div id="types" class="row">
-				@foreach (string types in Model.DisplayedTypes ?? Enumerable.Empty<string>())
-				{
-					<div class="col-2">
-						<ul>
-							<input type="checkbox" name="types" value="@types" id="@types" data-check="@types"
-							class="types" />
-							<label class="control-label">@types</label>
-						</ul>
-					</div>
-				}
-			</div>
-
-
-			<label class="control-label">Теги: </label>
-			<div id="tags" class="row">
-				@foreach (string tags in Model.DisplayedTags ?? Enumerable.Empty<string>())
-				{
-					<div class="col-2">
-						<ul>
-							<input type="checkbox" name="tags" value="@tags" id="@tags" data-check="@tags" class="" />
-							<label class="control-label">@tags</label>
-						</ul>
-					</div>
-				}
-			</div>
-
-			<select name="sortOrder" asp-items="Html.GetEnumSelectList<SortCatalog>()"
-				SelectedValue="@Model.SortedCatalog" class="form-select">
-				<option value="@Model.SortedCatalog">
-					@Model.SortedName
-				</option>
-			</select>
-		</div>
-
-	</form>
-</div>
-
-<div id="productview">
-		@if (@Model.DisplayedProducts.Count() == 0)
-		{
-			<div class="row">
-				<div class="col text-center p-2">Нет товаров</div>
-			</div>
-		}
-		else
-		{
-			<div class="row" id="prod-view">
-				@foreach (Product pr in @Model!.DisplayedProducts)
-				{
-					<div class="col-3">
-						<div class="" id="">
-							<div id="img-container">
-    							<div class="title-wrp">@pr.Name</div>
-    								<div class="post-and-image">
-    									<img class="col-12" src="@pr.MainPhoto">
-    									<div class="description-wrp">@pr.Description</div>
- 									</div>
-  							</div>
-  								<div class="footer-row">
-        							<div class="tags-wrp">@pr.Tags</div>
-									<div class="tags-wrp">@pr.Price.ToString("C")</div>
-									@if (@pr.Discount != null && @pr.OldPrice != null)
-									{
-										<div class="tags-wrp">-@pr.Discount%</div>
-										<div class="tags-wrp"><s>@pr.OldPrice?.ToString("C")</s></div>
-									}
-    							</div>
+<div class="mt-per-5">
+	<h1>Каталог</h1>
+	<div class="catalog__wrapper">
+		<div class="search-form__wrapper">
+			<div class="search-left-panel__wrapper">
+				<form id="catalogForm" method="get" asp-page="/Catalog" asp-page-handler="Products"
+					class="catalogForm-sub" asp-route-productPage="1">
+					<div class="">
+						<div class="search-name__wrapper">
+							<label class="control-label">Название: </label>
+							<input id="input-name" type="search" autocomplete="off" name="name" value="@Model.Name" class="searchByName form-control" />
+							<span class="autocomplete__icon autocomplete__clear" hidden style="">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+								<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+								</svg>
+							</span>
+							<ul id="autocomplete__results" class="autocomplete__results">
+							</ul>
+							@* <input type="submit" value="Поиск по названию" asp-route-productPage="1"
+								class="element_a btn btn-default" /> *@
 						</div>
-						<a asp-page="CardProduct" asp-route-CategoryName="@pr.Category!.CategoryName"
-						asp-route-ProductID="@pr.ProductID" asp-route-Name="@pr.Name">Подробнее</a>
 
-						<form id="ProductID=@pr.ProductID" class="addToCart" asp-page="/Cart" method="post">
-							<input type="hidden" name="ProductID" asp-for="@pr.ProductID" />
-							<input type="hidden" name="returnUrl" value="@ViewContext.HttpContext.Request.PathAndQuery()" />
-								<button type="submit" class="btn btn-success btn-sm pull-right" style="float:right">
-									Добавить в корзину
-								</button>
-						</form>
+						<label class="control-label">Категория: </label>
+						<select id="select-category" name="category" asp-items="Model.Category" SelectedValue="@Model.CategoryName"
+							class="form-select">
+							<option value="">Все</option>
+						</select>
+
+						<label class="control-label">Цена от: </label>
+						<input id="minPrice" name="minPrice" placeholder="@Model.PagingInfo.PlaceholderMinPrice"
+							value="@Model.MinPrice" class="form-control" type="number" min="0" />
+
+						<label class="control-label">Цена до: </label>
+						<input id="maxPrice" name="maxPrice" placeholder="@Model.PagingInfo.PlaceholderMaxPrice"
+							value="@Model.MaxPrice" class="form-control" type="number" max="1000000000" />
+
+						<label class="control-label">Цвет: </label>
+						<div id="color" class="row">
+							@foreach (string color in Model.DisplayedColors ?? Enumerable.Empty<string>())
+							{
+								<div class="col-2">
+									<ul>
+										<input type="checkbox" name="color" value="@color" id="@color" data-check="@color"
+										class="" />
+										<label class="control-label">@color</label>
+									</ul>
+								</div>
+							}
+						</div>
+
+						<label class="control-label">Тип: </label>
+						<div id="types" class="row">
+							@foreach (string types in Model.DisplayedTypes ?? Enumerable.Empty<string>())
+							{
+								<div class="col-2">
+									<ul>
+										<input type="checkbox" name="types" value="@types" id="@types" data-check="@types"
+										class="types" />
+										<label class="control-label">@types</label>
+									</ul>
+								</div>
+							}
+						</div>
+
+						<label class="control-label">Материал: </label>
+						<div id="materials" class="row">
+							@foreach (string material in Model.DisplayedMaterials ?? Enumerable.Empty<string>())
+							{
+								<div class="col-2">
+									<ul>
+										<input type="checkbox" name="materials" value="@material" id="@material" data-check="@material"
+										class="types" />
+										<label class="control-label">@material</label>
+									</ul>
+								</div>
+							}
+						</div>
+
+						<label class="control-label">Теги: </label>
+						<div id="tags" class="row">
+							@foreach (string tags in Model.DisplayedTags ?? Enumerable.Empty<string>())
+							{
+								<div class="col-2">
+									<ul>
+										<input type="checkbox" name="tags" value="@tags" id="@tags" data-check="@tags"
+										class="" />
+										<label class="control-label">@tags</label>
+									</ul>
+								</div>
+							}
+						</div>
+					</div>
+				</form>
+			</div>
+			<div id="productview" class="">
+				<div class="catalog-sort__wrapper catalogForm-sub">
+					<select name="sortOrder" form="catalogForm" asp-items="Html.GetEnumSelectList<SortCatalog>()"
+						SelectedValue="@Model.SortedCatalog" class="form-select">
+						<option value="@Model.SortedCatalog">
+							@Model.SortedName
+						</option>
+					</select>
+				</div>
+				@if (@Model.DisplayedProducts.Count() == 0)
+				{
+					<div class="row">
+						<div class="col text-center p-2">Нет товаров</div>
 					</div>
 				}
+				else
+				{
+					<div class="row" id="prod-view">
+						@foreach (Product pr in @Model!.DisplayedProducts)
+						{
+							<div class="col-3">
+								<div class="" id="">
+									<div id="img-container">
+										<div class="title-wrp">@pr.Name</div>
+										<div class="post-and-image">
+											<img class="col-12" src="@pr.MainPhoto">
+											<div class="description-wrp">@pr.Description</div>
+										</div>
+									</div>
+									<div class="footer-row">
+										<div class="tags-wrp">@pr.Tags</div>
+										<div class="tags-wrp">@pr.Price.ToString("C")</div>
+										@if (@pr.Discount != null && @pr.OldPrice != null)
+										{
+											<div class="tags-wrp">-@pr.Discount%</div>
+											<div class="tags-wrp"><s>@pr.OldPrice?.ToString("C")</s></div>
+										}
+									</div>
+								</div>
+								<a asp-page="CardProduct" asp-route-CategoryName="@pr.Category!.CategoryName"
+							asp-route-ProductID="@pr.ProductID" asp-route-Name="@pr.Name">Подробнее</a>
+
+								<form id="ProductID=@pr.ProductID" class="addToCart" asp-page="/Cart" method="post">
+									<input type="hidden" name="ProductID" asp-for="@pr.ProductID" />
+									<input type="hidden" name="returnUrl"
+								value="@ViewContext.HttpContext.Request.PathAndQuery()" />
+									<button type="submit" class="btn btn-success btn-sm pull-right" style="float:right">
+										Добавить в корзину
+									</button>
+								</form>
+							</div>
+						}
+					</div>
+				}
+				<ul id="pagingbuttons" class="pagination">
+					@for (int i = 1; i <= @Model.PagingInfo.TotalPages; i++)
+					{
+						<button form="catalogForm" asp-route-productPage="@i" asp-route-name="@Model.Name"
+						asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice"
+						asp-route-sortOrder="@Model.SortedCatalog" asp-route-category="@Model.CategoryName"
+						class="btn pagination-btn btn-default" type="submit" value="@i">@i
+						</button>
+					}
+				</ul>
 			</div>
-		}
+		</div>
+	</div>
 </div>
-
-<ul id="pagingbuttons" class="pagination">
-	@for (int i = 1; i <= @Model.PagingInfo.TotalPages; i++)
-	{
-		<button form="catalogForm" asp-route-productPage="@i" asp-route-name="@Model.Name" asp-route-minPrice="@Model.MinPrice"
-		asp-route-maxPrice="@Model.MaxPrice" asp-route-sortOrder="@Model.SortedCatalog"
-		asp-route-category="@Model.CategoryName" class="btn pagination-btn btn-default" type="submit" value="@i">@i
-		</button>
-	}
-</ul>
-
 <div id="spinner-border" class="hidden spinner-border" style="display: none;" role="status">
 	<span class="visually-hidden">Loading...</span>
 </div>

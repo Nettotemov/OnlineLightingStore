@@ -1,22 +1,19 @@
 @model Cart
 
-<ul class="d-inline-flex" style="align-items: center;">
-	<div class="d-inline-flex text-success">
-		<b>Ваша корзина:</b>
-		<b id="quantity">@Model?.Lines.Sum(x => x.Quantity)</b>
-		<l style="margin: 0 15px 0 5px;">item(s)</l>
-		<b id="sumcart">@Model?.ComputeTotalValue().ToString("c")</b>
-	</div>
-	<a class="btn btn-sm btn-success navbar-btn" style="margin-left: 15px;" asp-page="/Cart"
-		asp-route-returnurl="@ViewContext.HttpContext.Request.PathAndQuery()">
-		<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-shopping-cart" width="24"
-			height="24" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" fill="none" stroke-linecap="round"
-			stroke-linejoin="round">
-			<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-			<circle cx="6" cy="19" r="2"></circle>
-			<circle cx="17" cy="19" r="2"></circle>
-			<path d="M17 17h-11v-14h-2"></path>
-			<path d="M6 5l14 1l-1 7h-13"></path>
-		</svg>
-	</a>
-</ul>
+<a class="cart-btn" asp-page="/Cart" asp-route-returnurl="@ViewContext.HttpContext.Request.PathAndQuery()">
+	<svg class="cart-svg" width="25px" height="26px" viewBox="0 0 122 125" version="1.1" xmlns="http://www.w3.org/2000/svg"
+		xmlns:xlink="http://www.w3.org/1999/xlink">
+		<g id="Page-1" stroke="none" stroke-width="1" fill-rule="evenodd">
+			<g id="cart" transform="translate(3.732000, 3.000000)" fill-rule="nonzero"
+				stroke-width="6">
+				<path
+					d="M89.92,118.88 L25.738,118.88 C19.696,118.88 14.782,113.966 14.782,107.928 L5.691,65.246 C2.256,63.543 0,60.069 0,56.19 C0,50.521 4.611,45.914 10.276,45.914 L104.14,45.914 C109.805,45.914 114.416,50.521 114.416,56.19 C114.416,59.507 112.815,62.544 110.138,64.456 L100.801,108.622 C100.876,113.966 95.962,118.88 89.92,118.88 Z M10.276,52.653 C8.328,52.653 6.74,54.241 6.74,56.189 C6.74,57.725 7.85,59.085 9.443,59.489 C10.685,59.805 11.637,60.805 11.9,62.06 L21.447,107.235 C21.522,110.253 23.413,112.14 25.738,112.14 L89.92,112.14 C92.245,112.14 94.137,110.253 94.137,107.928 L103.847,61.639 C104.058,60.621 104.729,59.761 105.655,59.305 C106.901,58.7 107.678,57.497 107.678,56.19 C107.678,54.242 106.09,52.654 104.141,52.654 L10.276,52.654 L10.276,52.653 Z"
+					id="Shape"></path>
+				<path
+					d="M25.295,34.868 C27.545,19.199 40.985,7.145 57.275,7.145 C73.566,7.145 87.007,19.2 89.257,34.868 C89.585,40.218 96.477,39.362 96.477,34.868 C94.183,15.24 77.521,0 57.276,0 C37.032,0 20.369,15.24 18.076,34.868 C18.075,40.433 25.383,40.647 25.295,34.868 Z"
+					id="Path"></path>
+			</g>
+		</g>
+	</svg>
+	<p class="cart-count" id="quantity">@Model?.Lines.Sum(x => x.Quantity)</p>
+</a>

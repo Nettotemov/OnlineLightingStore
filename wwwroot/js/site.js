@@ -24,23 +24,21 @@ function autoCheck() {
 	let checked = urlParams.searchParams.getAll("tags");
 	let colorChecked = urlParams.searchParams.getAll("color");
 	let typesChecked = urlParams.searchParams.getAll("types");
-	if (!checked || !colorChecked || !typesChecked) {
+	let materialsChecked = urlParams.searchParams.getAll("materials");
+	if (!checked || !colorChecked || !typesChecked || !materialsChecked) {
 		return;
 	}
-	console.log(checked);
-	console.log(colorChecked);
-	console.log(typesChecked);
 	for (let i = 0; i < checked.length; i++) {
 		var target = document.querySelector('input[type="checkbox"][id="' + checked[i] + '"]').checked = true;
-		console.log(checked[i]);
 	}
 	for (let i = 0; i < colorChecked.length; i++) {
 		var target = document.querySelector('input[type="checkbox"][id="' + colorChecked[i] + '"]').checked = true;
-		console.log(colorChecked[i]);
 	}
 	for (let i = 0; i < typesChecked.length; i++) {
 		var target = document.querySelector('input[type="checkbox"][id="' + typesChecked[i] + '"]').checked = true;
-		console.log(typesChecked[i]);
+	}
+	for (let i = 0; i < materialsChecked.length; i++) {
+		var target = document.querySelector('input[type="checkbox"][id="' + materialsChecked[i] + '"]').checked = true;
 	}
 	if (!target) {
 		return;
@@ -51,15 +49,19 @@ autoCheck();
 
 const createURL = () => {
 	let urlSearch = new URLSearchParams()
+	let name = $("[name=name]:input").map((_, select) => select.value).get()
 	let category = $("[name=category]").map((_, select) => select.value).get()
 	let types = $("[name=types]:checked").map((_, chk) => chk.value).get()
+	let materials = $("[name=materials]:checked").map((_, chk) => chk.value).get()
 	let tags = $("[name=tags]:checked").map((_, chk) => chk.value).get()
 	let color = $("[name=color]:checked").map((_, chk) => chk.value).get()
 	let sorted = $("[name=sortOrder]").map((_, select) => select.value).get()
 	let minPrice = $("[name=minPrice]:input").map((_, minPrice) => minPrice.value).get()
 	let maxPrice = $("[name=maxPrice]:input").map((_, maxPrice) => maxPrice.value).get()
+	if (name.length > 0) urlSearch.set("name", name.join("&name="))
 	if (category.length > 0) urlSearch.set("category", category.join("&category="))
 	if (types.length > 0) urlSearch.set("types", types.join("&types="))
+	if (materials.length > 0) urlSearch.set("materials", materials.join("&materials="))
 	if (tags.length > 0) urlSearch.set("tags", tags.join("&tags="))
 	if (color.length > 0) urlSearch.set("color", color.join("&color="))
 	if (sorted.length > 0) urlSearch.set("sortOrder", sorted.join("&sortOrder="))
@@ -70,8 +72,9 @@ const createURL = () => {
 	window.history.pushState({}, '', srch.replace(/%26/g, "&").replace(/%3D/g, "="));
 };
 $(function () {
-	$("input:checkbox, [name=category], [name=sortOrder], [name=minPrice], [name=maxPrice]").on("change", createURL)
+	$("input:checkbox, [name=category], [name=sortOrder], [name=minPrice], [name=maxPrice]").on("change click", createURL)
 });
+
 
 
 $(document).on("submit", ".addToCart", function (ev) {
@@ -82,14 +85,12 @@ $(document).on("submit", ".addToCart", function (ev) {
 		data: frm.serialize(),
 		dataType: "json",
 		success: function (str) {
-			console.log(str);
 			let jsonCart = str;
 			$('#quantity').html(jsonCart.quantity);
-			$('#sumcart').html(new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(jsonCart.sumCart));
+			// $('#sumcart').html(new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(jsonCart.sumCart)); общ. стоимость корзины в header
 		}
 	});
 	ev.preventDefault();
-	console.log(ev);
 });
 
 $(document).on("click", ".pagination-btn", function (ev) {
@@ -105,10 +106,8 @@ $(document).on("click", ".pagination-btn", function (ev) {
 			data: path[1], // забираем страницу, которую нужно отобразить
 			dataType: 'json',
 			success: function (pages) {
-				console.log(pages);
 				let getUrl = '/Catalog/' + page + "?" + path[1];
 				window.history.pushState({}, '', getUrl); // устанавливаем URL в строку браузера
-
 				let productJson = JSON.parse(pages.json)
 				let postWrp;
 				if (productJson.length == 0) {
@@ -162,20 +161,31 @@ $(document).on("click", ".pagination-btn", function (ev) {
 	ev.preventDefault();
 });
 
-$('#catalogForm').on('change', 'input[type=checkbox], [name=category], [name=sortOrder], [name=minPrice], [name=maxPrice]', '', function (ev) {
+$('.catalogForm-sub').on('change click', '.autocomplete__results-item, .autocomplete__clear, input[type=checkbox], [name=category], [name=sortOrder], [name=minPrice], [name=maxPrice]', '', function (ev) {
 	$('#spinner-border').show();
+	let searchName = document.querySelector(".searchByName");
+	let name = $(this).attr('data-value') ?? "";
+	searchName.value = name;
+	let autocompleteClear = document.querySelector('.autocomplete__clear');
+	if (searchName.value != '') {
+		autocompleteClear.hidden = false;
+		$('input:checked').prop('checked', false);
+		$('input[type=number]').each( function () { $(this).val(''); });
+		$('#select-category option:first').prop('selected', true);
+	}
+	else {
+		autocompleteClear.hidden = true;
+	}
+	createURL();
 	let path = ev.target.baseURI.split("?"); // забираем путь
 	let getUrl = '/Catalog/' + 1 + "?" + path[1];
 	let url = getUrl + "&handler=Products";
-	console.log(url);
 	var token = GetAntiForgeryToken();
 	let prodview = document.getElementById('prod-view');
 	console.log(prodview);
 	let response = fetch(url)
 		.then((response) => response.json())
 		.then(data => {
-			console.log(data.json)
-			console.log(data.pagingInfoJson)
 			let pagingJson = JSON.parse(data.pagingInfoJson)
 			window.history.pushState({}, '', getUrl); // устанавливаем URL в строку браузера
 			let paging = document.getElementById('pagingbuttons');
@@ -241,6 +251,62 @@ $('#catalogForm').on('change', 'input[type=checkbox], [name=category], [name=sor
 		})
 });
 
+
+$('.searchByName').on('input', function (ev) {
+	let searchName = document.querySelector(".searchByName").value
+	let getUrl = '/Catalog/?'// забираем путь
+	let url = getUrl + "handler=AllProducts";
+	let autocompleteResults = document.getElementById('autocomplete__results');
+	let autocomplete;
+	let autocompleteClear = document.querySelector('.autocomplete__clear');
+	let response = fetch(url)
+		.then((response) => response.json())
+		.then(data => {
+			let productJson = JSON.parse(data.json);
+			if (productJson.length > 0) {
+				$('#autocomplete__results').empty();
+				let namesArr = [];
+				let elementIs = true;
+				for (let i = 0; i < productJson.length; i++) {
+					let productName = productJson[i].Name.toUpperCase();
+					if (productName.includes(searchName.toUpperCase())) {
+						namesArr.push(productName);
+					}
+				}
+				if (searchName.length > 0) {
+					autocompleteClear.hidden = false;
+				}
+				else {
+					autocompleteClear.hidden = true;
+				}
+				if (elementIs === true && searchName.length > 0) {
+					if (namesArr.length > 0) {
+						for (let i = 0; i < namesArr.length; i++) {
+							autocomplete = document.createElement("li");
+							autocomplete.classList.add("autocomplete__results-item");
+							autocomplete.setAttribute("data-value", namesArr[i])
+							autocomplete.innerHTML = `${namesArr[i]}`
+							autocompleteResults.append(autocomplete);
+							autocompleteResults.hidden = false;
+						};
+					}
+					else {
+						autocomplete = document.createElement("li");
+						autocomplete.classList.add("autocomplete__results-item");
+						autocomplete.innerHTML = `Нет результатов.`
+						autocompleteResults.append(autocomplete);
+						autocompleteResults.hidden = false;
+					}
+				}
+				$(document).on('click', ".autocomplete__results-item, .autocomplete__clear", function (e) {
+					namesArr.splice(0, namesArr.length);
+					elementIs = false;
+					autocompleteResults.hidden = true;
+				})
+			}
+		})
+});
+
 function GetAntiForgeryToken() {
 	var tokenField = $("input[type='hidden'][name$='RequestVerificationToken']");
 	if (tokenField.length == 0) {
@@ -252,6 +318,37 @@ function GetAntiForgeryToken() {
 		};
 	}
 }
+
+$(function () {
+	var header = $(".header");
+	// let navWrapper = document.getElementById('navWrapper');
+	let scroll = $(window).scrollTop();
+	// var headerDark = document.getElementById('footer-bg').scrollHeight;
+
+	if (scroll > 10) {
+		header.addClass("scrolled");
+	} else {
+		header.removeClass("scrolled");
+	}
+
+	$(window).scroll(function () {
+		scroll = $(window).scrollTop();
+
+		if (scroll > 10) {
+			header.addClass("scrolled");
+		}
+		// else if (scroll >= headerDark)
+		// {
+		// 	navWrapper.remove();
+		// }
+		else {
+			header.removeClass("scrolled");
+			// $('.header__wrapper').append(navWrapper);
+		}
+	});
+
+});
+
 
 // /* Обработчик клика на чекбоксах */
 // $('input').on('input', function () {

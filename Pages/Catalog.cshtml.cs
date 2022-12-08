@@ -33,15 +33,16 @@ namespace LampStore.Pages
 		public SelectList? Category { get; set; }
 		public List<string> DisplayedColors { get; private set; } = new();
 		public List<string> DisplayedTypes { get; private set; } = new();
+		public List<string> DisplayedMaterials { get; private set; } = new();
 
 		public SortViewModel? SortViewModel { get; private set; }
 
-		public int PageSize = 4; //количество товаров на странице
+		public int PageSize = 8; //количество товаров на странице
 		public PagingInfo PagingInfo { get; private set; } = new(); //для вывода информации пагинации для страниц
 
 		CatalogServices catalogServices = new CatalogServices(); //ссылка на сервисы каталога
 
-		public void OnGet(string name, string category, string maxPrice, string minPrice, string[] tags, string[] color, string[] types, SortCatalog sortOrder, int productPage = 1)
+		public void OnGet(string name, string category, string maxPrice, string minPrice, string[] tags, string[] color, string[] materials, string[] types, SortCatalog sortOrder, int productPage = 1)
 		{
 			Name = name;
 			CategoryName = category;
@@ -53,6 +54,7 @@ namespace LampStore.Pages
 			Category = new SelectList(repository.Categorys.Select(c => c.CategoryName).Distinct().ToList(), CategoryName); //получение списка категорий товара
 			DisplayedColors = repository.Products.Select(p => p.Color).Distinct().ToList(); //получаем цвета
 			DisplayedTypes = repository.Products.Select(p => p.Type).Distinct().ToList(); //получаем типы
+			DisplayedMaterials = repository.Products.Select(p => p.Material).Distinct().ToList();
 
 			DisplayedProducts = repository.Products.Select(p => p).ToList(); //получаем все товары для фильтрации
 
@@ -98,6 +100,10 @@ namespace LampStore.Pages
 				if (color.Count() > 0)
 				{
 					DisplayedProducts = catalogServices.ProductsByColors(DisplayedProducts, color);
+				}
+				if (materials.Count() > 0)
+				{
+					DisplayedProducts = catalogServices.ProductsByMaterials(DisplayedProducts, materials);
 				}
 				if (types.Count() > 0)
 				{
@@ -151,7 +157,7 @@ namespace LampStore.Pages
 		}
 
 		public List<Product> DPs { get; private set; } = new();
-		public IActionResult OnGetProducts(string name, string category, string maxPrice, string minPrice, string[] tags, string[] color, string[] types, SortCatalog sortOrder, int productPage = 1)
+		public IActionResult OnGetProducts(string name, string category, string maxPrice, string minPrice, string[] tags, string[] materials, string[] color, string[] types, SortCatalog sortOrder, int productPage = 1)
 		{
 			var dp = repository.Products.Select(p => p).ToList();
 
@@ -205,6 +211,10 @@ namespace LampStore.Pages
 				{
 					DPs = catalogServices.ProductsByTypes(DPs, types);
 				}
+				if (materials.Count() > 0)
+				{
+					DPs = catalogServices.ProductsByMaterials(DPs, materials);
+				}
 				if (!string.IsNullOrEmpty(maxPrice))
 				{
 					DPs = catalogServices.ProductsUpMaxPrice(DPs, maxPrice);
@@ -254,5 +264,13 @@ namespace LampStore.Pages
 			}
 		}
 
+		public IActionResult OnGetAllProducts()
+		{
+			var products = repository.Products.Select(p => p).ToList();
+
+			string json = JsonConvert.SerializeObject(products, Formatting.Indented);
+
+			return new JsonResult(new {json });
+		}
 	}
 }
