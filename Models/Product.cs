@@ -47,6 +47,17 @@ namespace LampStore.Models
 		
 		[Column(TypeName = "bigint")]
 		public long? OldPrice { get; set; }
+
+		[Required(ErrorMessage = "Пожалуйста, укажите размер изделия")]
+		public string Size { get; set; } = string.Empty;
+
+		public string BaseSize { get; set; } = string.Empty;
+		public int? CordLength { get; set; }
+
+		[Required(ErrorMessage = "Пожалуйста, укажите источник света (Например LED)")]
+		public string LightSource { get; set; } = string.Empty;
+		
+		public string PowerW { get; set; } = string.Empty;
 		
 	}
 }

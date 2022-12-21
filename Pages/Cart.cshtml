@@ -1,45 +1,60 @@
 @page
 @model CartModel
 
-<h2>Ваша корзина</h2>
-<table class="table table-bordered table-striped">
-	<thead>
-		<tr>
-			<th>Количество</th>
-			<th>Продукт</th>
-			<th class="text-right">Цена</th>
-			<th class="text-right">Общxая стоимость товаров</th>
-			<th></th>
-		</tr>
-	</thead>
-	<tbody>
+@{
+	ViewData["Title"] = "Корзина покупок";
+}
+
+<a class="btn btn-primary" href="@Model?.ReturnUrl">Назад</a>
+<h1>Ваша корзина</h1>
+<section class="container-cart__wrapper">
+	<div class="cart-left__wrapper">
 		@foreach (var line in Model?.Cart?.Lines ?? Enumerable.Empty<CartLine>())
 		{
-			<tr>
-				<td class="text-center">@line.Quantity</td>
-				<td class="text-left">@line.Product.Name</td>
-				<td class="text-right">@line.Product.Price.ToString("c")</td>
-				<td class="text-right">@((line.Quantity * line.Product.Price).ToString("c"))</td>
-				<td class="text-center">
-					<form asp-page-handler="Remove" method="post">
-						<input type="hidden" name="ProductID" value="@line.Product.ProductID" />
+			<div class="product-cart__wrapper">
+				<a class="product-cart-img__wrapper" asp-page="CardProduct" asp-route-CategoryName="@line.Product.Type"
+					asp-route-ProductID="@line.Product.ProductID" asp-route-Name="@line.Product.Name">
+					<img class="product-cart-img" src="@line.Product.MainPhoto">
+				</a>
+				<div class="product-cart-decript__wrapper">
+					<p class="product-card__description-p">@line.Product.Name</p>
+					<p class="footer-card__text">@line.Product.Type</p>
+					<p class="footer-card__price" id="product-price" price-value="@line.Product.Price.ToString()">@line.Product.Price.ToString("c")</p>
+				</div>
+				<div class="product-cart__total-wrapper">
+					<form class="recalculation" asp-page-handler="Recalculation" method="post">
+						<div class="number">
+							<span class="minus quantity-product-count">-</span>
+							<input type="number" class="quantity-count quantity-product-count" name="quantityProducts" value="@line.Quantity"/>
+							<span class="plus quantity-product-count">+</span>
+						</div>
+						<input type="hidden" name="productId" value="@line.Product.ProductID"/>
 						<input type="hidden" name="returnUrl" value="@Model?.ReturnUrl" />
-						<button type="submit" class="btn btn-sm btn-danger">
-							Удалить
-						</button>
 					</form>
-				</td>
-			</tr>
+					<p class="cart-total-price">@((line.Quantity * line.Product.Price).ToString("c"))</p>
+				</div>
+				<form asp-page-handler="Remove" method="post">
+					<input type="hidden" name="ProductID" value="@line.Product.ProductID" />
+					<input type="hidden" name="returnUrl" value="@Model?.ReturnUrl" />
+					<button type="submit" class="cart__btn-remove">
+						<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24">
+							<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+						</svg>
+					</button>
+				</form>
+			</div>
 		}
-	</tbody>
-	<tfoot>
-		<tr>
-			<td colspan="3" class="text-right">Общая стоимость корзины:</td>
-			<td class="text-right">@Model?.Cart?.ComputeTotalValue().ToString("c")</td>
-		</tr>
-	</tfoot>
-</table>
-<div class="text-center">
-	<a class="btn btn-primary" href="@Model?.ReturnUrl">Продолжить покупки</a>
-	<a class="btn btn-primary" asp-action="Checkout" asp-controller="Order">Оформить заказ</a>
-</div>
+	</div>
+	<div class="cart-right__wrapper">
+		<div class="cart-right__container">
+			<h2 class="">Ваш заказ</h2>
+			<p class="text-right">Количество товаров</p>
+			<p class="text-right">@Model?.Cart?.Lines.Select(q => q.Quantity).Sum() шт.</p>
+			<p class="text-right">Общая стоимость корзины:</p>
+			<p class="text-right">@Model?.Cart?.ComputeTotalValue().ToString("c")</p>
+			<div class="text-center">
+				<a class="form-catalog__text form__clear" asp-action="Checkout" asp-controller="Order">Оформить заказ</a>
+			</div>
+		</div>
+	</div>
+</section>

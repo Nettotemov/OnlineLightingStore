@@ -18,6 +18,16 @@ $('input[data-check]').on('input', function () {
 // 	}
 // });
 
+(function burgerAnimation() {
+	$('.burger').on('click', function () {
+		$('.burger-line').toggleClass('burger-line__active');
+		$('.burger-line-center').toggleClass('burger-line-center__active');
+	})
+})();
+document.querySelector(".burger").addEventListener('click', function () {
+	document.querySelector(".menu").classList.toggle("menu__active");
+}, false);
+
 /* Установка состояний чекбоксов, при переходе на сайт по ссылке */
 function autoCheck() {
 	const urlParams = new URL(window.location.href);
@@ -87,11 +97,13 @@ $(document).on("submit", ".addToCart", function (ev) {
 		success: function (str) {
 			let jsonCart = str;
 			$('#quantity').html(jsonCart.quantity);
-			// $('#sumcart').html(new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB' }).format(jsonCart.sumCart)); общ. стоимость корзины в header
+			let cookies = document.cookie;
+			let nameCookie = "CartCookie";
 		}
 	});
 	ev.preventDefault();
 });
+
 
 $(document).on("click", ".pagination-btn", function (ev) {
 	$('#spinner-border').show();
@@ -125,27 +137,22 @@ $(document).on("click", ".pagination-btn", function (ev) {
 						let price = productJson[i].Price;
 						let oldPrice = productJson[i].OldPrice;
 						postWrp = document.createElement("div");
-						postWrp.classList.add("col-3");
-						postWrp.innerHTML = `<div class="" id="">
-						<div id="img-container">
-    						<div class="title-wrp">${productJson[i].Name}</div>
-    							<div class="post-and-image">
-    								<img class="col-12" src="${productJson[i].MainPhoto}">
-    								<div class="description-wrp">${productJson[i].Description}
+						postWrp.classList.add("search-card__wrapper");
+						postWrp.innerHTML = `<a class="search-card__info" href="/Catalog/${productJson[i].Category.CategoryName}/${productJson[i].Name}/${productJson[i].ProductID}">
+							<div id="img-container">
+    							<div class="search-card__image-wrapper">
+    								<img class="search-card__image" src="${productJson[i].MainPhoto}">
  								</div>
   							</div>
-  							<div class="footer-row">
-        						<div class="tags-wrp">${productJson[i].Tags}</div>
-								<div class="tags-wrp">${price.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' })}</div>
-								<div class="tags-wrp">${productJson[i]?.Discount ?? ""}</div>
-								<div class="tags-wrp"><s>${oldPrice?.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' }) ?? ""}</s></div>
+  							<div class="footer-card__wrapper">
+								<p class="footer-card__text">${productJson[i].Name}</p>
+								<p class="footer-card__price">${price.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' })}</p>
     						</div>
-						</div>
-						<a href="/Catalog/${productJson[i].Category.CategoryName}/${productJson[i].Name}/${productJson[i].ProductID}">Подробнее</a>
+						</a>
 						<form id="ProductID=${productJson[i].ProductID}" class="addToCart" method="post" action="/Cart" >
 							<input type="hidden" name="ProductID" id="pr_ProductID" value="${productJson[i].ProductID}" />
 							<input type="hidden" name="returnUrl" value="${document.location.href}" />
-							<button type="submit" class="btn btn-success btn-sm pull-right" style="float:right">
+							<button type="submit" class="btn-addToCart form-catalog__text" style="float:right">
 								Добавить в корзину
 							</button>
 							<input name="${token.name}" type="hidden" value="${token.value}">
@@ -161,8 +168,14 @@ $(document).on("click", ".pagination-btn", function (ev) {
 	ev.preventDefault();
 });
 
-$('.catalogForm-sub').on('change click', '.autocomplete__results-item, .autocomplete__clear, input[type=checkbox], [name=category], [name=sortOrder], [name=minPrice], [name=maxPrice]', '', function (ev) {
+$('.catalogForm-sub').on('change click', '.autocomplete__results-item, .form__clear, .autocomplete__clear, input[type=checkbox], [name=category], [name=sortOrder], [name=minPrice], [name=maxPrice]', '', function (ev) {
 	$('#spinner-border').show();
+	document.querySelector(".form__clear").onclick = function () {
+		$('input:checked').prop('checked', false);
+		$('input[type=number]').each(function () { $(this).val(''); });
+		$('#select-category option:first').prop('selected', true);
+		$('input[type=text]').each(function () { $(this).val(''); });
+	}
 	let searchName = document.querySelector(".searchByName");
 	let name = $(this).attr('data-value') ?? "";
 	searchName.value = name;
@@ -170,7 +183,7 @@ $('.catalogForm-sub').on('change click', '.autocomplete__results-item, .autocomp
 	if (searchName.value != '') {
 		autocompleteClear.hidden = false;
 		$('input:checked').prop('checked', false);
-		$('input[type=number]').each( function () { $(this).val(''); });
+		$('input[type=number]').each(function () { $(this).val(''); });
 		$('#select-category option:first').prop('selected', true);
 	}
 	else {
@@ -218,27 +231,22 @@ $('.catalogForm-sub').on('change click', '.autocomplete__results-item, .autocomp
 					let price = productJson[i].Price;
 					let oldPrice = productJson[i].OldPrice;
 					postWrp = document.createElement("div");
-					postWrp.classList.add("col-3");
-					postWrp.innerHTML = `<div class="" id="">
-					<div id="img-container">
-    					<div class="title-wrp">${productJson[i].Name}</div>
-    						<div class="post-and-image">
-    							<img class="col-12" src="${productJson[i].MainPhoto}">
-    							<div class="description-wrp">${productJson[i].Description}
+					postWrp.classList.add("search-card__wrapper");
+					postWrp.innerHTML = `<a class="search-card__info" href="/Catalog/${productJson[i].Category.CategoryName}/${productJson[i].Name}/${productJson[i].ProductID}">
+						<div id="img-container">
+    						<div class="search-card__image-wrapper">
+    							<img class="search-card__image" src="${productJson[i].MainPhoto}">
  							</div>
   						</div>
-  						<div class="footer-row">
-        					<div class="tags-wrp">${productJson[i].Tags}</div>
-							<div class="tags-wrp">${price.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' })}</div>
-							<div class="tags-wrp">${productJson[i]?.Discount ?? ""}</div>
-							<div class="tags-wrp"><s>${oldPrice?.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' }) ?? ""}</s></div>
+  						<div class="footer-card__wrapper">
+							<p class="footer-card__text">${productJson[i].Name}</p>
+							<p class="footer-card__price">${price.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' })}</p>
     					</div>
-					</div>
-					<a href="/Catalog/${productJson[i].Category.CategoryName}/${productJson[i].Name}/${productJson[i].ProductID}">Подробнее</a>
+					</a>
 					<form id="ProductID=${productJson[i].ProductID}" class="addToCart" method="post" action="/Cart" >
 						<input type="hidden" name="ProductID" id="pr_ProductID" value="${productJson[i].ProductID}" />
 						<input type="hidden" name="returnUrl" value="${document.location.href}" />
-						<button type="submit" class="btn btn-success btn-sm pull-right" style="float:right">
+						<button type="submit" class="btn-addToCart form-catalog__text" style="float:right">
 							Добавить в корзину
 						</button>
 						<input name="${token.name}" type="hidden" value="${token.value}">
@@ -246,7 +254,6 @@ $('.catalogForm-sub').on('change click', '.autocomplete__results-item, .autocomp
 					prodview.append(postWrp);
 					$('#spinner-border').hide();
 				}
-
 			}
 		})
 });
@@ -269,7 +276,7 @@ $('.searchByName').on('input', function (ev) {
 				let elementIs = true;
 				for (let i = 0; i < productJson.length; i++) {
 					let productName = productJson[i].Name.toUpperCase();
-					if (productName.includes(searchName.toUpperCase())) {
+					if (productName.startsWith(searchName.toUpperCase())) {
 						namesArr.push(productName);
 					}
 				}
@@ -307,6 +314,7 @@ $('.searchByName').on('input', function (ev) {
 		})
 });
 
+
 function GetAntiForgeryToken() {
 	var tokenField = $("input[type='hidden'][name$='RequestVerificationToken']");
 	if (tokenField.length == 0) {
@@ -321,80 +329,103 @@ function GetAntiForgeryToken() {
 
 $(function () {
 	var header = $(".header");
-	// let navWrapper = document.getElementById('navWrapper');
 	let scroll = $(window).scrollTop();
-	// var headerDark = document.getElementById('footer-bg').scrollHeight;
-
-	if (scroll > 10) {
+	if (scroll > 1) {
 		header.addClass("scrolled");
 	} else {
 		header.removeClass("scrolled");
 	}
-
 	$(window).scroll(function () {
 		scroll = $(window).scrollTop();
 
-		if (scroll > 10) {
+		if (scroll > 1) {
 			header.addClass("scrolled");
 		}
-		// else if (scroll >= headerDark)
-		// {
-		// 	navWrapper.remove();
-		// }
 		else {
 			header.removeClass("scrolled");
-			// $('.header__wrapper').append(navWrapper);
 		}
 	});
-
 });
 
+$('.open-input').click(function () {
+	var target = $(this).data('target');
+	$("#input" + target).toggle();
+	document.getElementById('plus' + target).classList.toggle("icon-plus-active");
+});
 
-// /* Обработчик клика на чекбоксах */
-// $('input').on('input', function () {
-// 	let aChecked = [];
-// 	$('input[type="checkbox"]:checked').each(function () { aChecked.push($(this).getPath()); });
-// 	localStorage.setItem('CheckboxChecked', aChecked.join(';'));
-// 	localStorage.setItem('PasswordLength', $('#height_opt').val());
-// });
+jQuery(document).ready(function () {
+	$('.variable-width').slick({
+		dots: true,
+		arrows: false,
+		infinite: true,
+		speed: 300,
+		slidesToShow: 3,
+		centerMode: true,
+		variableWidth: true
+	});
 
-// /* Установка состояний чекбоксов, после загрузки страницы */
-// $(document).ready(function () {
-// 	if (localStorage.getItem('CheckboxChecked')) {
-// 		let aChecked = localStorage.getItem('CheckboxChecked').split(';');
-// 		$('input[type="checkbox"]').prop('checked', false);
-// 		aChecked.forEach(function (str) { $(str).prop('checked', true); });
-// 	}
-// 	if (localStorage.getItem('PasswordLength')) {
-// 		$('#height_opt').val(localStorage.getItem('PasswordLength'));
-// 	}
-// });
+	$('.similar-product').slick({
+		lazyLoad: 'ondemand',
+		dots: true,
+		arrows: false,
+		infinite: false,
+		swipe: true,
+		speed: 300,
+		slidesToShow: 4,
+		slidesToScroll: 4,
+		responsive: [
+			{
+				breakpoint: 1025,
+				settings: {
+					slidesToShow: 3,
+					slidesToScroll: 3,
+					infinite: true,
+					dots: true
+				}
+			},
+			{
+				breakpoint: 800,
+				settings: {
+					slidesToShow: 2,
+					slidesToScroll: 2
+				}
+			},
+			{
+				breakpoint: 500,
+				settings: {
+					slidesToShow: 1,
+					slidesToScroll: 1
+				}
+			}
+		]
+	});
+});
 
-/************************************************************
- * Функция для jQ, возвращающая уникальный селектор элемента *
- * Источник: https://stackoverflow.com/a/26762730/10179415   *
- ************************************************************/
-// jQuery.fn.extend({
-// 	getPath: function () {
-// 		let pathes = [];
-// 		this.each(function (index, element) {
-// 			let path, $node = jQuery(element);
-// 			while ($node.length) {
-// 				let realNode = $node.get(0), name = realNode.localName;
-// 				if (!name) { break; }
-// 				name = name.toLowerCase();
-// 				let parent = $node.parent();
-// 				let sameTagSiblings = parent.children(name);
-// 				if (sameTagSiblings.length > 1) {
-// 					let allSiblings = parent.children();
-// 					let index = allSiblings.index(realNode) + 1;
-// 					if (index > 0) { name += ':nth-child(' + index + ')'; }
-// 				}
-// 				path = name + (path ? '>' + path : '');
-// 				$node = parent;
-// 			}
-// 			pathes.push(path);
-// 		});
-// 		return pathes.join(',');
-// 	}
-// });
+$(document).ready(function () {
+	$('.minus').click(function () {
+		var $input = $(this).parent().find('input');
+		var count = parseInt($input.val()) - 1;
+		count = count < 1 ? 1 : count;
+		$input.val(count);
+		$input.change();
+		return false;
+	});
+	$('.plus').click(function () {
+		var $input = $(this).parent().find('input');
+		$input.val(parseInt($input.val()) + 1);
+		$input.change();
+		return false;
+	});
+});
+
+$('.number').on("change click", ".quantity-count, .minus, .plus", function (ev) {
+	let priceElement = document.getElementById('product-price');
+	let priceProduct = priceElement.getAttribute('price-value');
+	let quantity = document.getElementById('quantity-count').value;
+	let totalPrice = priceProduct * quantity;
+	$('#total-price').html(totalPrice.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' }));
+});
+
+$('.recalculation').on("change click", ".quantity-product-count", function (ev) {
+	$(this).closest('.recalculation').submit();
+});

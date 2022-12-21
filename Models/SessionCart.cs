@@ -29,5 +29,11 @@ namespace LampStore.Models
 			base.Clear();
 			Session?.Remove("Cart");
 		}
+
+		public override void Recalculation(Product product, int quantity)
+		{
+			base.Recalculation(product, quantity);
+			Session?.SetJson("Cart", this);
+		}
 	}
 }

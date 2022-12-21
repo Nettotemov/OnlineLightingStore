@@ -38,7 +38,7 @@
 	<div class="form-group">
 		<label>Описание категории</label>
 		<ValidationMessage For="@(() => Category.Description)" />
-		<InputText class="form-control" @bind-Value="Category.Description" />
+		<InputTextArea class="form-control" @bind-Value="Category.Description" />
 	</div>
 	<div class="form-group">
 		<label>Заголовок 2го блока</label>
@@ -51,7 +51,7 @@
 	</div>
 	<div class="form-group">
 		<label>Описнаие для 2го блока</label>
-		<InputText class="form-control" @bind-Value="Category.DescriptionTwo" />
+		<InputTextArea class="form-control" @bind-Value="Category.DescriptionTwo" />
 	</div>
 	<div class="form-group">
 		<label>Заголовок 3го блока</label>
@@ -64,7 +64,7 @@
 	</div>
 	<div class="form-group">
 		<label>Описнаие для 3го блока</label>
-		<InputText class="form-control" @bind-Value="Category.DescriptionThree" />
+		<InputTextArea class="form-control" @bind-Value="Category.DescriptionThree" />
 	</div>
 	<div class="form-group">
 		@if ( Category?.Slider != string.Empty )
@@ -76,7 +76,7 @@
 			}
 		}
 		<label>Слайдер картинок</label>
-		<InputText class="form-control" @bind-Value="Category!.Slider" />
+		<InputTextArea class="form-control" @bind-Value="Category!.Slider" />
 	</div>
 	<div class="form-group">
 		<label>Показывать слайдер</label>

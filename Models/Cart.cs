@@ -25,6 +25,16 @@ namespace LampStore.Models
 
 		public decimal ComputeTotalValue() => Lines.Sum(e => e.Product.Price * e.Quantity); //Согалсование корзины
 		public virtual void Clear() => Lines.Clear(); //очистка корзины
+
+		public virtual void Recalculation(Product product, int quantity)
+		{
+			CartLine? line = Lines.Where(p => p.Product.ProductID == product.ProductID).FirstOrDefault();
+
+			if (line != null)
+			{
+				line.Quantity = quantity;
+			}
+		}
 	}
 
 	public class CartLine

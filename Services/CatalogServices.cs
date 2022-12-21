@@ -10,7 +10,7 @@ namespace LampStore.Services
 	{
 		public List<Product> ProductsByName(List<Product> products, string name) //проверка по названию
 		{
-			return products.Where(p => p.Name.ToUpper().Contains(name.ToUpper())).ToList();
+			return products.Where(p => p.Name.ToUpper().StartsWith(name.ToUpper())).ToList();
 		}
 		public List<Product> ProductsByTags(List<Product> products, string[] tags) //проверка тегов
 		{
@@ -28,7 +28,7 @@ namespace LampStore.Services
 		}
 		public List<Product> ProductsByMaterials(List<Product> products, string[] materials) //проверка типа
 		{
-			return products.Where(p => materials.Any(material => p.Material.Contains(material))).ToList();
+			return products.Where(p => materials.All(material => p.Material.Contains(material))).ToList();
 		}
 
 		public List<Product> ProductsByCategory(List<Product> products, string category) //проверка по категории

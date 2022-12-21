@@ -32,7 +32,7 @@
 		}
 		<label>Галерея</label>
 		<ValidationMessage For="@(() => Product.Photos)" />
-		<InputText class="form-control" @bind-Value="Product.Photos" />
+		<InputTextArea class="form-control" @bind-Value="Product.Photos" />
 	</div>
 	<div class="form-group">
 		<label>Название</label>
@@ -42,12 +42,12 @@
 	<div class="form-group">
 		<label>Описание</label>
 		<ValidationMessage For="@(() => Product.Description)" />
-		<InputText class="form-control" @bind-Value="Product.Description" />
+		<InputTextArea class="form-control" @bind-Value="Product.Description" />
 	</div>
 	<div class="form-group">
 		<label>Короткое описание</label>
 		<ValidationMessage For="@(() => Product.MinDescription)" />
-		<InputText class="form-control" @bind-Value="Product.MinDescription" />
+		<InputTextArea class="form-control" @bind-Value="Product.MinDescription" />
 	</div>
 	<div class="form-group">
 		<label>ID Категории</label>
@@ -90,6 +90,29 @@
 		<label>Теги</label>
 		<ValidationMessage For="@(() => Product.Tags)" />
 		<InputText class="form-control" @bind-Value="Product.Tags" />
+	</div>
+	<div class="form-group">
+		<label>Размер</label>
+		<ValidationMessage For="@(() => Product.Size)" />
+		<InputText class="form-control" @bind-Value="Product.Size" />
+	</div>
+	<div class="form-group">
+		<label>Размер базы</label>
+		<InputText class="form-control" @bind-Value="Product.BaseSize" />
+	</div>
+	<div class="form-group">
+		<label>Источник света</label>
+		<ValidationMessage For="@(() => Product.LightSource)" />
+		<InputText class="form-control" @bind-Value="Product.LightSource" />
+	</div>
+	<div class="form-group">
+		<label>Длина шнура</label>
+		<InputNumber class="form-control" @bind-Value="Product.CordLength" />
+	</div>
+	<div class="form-group">
+		<label>Мощность</label>
+		<ValidationMessage For="@(() => Product.PowerW)" />
+		<InputText class="form-control" @bind-Value="Product.PowerW" />
 	</div>
 	<div class="form-group">
 		<label>Цвет</label>

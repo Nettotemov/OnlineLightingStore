@@ -33,7 +33,7 @@
 	<div class="form-group">
 		<label>Описание страницы 1го блока</label>
 		<ValidationMessage For="@(() => AboutPage.ParagraphOneNode)" />
-		<InputText class="form-control" @bind-Value="AboutPage.ParagraphOneNode" />
+		<InputTextArea class="form-control" @bind-Value="AboutPage.ParagraphOneNode" />
 	</div>
 	<div class="form-group">
 		<label>Заголовок 2го блока</label>
@@ -46,7 +46,7 @@
 	</div>
 	<div class="form-group">
 		<label>Описнаие для 2го блока</label>
-		<InputText class="form-control" @bind-Value="AboutPage.ParagraphTwoNode" />
+		<InputTextArea class="form-control" @bind-Value="AboutPage.ParagraphTwoNode" />
 	</div>
 	<div class="form-group">
 		<label>Ссылка на видео 1</label>

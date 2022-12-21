@@ -9,7 +9,15 @@ a.navbar-brand[b-fg6xx69g70] {
 }
 
 a[b-fg6xx69g70] {
-  color: #0077cc;
+  color: #000;
+}
+
+a.footer-text[b-fg6xx69g70] {
+	color: #676767;
+}
+
+a.footer-hov:hover[b-fg6xx69g70] {
+	color: #fff;
 }
 
 .btn-primary[b-fg6xx69g70] {

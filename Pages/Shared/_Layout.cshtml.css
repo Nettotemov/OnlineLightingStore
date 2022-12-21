@@ -8,7 +8,15 @@ a.navbar-brand {
 }
 
 a {
-  color: #0077cc;
+  color: #000;
+}
+
+a.footer-text {
+	color: #676767;
+}
+
+a.footer-hov:hover {
+	color: #fff;
 }
 
 .btn-primary {

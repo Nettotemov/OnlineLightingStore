@@ -11,7 +11,6 @@ namespace LampStore.Pages
 {
 	public class ContactsModel : PageModel
 	{
-		public Contacts? contacts = new Contacts();
-
+		
 	}
 }

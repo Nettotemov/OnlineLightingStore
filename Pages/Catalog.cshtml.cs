@@ -49,12 +49,14 @@ namespace LampStore.Pages
 			Tags = tags;
 			SortedCatalog = sortOrder.GetHashCode();
 			SortedName = EnumExtensions.GetDisplayName(sortOrder);
-			DisplayedTags = TagsExtensions.GetDisplayTags(repository);
+			string strTags = string.Join(",", repository.Products.Select(c => c.Tags).Distinct().OrderBy(p => p)).ToString();
+			DisplayedTags = ParametersExtensions.GetDisplayParameters(strTags);
 			DisplayedCategories = repository.Categorys.Select(c => c).Distinct().ToList(); //получение категорий
 			Category = new SelectList(repository.Categorys.Select(c => c.CategoryName).Distinct().ToList(), CategoryName); //получение списка категорий товара
 			DisplayedColors = repository.Products.Select(p => p.Color).Distinct().ToList(); //получаем цвета
 			DisplayedTypes = repository.Products.Select(p => p.Type).Distinct().ToList(); //получаем типы
-			DisplayedMaterials = repository.Products.Select(p => p.Material).Distinct().ToList();
+			string strMaterials = string.Join(",", repository.Products.Select(c => c.Material).Distinct().OrderBy(p => p)).ToString(); //получаем строку материалов
+			DisplayedMaterials = ParametersExtensions.GetDisplayParameters(strMaterials);
 
 			DisplayedProducts = repository.Products.Select(p => p).ToList(); //получаем все товары для фильтрации
 

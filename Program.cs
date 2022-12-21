@@ -26,7 +26,7 @@ builder.Services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlSer
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppIdentityDbContext>(); //добавление идентифкации для админа
 
 var app = builder.Build();
-app.UseSession(); //включения фукции сессии
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -45,6 +45,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseSession(); //включения фукции сессии
 
 app.MapRazorPages();
 app.MapBlazorHub();//регистрирует компоненты промежуточного программного обеспечения Blazor.

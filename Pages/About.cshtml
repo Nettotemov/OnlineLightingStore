@@ -3,9 +3,10 @@
 
 @{
 	Layout = "_Layout";
+	ViewData["Title"] = "О компании";
 }
 
-<div class="col-12 mb-per-5 mt-per-5">
+<div class="col-12">
 	<div class="row justify-content-between align-items-xl-center">
 		<div class="col-12 col-xl-6">
 			<div class="black-img__wrapper">
@@ -15,7 +16,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-md-5 col-xs-12 active">
+		<div class="col-md-5 col-xs-12">
 			<h1 class="p__caption mb-per-5">@Model.aboutPage?.HeadingOneNode</h1>
 		</div>
 	</div>
@@ -26,12 +27,12 @@
 {
 	<div class="col-12 mb-per-5 mt-per-5">
 		<div class="row justify-content-between align-items-xl-center">
-			<div class="col-md-5 col-xs-12 active">
+			<div class="col-md-5 col-xs-12 order-block-2">
 				<h1 class="p__caption mb-per-5">@Model.aboutPage?.ParagraphOneNode</h1>
 			</div>
-			<div class="col-12 col-xl-6">
+			<div class="col-12 col-xl-6 order-block-1">
 				<div class="img-center__wrapper">
-					<img class="img-responsive img-center" src="@Model.aboutPage?.ImgOneUrl">
+					<img class="img-responsive" src="@Model.aboutPage?.ImgOneUrl">
 				</div>
 			</div>
 		</div>
@@ -44,10 +45,10 @@
 		<div class="row justify-content-between align-items-xl-center">
 			<div class="col-12 col-xl-6">
 				<div class="img-center__wrapper">
-					<img class="img-responsive img-center" src="@Model.aboutPage?.ImgTwoUrl">
+					<img class="img-responsive" src="@Model.aboutPage?.ImgTwoUrl">
 				</div>
 			</div>
-			<div class="col-md-5 col-xs-12 active">
+			<div class="col-md-5 col-xs-12">
 				<h1 class="h1__caption mb-per-5">@Model.aboutPage?.HeadingTwoNode</h1>
 				<h1 class="p__caption mb-per-5">@Model.aboutPage?.ParagraphTwoNode</h1>
 			</div>
@@ -57,13 +58,13 @@
 
 <div class="col-12 mb-per-5 mt-per-5">
 	<div class="row justify-content-between align-items-xl-center">
-		<div class="col-md-5 col-xs-12 active">
+		<div class="col-md-5 col-xs-12 order-block-2">
 			<h2 class="h1__caption mb-per-5">Подберите идеальный свет для вашего интерьера!</h2>
 		</div>
-		<div class="col-12 col-xl-6">
+		<div class="col-12 col-xl-6 order-block-1">
 			<div class="black-img__wrapper">
 				<div class="black-img">
-					<p class="black-img-p">Created by<p></p>
+					<p class="black-img-p">Create with<p></p>
 					<h1 class="black-img-h">Lights 4 Apart</h1>
 				</div>
 			</div>

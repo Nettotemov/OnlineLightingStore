@@ -21,6 +21,8 @@ namespace LampStore.Pages
 
 		public List<string> DisplayedPhotos { get; private set; } = new();
 
+		public List<Product> DisplayedProducts { get; private set; } = new();
+
 		public void OnGet(long productId) //инициализация карточки товара
 		{
 			DisplayedCategories = repository.Categorys.Select(c => c).Distinct().ToList();
@@ -29,11 +31,11 @@ namespace LampStore.Pages
 			{
 				if (product.ProductID == productId)
 				{
-					DisplayedPhotos = product?.Photos.Split(',').ToList();
+					DisplayedPhotos = product.Photos.Split(',').ToList();
 					
 					productCard = new Product()
 					{
-						MainPhoto = product.MainPhoto,
+						MainPhoto = product!.MainPhoto,
 						Photos = product.Photos,
 						Name = product.Name,
 						MinDescription = product.MinDescription,
@@ -48,10 +50,17 @@ namespace LampStore.Pages
 						Type = product.Type,
 						Material = product.Material,
 						Availability = product.Availability,
+						Size = product.Size,
+						BaseSize = product.BaseSize,
+						CordLength = product.CordLength,
+						LightSource = product.LightSource,
+						PowerW = product.PowerW,
 						Category = product.Category,
 					};
 				}
 			}
+			
+			DisplayedProducts = repository.Products.Select(p => p).ToList();
 		}
 
 	}

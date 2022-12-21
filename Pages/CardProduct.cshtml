@@ -2,39 +2,146 @@
 @model CardProduct
 
 @{
+	ViewData["Title"] = "Светильник " + @Model.productCard?.Name + " купить";
 	Layout = "_Layout";
 }
 
-<div class="col-6" style="margin-top: 20px;">
-	<img class="img-fluid" src=@Model.productCard?.MainPhoto>
-	@foreach (var img in @Model.DisplayedPhotos)
-	{
-		<img class="img-thumbnail col-2" src=@img>
-	}
-	<h1>@Model.productCard?.Name</h1>
-	<p class="h6" style="margin-top: 15px;">Цвет: @Model.productCard?.Color</p>
-	<p class="h6" style="margin-top: 15px;">Цветовая температура: @Model.productCard?.Kelvins</p>
-	<p class="h6" style="margin-top: 15px;">Короткое описание: @Model.productCard?.MinDescription</p>
-	<p class="h6" style="margin-top: 15px;">Описание: @Model.productCard?.Description</p>
-	<p class="h6" style="margin-top: 15px;">Категория товара: @Model.productCard?.Category?.CategoryName</p>
-	<p class="h6" style="margin-top: 15px;">Тип: @Model.productCard?.Type</p>
-	<p class="h6" style="margin-top: 15px;">Материал: @Model.productCard?.Material</p>
-	<p class="h6" style="margin-top: 15px;">Наличие: @Model.productCard?.Availability</p>
-	<p class="h5" style="margin-top: 15px;">Цена: @Model.productCard?.Price.ToString("c")</p>
-	@if (@Model.productCard?.Discount != null && @Model.productCard?.OldPrice != null)
-	{
-		<div class="h6" style="margin-top: 15px;">Скидка: @Model.productCard?.Discount%</div>
-		<div class="h6" style="margin-top: 15px;">Cтрая цена: <s>@Model.productCard?.OldPrice?.ToString("c")</s></div>
-	}
-	<p class="h6" style="margin-top: 15px;">@Model.productCard?.ProductID.ToString()</p>
-	<p class="h6" style="margin-top: 15px;">Теги: @Model.productCard?.Tags</p>
-	<form id="ProductID" class="addToCart" asp-page="/Cart" method="post">
-		<input type="hidden" asp-for="ProductID" />
-		<input type="hidden" name="returnUrl" value="@ViewContext.HttpContext.Request.PathAndQuery()" />
-		<span class="card-text p-1">
-			<button type="submit" class="btn btn-success btn-sm pull-right" style="float:right">
-				Добавить в корзину
-			</button>
-		</span>
-	</form>
-</div>
+<section class="product-card-slider__wrapper pt-per-5">
+	<div class="variable-width">
+		@foreach (var img in @Model.DisplayedPhotos)
+		{
+			<div class="">
+				<img class="" src=@img>
+			</div>
+		}
+	</div>
+</section>
+
+<section class="product-card__wrapper">
+	<div class="product-card">
+		<div class="product-card__name">
+			<h1 class="h1__caption ">@Model.productCard?.Name</h1>
+			<div class="product-card__price-info">
+				<p id="product-price" class="h5" price-value="@Model.productCard?.Price.ToString()">Цена: @Model.productCard?.Price.ToString("c")</p>
+				@if (@Model.productCard?.Discount != null && @Model.productCard?.OldPrice != null)
+				{
+					<p class="h6">Скидка: @Model.productCard?.Discount%</p>
+					<p class="h6">Cтрая цена: <s>@Model.productCard?.OldPrice?.ToString("c")</s></p>
+				}
+			</div>
+		</div>
+		<div class="product-card__total-wrapper">
+			<form id="ProductID" class="product-card__add addToCart" asp-page="/Cart" method="post">
+				<div class="number">
+					<span class="minus">-</span>
+					<input id="quantity-count" class="quantity-count" name="quantityProducts" type="number" value="1"/>
+					<span class="plus">+</span>
+				</div>
+				<input type="hidden" asp-for="ProductID" />
+				<input type="hidden" name="returnUrl" value="@ViewContext.HttpContext.Request.PathAndQuery()" />
+					<button type="submit" class="addToCart__product-card form-catalog__text">
+						Добавить в корзину
+					</button>
+			</form>
+			<div class="gray-line"></div>
+			<div class="product-card__total">
+				<p class="h5">Total</p>
+				<p id="total-price" class="h5">@Model.productCard?.Price.ToString("c")</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="product-card__description-wrapper">
+	<div class="product-card__description">
+		<p class="product-card__description-p"><span class="min-description-p">Описание</span>@Model.productCard?.Description</p>
+		<div class="product-card__tabl-wrapper">
+			<div class="product-card__tl">
+				<p class="product-card__characteristic">Категория</p>
+				<p class="product-card__characteristic">@Model.productCard?.Category?.CategoryName</p>
+			</div>
+			<div class="product-card__tl">
+				<p class="product-card__characteristic">Тип</p>
+				<p class="product-card__characteristic">@Model.productCard?.Type</p>
+			</div>
+			<div class="product-card__tl">
+				<p class="product-card__characteristic">Материал</p>
+				<p class="product-card__characteristic">@Model.productCard?.Material</p>
+			</div>
+			<div class="product-card__tl">
+				<p class="product-card__characteristic">Цвет</p>
+				<p class="product-card__characteristic">@Model.productCard?.Color</p>
+			</div>
+			<div class="product-card__tl">
+				<p class="product-card__characteristic">Размер светильника</p>
+				<p class="product-card__characteristic">@Model.productCard?.Size мм</p>
+			</div>
+			<div class="product-card__tl">
+				<p class="product-card__characteristic">Размер крепления</p>
+				<p class="product-card__characteristic">@Model.productCard?.BaseSize мм</p>
+			</div>
+			@if (@Model.productCard?.CordLength != null)
+			{
+				<div class="product-card__tl">
+					<p class="product-card__characteristic">Длина шнура</p>
+					<p class="product-card__characteristic">@Model.productCard?.CordLength мм</p>
+				</div>
+			}
+			<div class="product-card__tl">
+				<p class="product-card__characteristic">Источник света</p>
+				<p class="product-card__characteristic">@Model.productCard?.LightSource</p>
+			</div>
+			<div class="product-card__tl">
+				<p class="product-card__characteristic">Цветовая температура K</p>
+				<p class="product-card__characteristic">@Model.productCard?.Kelvins</p>
+			</div>
+			<div class="product-card__tl">
+				<p class="product-card__characteristic">Мощность W</p>
+				<p class="product-card__characteristic">@Model.productCard?.PowerW</p>
+			</div>
+			<div class="product-card__tl">
+				<p class="product-card__characteristic">Теги</p>
+				<p class="product-card__characteristic">@Model.productCard?.Tags</p>
+			</div>
+			<div class="product-card__tl">
+				<p class="product-card__characteristic">Наличие</p>
+				@if (@Model.productCard?.Availability == true)
+				{
+					<p class="product-card__characteristic">В наличие</p>
+				}
+				else { <p class="product-card__characteristic">Уточняйте</p> }
+			</div>
+		</div>
+		<div class="product-card__min-description">
+			<p class="product-card__characteristic">@Model.productCard.MinDescription</p>
+		</div>
+	</div>
+</section>
+
+@{
+	var SimilarProduct = @Model.DisplayedProducts.Where(p => p.Type == @Model.productCard.Type && p.Material == @Model.productCard.Material && p.ProductID != @Model.productCard.ProductID);
+}
+
+@if (@SimilarProduct.Count() > 0)
+{
+	<section class="similar-product__wrapper">
+	<h2 class="h1__caption ">Похожие товары</h2>
+		<div class="similar-product">
+			@foreach (var product in @SimilarProduct)
+			{
+				<a class="product__wrapper" asp-page="CardProduct"
+					asp-route-CategoryName="@product.Category!.CategoryName" asp-route-ProductID="@product.ProductID"
+					asp-route-Name="@product.Name">
+					<div class="product-img__wrapper">
+						<img class="img-center" src="@product.MainPhoto">
+					</div>
+					<div class="product-desc__wrapper">
+						<p class="title-wrp">@product.Name</p>
+						<p class="product-price">@product.Price.ToString()</p>
+					</div>
+				</a>
+			}
+		</div>
+	</section>
+}
+
