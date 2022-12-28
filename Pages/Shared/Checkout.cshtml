@@ -1,55 +1,114 @@
 @model Order
 
-<h2>Пожайлуста заполните</h2>
-<p>Пожалуйста, введите свои контактные данные, и мы отправим ваш товар!</p>
-
-@* Проверка полей валидации *@
-<div asp-validation-summary="All" class="text-danger"></div>
-
-<form asp-action="Checkout" method="post">
-	<h3>Контактные данные</h3>
-	<div class="form-group">
-		<label>Имя:</label>
-		<input asp-for="Name" class="form-control" />
+<h1 class="h1__caption mt-per-5">Контактные данные</h1>
+<p class="">*Обязательные поля</p>
+<section class="container-cart__wrapper">
+	<div class="cart-left__wrapper">
+		@* <div asp-validation-summary="All" class="text-danger"></div> Проверка полей валидации *@
+		<form id="checkout-form" asp-action="Checkout" method="post">
+			<div class="form-group__cont">
+				<div class="form-group__cont-input__wrapper">
+					<input placeholder="Полное имя*" asp-for="Name" class="form-group__cont-input" />
+					<span asp-validation-for="Name" class="text-danger"></span>
+				</div>
+				<div class="form-group__cont-input__wrapper">
+					<input type="tel" id="tel" placeholder="Телефон*" asp-for="Phone" class="form-group__cont-input" />
+					<span asp-validation-for="Phone" class="text-danger"></span>
+				</div>
+				<div class="form-group__cont-input__wrapper">
+					<input type="email" placeholder="Email*" asp-for="Email" class="form-group__cont-input" />
+					<span asp-validation-for="Email" class="text-danger"></span>
+				</div>
+				<div class="form-group__cont-input__wrapper">
+					<input placeholder="Город*" asp-for="City" class="form-group__cont-input" />
+					<span asp-validation-for="City" class="text-danger"></span>
+				</div>
+			</div>
+			<h2 class="h1__caption mt-per-5">Доставка</h2>
+			<div class="form-group__cont-input__wrapper">
+				<input placeholder="Индекс" asp-for="Zip" class="form-group__cont-input" />
+			</div>
+			<div class="form-group">
+				<input placeholder="Адрес" asp-for="Line1" class="form-group__cont-input" />
+			</div>
+			<h2 class="h1__caption mt-per-5">Комментарий</h2>
+			<div class="form-group">
+				<input placeholder="Написать" asp-for="Line2" class="form-group__cont-input" />
+			</div>
+			<div class="checkbox form-group-gift__wrapper">
+				<input type="checkbox" asp-for="GiftWrap" class="form-control" />
+				<label for="GiftWrap" class="control-label">Принимаю политику политику обработки заказов</label>
+				<span asp-validation-for="GiftWrap" class="text-danger"></span>
+			</div>
+		</form>
 	</div>
-	<div class="form-group">
-		<label>Телефон:</label>
-		<input asp-for="Phone" class="form-control" />
+	<div class="cart-right__wrapper">
+		<h2 class="fw-bold">Корзина</h2>
+		@if (@Model?.Lines.Count() != 0)
+		{
+			<div class="cart-chechout__wrapper">
+				@foreach (var line in @Model?.Lines ?? Enumerable.Empty<CartLine>())
+				{
+					<div class="product-cart-chechout__wrapper">
+						<div class="product-cart-img__wrapper">
+							<img class="product-cart-img" src="@line.Product.MainPhoto">
+						</div>
+						<div class="cart-chechout-name__wrapper">
+							<p class="product-cart-chechout__name">@line.Product.Name</p>
+							<p class="product-cart-chechout__price">@line.Product.Price.ToString("c")</p>
+						</div>
+						<p class="product-cart-chechout__quantity">@line.Quantity шт.</p>
+					</div>
+				}
+			</div>
+			<div class="cart-right__container mt-per-5">
+				<p class="product-card__description-p">Количество товаров, @Model?.Lines.Select(q => q.Quantity).Sum() шт.
+				</p>
+				<p class="product-card__description-p">Общая стоимость корзины:</p>
+				<p class="cart__total-price">@Model?.Lines.Sum(e => e.Product.Price * e.Quantity).ToString("c")</p>
+			</div>
+			<div class="text-center">
+				<button form="checkout-form" class="form-catalog__text cart__btn-checkout" type="submit">Сделать
+					заказ</button>
+				<a href="/catalog/1?sortOrder=0" class="form-catalog__text cart__btn-no-checkout">Вернуться в каталог</a>
+			</div>
+		}
+		else
+		{
+			<div class="checkout-cart-empty__wrapper">
+				<svg class="cart-emty-svg" width="117px" height="94px" viewBox="0 0 117 94" version="1.1"
+				xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<title>ic-empty-basket</title>
+					<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+						<g id="ic-empty-basket.b6855e4e" transform="translate(0.000000, 1.050000)">
+							<path
+							d="M19.9,78 L28,79 L35.3,83.9 L96.8,83.9 L98.1,78.1 C109.7,79.6 117,81.7 117,84 C117,88.4 90.8,92 58.5,92 C26.2,92 0,88.4 0,84 C0,81.6 7.7,79.5 19.9,78 L19.9,78 Z"
+							id="Path" fill="#B1B1B1" fill-rule="nonzero"></path>
+							<circle id="Oval" fill="#B1B1B1" fill-rule="nonzero" cx="50" cy="63.95" r="4.3"></circle>
+							<circle id="Oval" fill="#B1B1B1" fill-rule="nonzero" cx="83" cy="63.95" r="4.3"></circle>
+							<circle id="Oval" fill="#000000" fill-rule="nonzero" cx="56" cy="55.95" r="2.2"></circle>
+							<circle id="Oval" fill="#000000" fill-rule="nonzero" cx="75" cy="55.95" r="2.2"></circle>
+							<g id="Group" stroke-linejoin="round" transform="translate(9.000000, 0.000000)" stroke="#000000"
+							stroke-width="1.5">
+								<path
+								d="M65.093,68.5 C63.4712601,65.8513896 60.5985594,64.2260458 57.493,64.1999845 C54.481191,64.1944198 51.6662249,65.6957351 49.993,68.2"
+								id="Path" stroke-linejoin="bevel"></path>
+								<path
+								d="M26.559,84.078 L19.059,79.078 L10.8,78 L0,24.6 L12,28 L14.956,30.925 M0,24.6 L84.011,24.611 L87.011,26.911 L99.831,30.638 M57.8,20.2 L57.8,17.8 C57.8,8 49.3,3.55271368e-15 39,3.55271368e-15 C28.5,3.55271368e-15 19.984,8 19.9999775,17.8 L20.011,24.496"
+								id="Shape"></path>
+								<path
+								d="M76,30.5 L76,23.8 C76,14 67.5,6 57,6 C46.6,6 38.309,14 38.2,23.8 L38.128,30.305 M83.7,30.6 L99.7,30.6 L87.7,84 L26.4,84 L14.5,30.6 L61.8,30.6 L83.7,30.6 Z"
+								id="Shape"></path>
+							</g>
+						</g>
+					</g>
+				</svg>
+				<p class="product-card__description-p">В ВАШЕЙ КОРЗИНЕ ПУСТО</p>
+				<p class="product-cart-chechout__name">Начните создание стиля с освещения прямо сейчас. Перейдите в каталог и добавьте товар в корзину.</p>
+			</div>
+			<div class="text-center">
+				<a href="/catalog/1?sortOrder=0" class="form-catalog__text cart__btn-checkout">В каталог</a>
+			</div>
+		}
 	</div>
-	<div class="form-group">
-		<label>Email:</label>
-		<input asp-for="Email" class="form-control" />
-	</div>
-	<h3>Адрес</h3>
-	<div class="form-group">
-		<label>Улица:</label>
-		<input asp-for="Line1" class="form-control" />
-	</div>
-	<div class="form-group">
-		<label>Дом:</label>
-		<input asp-for="Line2" class="form-control" />
-	</div>
-	<div class="form-group">
-		<label>Квартира:</label>
-		<input asp-for="Line3" class="form-control" />
-	</div>
-	<div class="form-group">
-		<label>Город:</label>
-		<input asp-for="City" class="form-control" />
-	</div>
-	<div class="form-group">
-		<label>Индекс:</label>
-		<input asp-for="Zip" class="form-control" />
-	</div>
-	<div class="form-group">
-		<label>Страна:</label>
-		<input asp-for="Country" class="form-control" />
-	</div>
-	<h3>Параметры</h3>
-	<div class="checkbox">
-		<label><input asp-for="GiftWrap" />Принимаю политику политику обработки заказов</label>
-	</div>
-	<div class="text-center">
-		<input class="btn btn-primary" type="submit" value="Сделать заказ" />
-	</div>
-</form>
+</section>

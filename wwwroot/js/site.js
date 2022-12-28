@@ -97,8 +97,6 @@ $(document).on("submit", ".addToCart", function (ev) {
 		success: function (str) {
 			let jsonCart = str;
 			$('#quantity').html(jsonCart.quantity);
-			let cookies = document.cookie;
-			let nameCookie = "CartCookie";
 		}
 	});
 	ev.preventDefault();
@@ -119,6 +117,18 @@ $(document).on("click", ".pagination-btn", function (ev) {
 			dataType: 'json',
 			success: function (pages) {
 				let getUrl = '/Catalog/' + page + "?" + path[1];
+				let pagingJson = JSON.parse(pages.pagingInfoJson)
+				let paging = document.getElementById('pagingbuttons');
+				$('#pagingbuttons').empty();
+				for (let i = 1; i <= pagingJson.TotalPages; i++) {
+					pagingButtons = document.createElement("li");
+					pagingButtons.classList.add("page-item");
+					pagingButtons.innerHTML = `<button form="catalogForm" class="pagination-btn page-link" type="submit" value="${i}" formaction="/${i}">${i}</button>`
+					paging.appendChild(pagingButtons);
+					if (pagingJson.CurrentPage == page && i == page) {
+						pagingButtons.classList.add("active");
+					}
+				}
 				window.history.pushState({}, '', getUrl); // устанавливаем URL в строку браузера
 				let productJson = JSON.parse(pages.json)
 				let postWrp;
@@ -168,9 +178,24 @@ $(document).on("click", ".pagination-btn", function (ev) {
 	ev.preventDefault();
 });
 
+// function autoCheckPagination() {
+// 	const path = document.location.pathname.slice(-1);
+// 	let paging = document.getElementById('pagingbuttons');
+// 	var btns = paging.getElementsByClassName("page-item");	
+
+// 	for (var i = 0; i < btns.length; i++) {
+// 		if (path == i + 1)
+// 		{
+// 			btns[i].classList.add("active");
+// 		}
+// 	}
+// }
+// autoCheckPagination();
+
 $('.catalogForm-sub').on('change click', '.autocomplete__results-item, .form__clear, .autocomplete__clear, input[type=checkbox], [name=category], [name=sortOrder], [name=minPrice], [name=maxPrice]', '', function (ev) {
 	$('#spinner-border').show();
-	document.querySelector(".form__clear").onclick = function () {
+	const formClear = document.querySelector(".form__clear");
+	formClear.onclick = function () {
 		$('input:checked').prop('checked', false);
 		$('input[type=number]').each(function () { $(this).val(''); });
 		$('#select-category option:first').prop('selected', true);
@@ -195,7 +220,6 @@ $('.catalogForm-sub').on('change click', '.autocomplete__results-item, .form__cl
 	let url = getUrl + "&handler=Products";
 	var token = GetAntiForgeryToken();
 	let prodview = document.getElementById('prod-view');
-	console.log(prodview);
 	let response = fetch(url)
 		.then((response) => response.json())
 		.then(data => {
@@ -206,7 +230,7 @@ $('.catalogForm-sub').on('change click', '.autocomplete__results-item, .form__cl
 			for (let i = 1; i <= pagingJson.TotalPages; i++) {
 				pagingButtons = document.createElement("li");
 				pagingButtons.classList.add("page-item");
-				pagingButtons.innerHTML = `<button form="catalogForm" class="btn pagination-btn btn-default" type="submit" value="${i}" formaction="/${i}">${i}</button>`
+				pagingButtons.innerHTML = `<button form="catalogForm" class="pagination-btn page-link" type="submit" value="${i}" formaction="/${i}">${i}</button>`
 				paging.appendChild(pagingButtons);
 			}
 			let placeholderMinPrice = document.getElementById('minPrice')
@@ -429,3 +453,12 @@ $('.number').on("change click", ".quantity-count, .minus, .plus", function (ev) 
 $('.recalculation').on("change click", ".quantity-product-count", function (ev) {
 	$(this).closest('.recalculation').submit();
 });
+
+$('#checkout-form').on("change click", "#tel", function () {
+	document.getElementById('tel').addEventListener('input', function (e) {
+		var x = e.target.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,4})/);
+		e.target.value = '+' + (x[1] = 7) + ' (' + x[2] + ') ' + x[3] + '-' + x[4]
+	});
+});
+
+

@@ -215,21 +215,32 @@
 			</div>
 		</div>
 		<div class="pagination__wrapper">
-			<ul id="pagingbuttons" class="pagination">
+			@* <ul id="pagingbuttons" class="pagination">
 				@for (int i = 1; i <= @Model.PagingInfo.TotalPages; i++)
 				{
 					<li class="page-item">
 						<button form="catalogForm" asp-route-productPage="@i" asp-route-name="@Model.Name"
 						asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice"
 						asp-route-sortOrder="@Model.SortedCatalog" asp-route-category="@Model.CategoryName"
-						class="page-link" type="submit" value="@i">@i
+						class="pagination-btn page-link" type="submit" value="@i">@i
 						</button>
 					</li>
 				}
+			</ul> *@
+			<ul id="pagingbuttons" page-model="@Model?.PagingInfo" page-classes-enabled="true" page-class="btn"
+				page-class-li="page-item" page-class-normal="pagination-btn page-link" page-class-selected="btn-primary"
+				class="pagination">
 			</ul>
 		</div>
+
 	</div>
-</div>
-<div id="spinner-border" class="hidden spinner-border" style="display: none;" role="status">
-	<span class="visually-hidden">Loading...</span>
+	<div id="spinner-border" class="loader__wrapper" style="display: none;" role="status">
+		<span class="visually-hidden">Loading...</span>
+		<div class="lds-ring">
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+		</div>
+	</div>
 </div>

@@ -14,7 +14,16 @@ namespace LampStore.Controllers //контроллер заказа
 			cart = cartService;
 		}
 
-		public ViewResult Checkout() => View(new Order());
+		public ViewResult Checkout()
+		{
+			Order order = new Order();
+
+			if (cart.Lines.Count() != 0)
+			{
+				order.Lines = cart.Lines.Select(l => l).ToList();
+			}
+			return View(order);
+		} 
 
 		[HttpPost]
 		public IActionResult Checkout(Order order)
@@ -23,16 +32,22 @@ namespace LampStore.Controllers //контроллер заказа
 			{
 				ModelState.AddModelError("", "Извините, ваша корзина пуста");
 			}
+
 			if (ModelState.IsValid)
 			{
 				order.Lines = cart.Lines.ToArray();
+				order.DateAdded = DateTime.Now;
 				repository.SaveOrder(order);
 				cart.Clear();
 				return RedirectToPage("/Completed", new { orderId = order.OrderID });
 			}
 			else
 			{
-				return View();
+				if (cart.Lines.Count() != 0)
+				{
+					order.Lines = cart.Lines.Select(l => l).ToList();
+				}
+				return View(order);
 			}
 		}
 	}

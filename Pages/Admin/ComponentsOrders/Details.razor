@@ -1,0 +1,82 @@
+@page "/admin/orders/details/{id:long}"
+
+<h3 class="bg-info text-white text-center p-1">Подробнее о заказе @Id</h3>
+
+<table class="table table-sm table-bordered table-striped">
+	<tbody>
+		<tr>
+			<th>ID заказа</th>
+			<td>@Order?.OrderID</td>
+		</tr>
+		<tr>
+			<th>Дата заказа</th>
+			<td>@Order?.DateAdded</td>
+		</tr>
+		<tr>
+			<th>Имя клиента</th>
+			<td>@Order?.Name</td>
+		</tr>
+		<tr>
+			<th>Телефон клиента</th>
+			<td>@Order?.Phone</td>
+		</tr>
+		<tr>
+			<th>Email клиента</th>
+			<td>@Order?.Email</td>
+		</tr>
+		<tr>
+			<th>Город доставки</th>
+			<td>@Order?.City</td>
+		</tr>
+		<tr>
+			<th>Индекс доставки</th>
+			<td>@Order?.Zip</td>
+		</tr>
+		<tr>
+			<th>Адрес доставки</th>
+			<td>@Order?.Line1</td>
+		</tr>
+		<tr>
+			<th>Комментарий</th>
+			<td>@Order?.Line2</td>
+		</tr>
+		<tr>
+			<th>Статус заказа</th>
+			<td>@Order?.StatusOrders</td>
+		</tr>
+		<tr>
+			<th>Сумма заказа</th>
+			<td>@Order?.Lines.Select(p => p.Product).Sum(e => e.Price).ToString("C")</td>
+		</tr>
+		@foreach (CartLine line in Order!.Lines)
+		{
+			<tr>
+				<td class="text-center">@line.Product.Name</td>
+				<td class="text-center">@line.Quantity</td>
+				<td class="text-center">@line.Product.Price.ToString("C")</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+<NavLink class="btn btn-warning" href="@EditUrl">Изменить</NavLink>
+<NavLink class="btn btn-secondary" href="/admin/orders">Назад</NavLink>
+
+@code
+{
+	[Inject]
+	public IOrderRepository? Repository { get; set; }
+
+	public List<Category>? DisplayedCategories { get; set; }
+
+	[Parameter]
+	public long Id { get; set; }
+
+	public Order? Order { get; set; }
+
+	protected override void OnParametersSet()
+	{
+		Order = Repository?.Orders.FirstOrDefault(o => o.OrderID == Id);
+	}
+	public string EditUrl => $"/admin/orders/edit/{Order?.OrderID}";
+}

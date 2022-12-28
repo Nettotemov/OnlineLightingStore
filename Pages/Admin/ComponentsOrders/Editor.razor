@@ -33,27 +33,30 @@
 		<ValidationMessage For="@(() => Order.Email)" />
 		<InputText class="form-control" @bind-Value="Order.Email" />
 	</div>
-	<div class="form-group">
+	@* <div class="form-group">
 		<label>Страна доставки</label>
 		<ValidationMessage For="@(() => Order.Country)" />
 		<InputText class="form-control" @bind-Value="Order.Country" />
-	</div>
+	</div> *@
 	<div class="form-group">
 		<label>Город доставки</label>
 		<ValidationMessage For="@(() => Order.City)" />
 		<InputText class="form-control" @bind-Value="Order.City" />
 	</div>
 	<div class="form-group">
-		<label>Адрес доставки</label>
-		<ValidationMessage For="@(() => Order.Line1)" />
-		<InputText class="form-control" @bind-Value="Order.Line1" />
-		<InputText class="form-control" @bind-Value="Order.Line2" />
-		<InputText class="form-control" @bind-Value="Order.Line3" />
-	</div>
-	<div class="form-group">
 		<label>Индекс доставки</label>
 		<ValidationMessage For="@(() => Order.Zip)" />
 		<InputText class="form-control" @bind-Value="Order.Zip" />
+	</div>
+	<div class="form-group">
+		<label>Адрес доставки</label>
+		<ValidationMessage For="@(() => Order.Line1)" />
+		<InputText class="form-control" @bind-Value="Order.Line1" />
+		<InputText class="form-control" @bind-Value="Order.Line3" />
+	</div>
+	<div class="form-group">
+		<label>Комментарий</label>
+		<InputText class="form-control" @bind-Value="Order.Line2" />
 	</div>
 	<div class="form-group">
 		<label>Статус заказа</label>

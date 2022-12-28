@@ -113,13 +113,13 @@
 			</div>
 		</div>
 		<div class="product-card__min-description">
-			<p class="product-card__characteristic">@Model.productCard.MinDescription</p>
+			<p class="product-card__characteristic">@Model.productCard?.MinDescription</p>
 		</div>
 	</div>
 </section>
 
 @{
-	var SimilarProduct = @Model.DisplayedProducts.Where(p => p.Type == @Model.productCard.Type && p.Material == @Model.productCard.Material && p.ProductID != @Model.productCard.ProductID);
+	var SimilarProduct = @Model.DisplayedProducts.Where(p => p.Type == @Model.productCard?.Type && p.Material == @Model.productCard.Material && p.ProductID != @Model.productCard.ProductID);
 }
 
 @if (@SimilarProduct.Count() > 0)

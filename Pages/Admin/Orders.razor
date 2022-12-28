@@ -1,8 +1,8 @@
 @page "/admin/orders"
 @inherits OwningComponentBase<IOrderRepository>
 
-<OrderTable StyleTable="bg-warning" TableTitle="Новые заказы" Orders="UnshippedOrders" ButtonLabel="Выполнен" OrderSelected="ShipOrder" />
-<OrderTable StyleTable="bg-success" TableTitle="Выполненые заказы" Orders="ShippedOrders" ButtonLabel="Ожидает выполнения" OrderSelected="ResetOrder" />
+<OrderTable StyleTable="bg-warning" TableTitle="Новые заказы" Orders="UnshippedOrders" GetOrders="UnshippedOrders" ButtonLabel="Ожидает выполнения" OrderSelected="ShipOrder" />
+<OrderTable StyleTable="bg-success" TableTitle="Выполненые заказы" Orders="ShippedOrders" GetOrders="ShippedOrders" ButtonLabel="Выполнен" OrderSelected="ResetOrder" />
 
 <button class="btn btn-info text-white" @onclick="@(e => UpdateData())">Обновить данные</button>
 

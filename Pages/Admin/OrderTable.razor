@@ -1,16 +1,46 @@
 <table class="table table-sm table-striped table-bordered">
 	<thead>
 		<tr class="@StyleTable">
-			<th colspan="13" class="text-center text-white">@TableTitle</th>
+			<th colspan="14" class="text-center text-white">@TableTitle</th>
 		</tr>
 		<tr>
 			<th class="text-center">№</th>
-			<th class="text-center">Имя</th>
-			<th class="text-center">Телефон</th>
-			<th class="text-center">Email</th>
+			<th class="text-center" @onclick="@(e => SortOrders(SortedDate))">Дата
+				<input value="@InputDateTimeValue"
+					@onchange="@((ChangeEventArgs __e) => InputDateTimeValue = Convert.ToDateTime(__e.Value))"
+					@onblur="@(e => SortOrders())" />
+			</th>
+			<th class="text-center">Имя
+				<input value="@InputNameValue"
+					@onchange="@((ChangeEventArgs __e) => InputNameValue = __e.Value?.ToString())"
+					@onblur="@(e => SortOrders())" />
+			</th>
+			<th class="text-center">Телефон
+				<input value="@InputTelValue"
+					@onchange="@((ChangeEventArgs __e) => InputTelValue = __e.Value?.ToString())"
+					@onblur="@(e => SortOrders())" />
+			</th>
+			<th class="text-center">Email
+				<input value="@InputEmailValue"
+					@onchange="@((ChangeEventArgs __e) => InputEmailValue = __e.Value?.ToString())"
+					@onblur="@(e => SortOrders())" />
+			</th>
 			<th class="text-center">Индекс</th>
-			<th class="text-center">Город</th>
-			<th class="text-center">Статус заказа</th>
+			<th class="text-center">Город
+				<input value="@InputCityValue"
+					@onchange="@((ChangeEventArgs __e) => InputCityValue = __e.Value?.ToString())"
+					@onblur="@(e => SortOrders())" />
+			</th>
+			<th class="text-center">Статус заказа
+				<select @onchange="@((ChangeEventArgs __e) => InputStatusOrderValue = __e.Value?.ToString())"
+					@onmouseout="@(e => SortOrders())" class="form-select">
+					<option value="">Все</option>
+					@foreach (var status in Enum.GetValues<StatusOrder>())
+					{
+						<option value="@status">@EnumExtensions.GetDisplayName(status)</option>
+					}
+				</select>
+			</th>
 			<th class="text-center">Сумма заказа</th>
 			<th colspan="3" class="text-center">Информация о заказе</th>
 			<th class="text-center">Редактировать</th>
@@ -24,6 +54,7 @@
 			{
 				<tr>
 					<td class="text-center">@o.OrderID</td>
+					<td class="text-center">@o.DateAdded</td>
 					<td class="text-center">@o.Name</td>
 					<td class="text-center">@o.Phone</td>
 					<td class="text-center">@o.Email</td>
@@ -38,6 +69,9 @@
 						<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(o.OrderID)">
 							Изменить
 						</NavLink>
+						<NavLink class="btn btn-info btn-sm" href="@GetDetailsUrl(o.OrderID)">
+							Подробнее
+						</NavLink>
 					</td>
 					<td class="text-center">
 						<button class="btn btn-sm btn-danger" @onclick="@(e => OrderSelected.InvokeAsync(o.OrderID))">
@@ -48,7 +82,7 @@
 				@foreach (CartLine line in o.Lines)
 				{
 					<tr>
-						<td colspan="8"></td>
+						<td colspan="9"></td>
 						<td class="text-center">@line.Product.Name</td>
 						<td class="text-center">@line.Quantity</td>
 						<td class="text-center">@line.Product.Price.ToString("C")</td>
@@ -84,5 +118,60 @@
 	public string StyleTable { get; set; } = "bg-danger";
 
 	public string GetEditUrl(long id) => $"/admin/orders/edit/{id}";
+	public string GetDetailsUrl(long id) => $"/admin/orders/details/{id}";
 
+	[Parameter]
+	public IEnumerable<Order> GetOrders { get; set; } = Enumerable.Empty<Order>();
+
+	public bool SortedDate { get; set; } = false;
+	public string InputTelValue { get; set; } = "";
+	public string InputNameValue { get; set; } = "";
+	public string InputEmailValue { get; set; } = "";
+	public string InputCityValue { get; set; } = "";
+	public string InputStatusOrderValue { get; set; } = "";
+	public DateTime InputDateTimeValue { get; set; }
+
+	public void SortOrders(bool b)
+	{
+		if (b == false)
+		{
+			Orders = Orders.OrderBy(o => o.DateAdded).ToList();
+			SortedDate = true;
+		}
+		else
+		{
+			Orders = Orders.OrderByDescending(o => o.DateAdded).ToList();
+			SortedDate = false;
+		}
+	}
+	public void SortOrders()
+	{
+
+		Orders = GetOrders;
+
+		if (InputNameValue != string.Empty)
+		{
+			Orders = Orders.Where(o => o.Name!.ToLower().StartsWith(InputNameValue.ToLower())).ToList();
+		}
+		if (InputTelValue != string.Empty)
+		{
+			Orders = Orders.Where(o => o.Phone!.Contains(InputTelValue)).ToList();
+		}
+		if (InputEmailValue != string.Empty)
+		{
+			Orders = Orders.Where(o => o.Email!.ToLower().StartsWith(InputEmailValue.ToLower())).ToList();
+		}
+		if (InputCityValue != string.Empty)
+		{
+			Orders = Orders.Where(o => o.Email!.ToLower().StartsWith(InputCityValue.ToLower())).ToList();
+		}
+		if (InputStatusOrderValue != string.Empty)
+		{
+			Orders = Orders.Where(o => o.StatusOrders.ToString() == InputStatusOrderValue).ToList();
+		}
+		if (InputDateTimeValue != null)
+		{
+			Orders = Orders.Where(o => o.DateAdded.Day == InputDateTimeValue.Day).ToList();
+		}
+	}
 }
