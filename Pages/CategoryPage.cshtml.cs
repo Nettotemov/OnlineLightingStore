@@ -10,7 +10,7 @@ namespace LampStore.Pages
 	public class CategoryPage : PageModel
 	{
 		private ICatalogRepository repository;
-		
+
 		public CategoryPage(ICatalogRepository repo)
 		{
 			repository = repo;
@@ -22,7 +22,7 @@ namespace LampStore.Pages
 		public List<Product> DisplayedProducts { get; private set; } = new();
 		public List<string> DisplayedTypes { get; private set; } = new();
 
-		public void OnGet(long categoryID) //инициализация категории
+		public IActionResult OnGet(long categoryID) //инициализация категории
 		{
 			try
 			{
@@ -47,17 +47,14 @@ namespace LampStore.Pages
 							DisplaySlider = category.DisplaySlider,
 							Slider = category.Slider
 						};
+						return Page();
 					}
 				}
+				return StatusCode(404);
 			}
-			catch(Exception)
+			catch (Exception)
 			{
-				categoryCard = new Category()
-				{
-					CategoryName = "Категории не существует",
-					CategoryImg = string.Empty,
-					Description = "Вернитесь на главную"
-				};
+				return StatusCode(404);
 			}
 		}
 	}

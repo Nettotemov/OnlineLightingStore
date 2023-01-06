@@ -24,7 +24,7 @@ builder.Services.AddServerSideBlazor(); //создает службы, кото�
 
 builder.Services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlServer(builder.Configuration["ConnectionStrings:IdentityConnection"])); //подключение к БД для админа
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppIdentityDbContext>(); //добавление идентифкации для админа
-
+builder.Services.AddHttpClient(); //отправка файлов на сервер
 var app = builder.Build();
 
 
@@ -52,5 +52,6 @@ app.MapBlazorHub();//регистрирует компоненты промеж�
 app.MapFallbackToPage("/admin/{*catchall}", "/Admin/Index"); //усовершенствовании системы маршрутизации, чтобы гарантировать бесперебойную работу Blazor с остальной частью приложения.
 
 IdentitySeedData.EnsurePopulated(app);
+
 
 app.Run();

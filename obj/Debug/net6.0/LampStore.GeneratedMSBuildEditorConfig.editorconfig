@@ -51,12 +51,20 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vQ29tcG9uZW50c1Byb2R1Y3RzL0VkaXRvci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Admin/FileUpload.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vRmlsZVVwbG9hZC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Admin/Orders.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vT3JkZXJzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Admin/OrderTable.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vT3JkZXJUYWJsZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Admin/Popup.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vUG9wdXAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Admin/Products.razor]

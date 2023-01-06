@@ -27,6 +27,7 @@ namespace LampStore.Infrastructure
 		public string PageClassNormal { get; set; } = String.Empty;
 		public string PageClassSelected { get; set; } = String.Empty;
 		public string PageClassLi { get; set; } = String.Empty;
+		public string PageDisabledClass { get; set; } = String.Empty;
 
 		public override void Process(TagHelperContext context, TagHelperOutput output)
 		{
@@ -35,9 +36,35 @@ namespace LampStore.Infrastructure
 				IUrlHelper urlHelper = urlHelperFactory.GetUrlHelper(ViewContext);
 				TagBuilder result = new TagBuilder("ul");
 
+				TagBuilder buttonNext = new TagBuilder("button");
+				TagBuilder buttonBefore = new TagBuilder("button");
+
+				TagBuilder tagWrapper = new TagBuilder("li");
+
+
+
+				tagWrapper.InnerHtml.AppendHtml(buttonBefore);
+				buttonBefore.InnerHtml.Append("Назад");
+				buttonBefore.AddCssClass(PageClass);
+				tagWrapper.AddCssClass(PageClassLi);
+				if (PageModel.CurrentPage <= 1)
+				{
+					tagWrapper.AddCssClass(PageDisabledClass);
+				}
+				else
+				{
+					buttonBefore.Attributes["form"] = "catalogForm";
+					buttonBefore.Attributes["type"] = "submit";
+					buttonBefore.Attributes["value"] = (PageModel.CurrentPage - 1).ToString();
+					buttonBefore.Attributes["formaction"] = "/Catalog/" + (PageModel.CurrentPage - 1);
+				}
+				result.InnerHtml.AppendHtml(tagWrapper);
+
+
+
 				for (int i = 1; i <= PageModel.TotalPages; i++)
 				{
-					TagBuilder tagWrapper = new TagBuilder("li");
+					tagWrapper = new TagBuilder("li");
 					tagWrapper.AddCssClass(PageClassLi);
 
 					TagBuilder tag = new TagBuilder("button");
@@ -49,13 +76,34 @@ namespace LampStore.Infrastructure
 					if (PageClassesEnabled)
 					{
 						tag.AddCssClass(PageClass);
-						tag.AddCssClass(i == PageModel.CurrentPage ? PageClassSelected : PageClassNormal);
+						tagWrapper.AddCssClass(i == PageModel.CurrentPage ? PageClassSelected : "");
 					}
 					tag.InnerHtml.Append(i.ToString());
 					tagWrapper.InnerHtml.AppendHtml(tag);
 					result.InnerHtml.AppendHtml(tagWrapper);
 				}
 				output.Content.AppendHtml(result.InnerHtml);
+
+
+
+				var tagWrapperNext = new TagBuilder("li");
+				tagWrapperNext.InnerHtml.AppendHtml(buttonNext);
+				buttonNext.InnerHtml.Append("Вперёд");
+				buttonNext.AddCssClass(PageClass);
+				tagWrapperNext.AddCssClass(PageClassLi);
+				if (PageModel.CurrentPage >= PageModel.TotalPages)
+				{
+					tagWrapperNext.AddCssClass(PageDisabledClass);
+				}
+				else
+				{
+					buttonNext.Attributes["form"] = "catalogForm";
+					buttonNext.Attributes["type"] = "submit";
+					buttonNext.Attributes["value"] = (PageModel.CurrentPage + 1).ToString();
+					buttonNext.Attributes["formaction"] = "/Catalog/" + (PageModel.CurrentPage + 1);
+
+				}
+				result.InnerHtml.AppendHtml(tagWrapperNext);
 			}
 		}
 	}

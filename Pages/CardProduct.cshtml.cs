@@ -23,7 +23,7 @@ namespace LampStore.Pages
 
 		public List<Product> DisplayedProducts { get; private set; } = new();
 
-		public void OnGet(long productId) //инициализация карточки товара
+		public IActionResult OnGet(long productId) //инициализация карточки товара
 		{
 			DisplayedCategories = repository.Categorys.Select(c => c).Distinct().ToList();
 
@@ -57,10 +57,12 @@ namespace LampStore.Pages
 						PowerW = product.PowerW,
 						Category = product.Category,
 					};
+					return Page();
 				}
 			}
 			
 			DisplayedProducts = repository.Products.Select(p => p).ToList();
+			return StatusCode(404);
 		}
 
 	}

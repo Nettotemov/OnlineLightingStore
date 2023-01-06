@@ -1,0 +1,198 @@
+@page "/admin/file-upload"
+@using System
+@using System.IO
+@using Microsoft.AspNetCore.Hosting
+@using Microsoft.Extensions.Logging
+@inject ILogger<FileUpload> Logger
+@inject IWebHostEnvironment Environment
+@using Microsoft.JSInterop
+@inject IJSRuntime JS
+
+<h1>Upload Files</h1>
+
+<p>
+	<label>
+		Max file size:
+		<input type="number" @bind="maxFileSize" />
+	</label>
+</p>
+
+<p>
+	<label>
+		Max allowed files:
+		<input type="number" @bind="maxAllowedFiles" />
+	</label>
+</p>
+
+<p>
+	<label>
+		Upload up to @maxAllowedFiles of up to @maxFileSize bytes:
+		<InputFile OnChange="@LoadFiles" multiple />
+		<li>@fileNameError</li>
+	</label>
+</p>
+
+@if (isLoading)
+{
+	<p>Progress: @string.Format("{0:P0}", progressPercent)</p>
+}
+else
+{
+	<ul>
+	@foreach (var file in loadedFiles)
+		{
+			<li>
+				<ul>
+					<li>Name: @file.Name</li>
+					<li>Last modified: @file.LastModified.ToString()</li>
+					<li>Size (bytes): @file.Size</li>
+					<li>Content type: @file.ContentType</li>
+					<img class="col-3" src="@UrlPath/@file.Name" />
+				</ul>
+			</li>
+		}
+	</ul>
+
+}
+<p>@UrlPath@FolderName</p>
+<button @onclick="@(e => ShowFiles())">Получить все изображения</button>
+
+@if (pathFiles.Count() > 0)
+{
+	@foreach (var file in pathFiles)
+	{
+		<div class="card col-3">
+	<p>@file.FullName</p>
+	<img class="" src="@UrlPath/@FolderName/@file.Name" />
+	<p>wwwroot/@UrlPath@file.Name</p>
+	<button class="btn btn-success" @onclick="@(e => AddPhoto('/' + @UrlPath + @FolderName + '/' + @file.Name))">
+		Добавить</button>
+	<button @onclick="@(e => DeleteFile("wwwroot/" + @UrlPath + @FolderName + '/' + @file.Name))">
+		Удалить</button>
+</div>
+	}
+}
+
+
+@code {
+	private List<IBrowserFile> loadedFiles = new();
+	private long maxFileSize = 102400 * 15;
+	private int maxAllowedFiles = 3;
+	private bool isLoading;
+	private decimal progressPercent;
+	private string path = string.Empty;
+
+	[Parameter]
+	public string UrlPath { get; set; } = "imegs/img-products/";
+
+	[Parameter]
+	public string FolderName { get; set; } = string.Empty;
+	private string fileNameError = string.Empty;
+
+	private List<FileInfo> pathFiles = new();
+
+	private async Task LoadFiles(InputFileChangeEventArgs e)
+	{
+		isLoading = true;
+		loadedFiles.Clear();
+		progressPercent = 0;
+
+		foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+		{
+			try
+			{
+				var trustedFileName = Path.GetRandomFileName();
+				path = Path.Combine(Environment.ContentRootPath,
+				"wwwroot", UrlPath + FolderName, file.Name);
+
+				if (File.Exists(path))
+				{
+					fileNameError = "Такое имя уже существует";
+				}
+				else
+				{
+					fileNameError = string.Empty;
+					await using FileStream writeStream = new(path, FileMode.Create);
+					using var readStream = file.OpenReadStream(maxFileSize);
+					var bytesRead = 0;
+					var totalRead = 0;
+					var buffer = new byte[1024 * 10];
+
+					while ((bytesRead = await readStream.ReadAsync(buffer)) != 0)
+					{
+						totalRead += bytesRead;
+
+						await writeStream.WriteAsync(buffer, 0, bytesRead);
+
+						progressPercent = Decimal.Divide(totalRead, file.Size);
+
+						StateHasChanged();
+					}
+
+					loadedFiles.Add(file);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logger.LogError("File: {Filename} Error: {Error}",
+				file.Name, ex.Message);
+			}
+		}
+
+		isLoading = false;
+	}
+
+	private async Task ShowFiles()
+	{
+		await Task.Run(() => pathFiles = GetFiles());
+	}
+
+	private List<FileInfo> GetFiles()
+	{
+		var directory = new DirectoryInfo("wwwroot/" + UrlPath + FolderName);
+
+		//pathFiles = directory.GetFiles().ToList();
+
+		//pathFiles = files.ToList();
+
+		return directory.GetFiles().ToList();
+	}
+
+	private async Task DeleteFile(string urlPath)
+	{
+		if (File.Exists(urlPath))
+		{
+			try
+			{
+				File.Delete(urlPath);
+				await ShowFiles();
+			}
+			catch (Exception ex)
+			{
+				Logger.LogError("File: {Filename} Error: {Error}",
+				urlPath, ex.Message);
+			}
+		}
+		else
+		{
+			fileNameError = "Specified file doesn't exist";
+		}
+	}
+
+	[Parameter]
+	public EventCallback<string> OnClickAddPhoto { get; set; }
+
+	private Task AddPhoto(string url)
+	{
+		return OnClickAddPhoto.InvokeAsync(url);
+	}
+}
+
+
+
+<Popup IsVisible="@IsVisible" PathFiles="@pathFiles"/>
+
+@code {
+
+	private bool IsVisible { get; set; }
+}

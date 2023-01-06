@@ -1,6 +1,9 @@
 @page "/admin/products/edit/{id:long}"
 @page "/admin/products/create"
 @inherits OwningComponentBase<IStoreRepository>
+@using System
+@using System.IO
+
 
 <style>
 	div.validation-message {
@@ -25,10 +28,15 @@
 		<ValidationMessage For="@(() => Product.MainPhoto)" />
 		<InputText class="form-control" @bind-Value="Product.MainPhoto" />
 	</div>
-	<div class="form-group">
-		@foreach (var img in @Product?.Photos?.Split(',').ToArray())
+	<div class="form-group row">
+		@foreach (var img in @Product.Photos.Split(", ").ToList())
 		{
-			<img class="img-thumbnail col-2" src=@img>
+			<div class="card col-2">
+				<img class="img-thumbnail" src=@img>
+				<p class="">@img</p>
+				<a class="btn btn-danger" @onclick="@(e => DeletePhoto(@img))">Удалить</a>
+				<a class="btn btn-warning" @onclick="@(e => AddMainPhoto(@img))">Сделать основной</a>
+			</div>
 		}
 		<label>Галерея</label>
 		<ValidationMessage For="@(() => Product.Photos)" />
@@ -65,12 +73,12 @@
 	</div>
 	<div class="form-group">
 		<label>Цена</label>
-		<ValidationMessage For="@(() => Product.Price)" />
-		@if (Product.Discount != null && Product.OldPrice != null)
+		<ValidationMessage For="@(() => Product!.Price)" />
+		@if (Product?.Discount != null && Product.OldPrice != null)
 		{
 			Product.Price = @PriceProduct((long)Product.OldPrice, (int)Product.Discount);
 		}
-		else { Product.Price = Product.Price; }
+		else { Product!.Price = Product.Price; }
 		<InputNumber class="form-control" @bind-Value="Product.Price" />
 	</div>
 	<div class="form-group">
@@ -139,6 +147,24 @@
 		<NavLink class="btn btn-secondary" href="/admin/products">Отмена</NavLink>
 	</div>
 </EditForm>
+<button @onclick="@(e => NewDirectoryImgForProduct(Convert.ToInt64(Product.ProductID)))">Создать папку</button>
+<p>@ErrorMassage</p>
+<div class="row">
+	@if (pathFiles.Count() > 0)
+	{
+		@foreach (var file in pathFiles)
+		{
+			<div class="card col-3">
+				<p>@file.FullName</p>
+				<img class="" src="@urlPath/@Product.ProductID.ToString()/@file.Name" />
+				@* <button class="btn btn-success"
+					@onclick="@(e => AddPhoto("/" + @urlPath + @Product.ProductID.ToString() + "/" + @file.Name))">Добавить</button>
+				*@
+				<p>wwwroot/@urlPath @file.Name</p>
+			</div>
+		}
+	}
+</div>
 
 @code {
 
@@ -153,7 +179,7 @@
 
 	public List<Category>? DisplayedCategories { get; set; }
 	public Category? Category { get; set; }
-	
+
 
 	protected override void OnParametersSet()
 	{
@@ -169,6 +195,7 @@
 		if (Id == 0)
 		{
 			Repository.CreateProduct(Product);
+			NewDirectoryImgForProduct(Convert.ToInt64(Product.ProductID));
 		}
 		else
 		{
@@ -184,5 +211,64 @@
 	{
 		long price;
 		return price = oldPrice - oldPrice * discount / 100;
+	}
+
+	private List<FileInfo> pathFiles = new();
+	private string urlPath = "imegs/img-products/";
+
+	private List<string> urlPhotos { get; set; } = new();
+	private string DeletePhoto(string url)
+	{
+		if (Product.Photos != string.Empty)
+		{
+			urlPhotos = Product.Photos.Split(", ").ToList();
+
+			urlPhotos.Remove(url);
+
+			return Product.Photos = String.Join(", ", urlPhotos);
+		}
+		return Product.Photos;
+	}
+
+	private string AddMainPhoto(string url)
+	{
+		Product.MainPhoto = url;
+		return Product.MainPhoto;
+	}
+}
+
+@code {
+	private string? ErrorMassage { get; set; }
+	private string? NameDirectory { get; set; }
+	private void NewDirectoryImgForProduct(long id)
+	{
+		try
+		{
+			NameDirectory = $"wwwroot/{urlPath}{id.ToString()}";
+			if (Directory.Exists(NameDirectory))
+			{
+				ErrorMassage = "Такая папка существует";
+				return;
+			}
+
+			DirectoryInfo di = Directory.CreateDirectory(NameDirectory);
+			ErrorMassage = $"Каталог был успешно создан в {NameDirectory}. {Directory.GetCreationTime(NameDirectory)}";
+
+		}
+		catch (Exception e)
+		{
+			ErrorMassage = $"The process failed: {e.ToString()}";
+		}
+	}
+}
+
+<FileUpload FolderName=@Product.ProductID.ToString() UrlPath="imegs/img-products/" OnClickAddPhoto="@AddPhotos" />
+
+@code {
+
+	private void AddPhotos(string url)
+	{
+		if (Product.Photos != string.Empty) { Product.Photos += ", " + url; }
+		else { Product.Photos += url; }
 	}
 }

@@ -1,0 +1,66 @@
+<a class="btn btn-login" @onclick="@(e => Show())">Показать попап</a>
+
+@{
+	var showClass = IsVisible ? "d-block" : "d-none";
+}
+
+<div class="toast-container p-3 @showClass" data-bs-autohide="true" data-bs-delay="5000">
+	<div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+		<div class="toast-header">
+			<strong class="me-auto">@HeaderText</strong>
+			<button type="button" class="btn-close" aria-label="Close" @onclick="@(e => Close(false))"></button>
+		</div>
+
+		<div class="toast-body">
+			@BodyText
+			@if (PathFiles.Count() > 0)
+			{
+				@foreach (var file in PathFiles)
+				{
+					<div class="card col-3">
+						<p>@file.FullName</p>
+						<img class="" src="@file" />
+					</div>
+				}
+			}
+
+		</div>
+	</div>
+</div>
+
+@code {
+	[Parameter]
+	public bool IsVisible { get; set; }
+
+	[Parameter]
+	public string? HeaderText { get; set; }
+
+	[Parameter]
+	public string? BodyText { get; set; }
+
+	[Parameter]
+	public List<FileInfo> PathFiles { get; set; } = new();
+
+	public void Show()
+	{
+		@* HeaderText = headerText;
+			BodyText = bodyText; *@
+
+		if (IsVisible == true)
+		{
+			IsVisible = false;
+		}
+		else
+		{
+			IsVisible = true;
+		}
+
+	}
+
+	private void Close(bool isVisible)
+	{
+		HeaderText = string.Empty;
+		BodyText = string.Empty;
+		IsVisible = isVisible;
+	}
+}

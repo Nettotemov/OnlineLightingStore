@@ -18,7 +18,7 @@ namespace LampStore.Pages
 
 		public AboutPage? aboutPage;
 
-		public void OnGet(long ID) //инициализация категории
+		public IActionResult OnGet(long ID) //инициализация категории
 		{
 			try
 			{
@@ -37,13 +37,14 @@ namespace LampStore.Pages
 							HeadingTwoNode = page.HeadingTwoNode,
 							ParagraphTwoNode = page.ParagraphTwoNode
 						};
+						return Page();
 					}
-
 				}
+				return StatusCode(404);
 			}
 			catch (Exception)
 			{
-
+				return StatusCode(404);
 			}
 		}
 	}
