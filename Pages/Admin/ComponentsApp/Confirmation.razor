@@ -1,0 +1,56 @@
+@if (displayConfirmation)
+{
+	<div aria-live="polite" aria-atomic="true" class="position-fixed top-50 start-50 translate-middle">
+	@{
+			var displayConfirm = displayConfirmation ? "show" : "hide";
+		}
+		<div class="toast @displayConfirm" role="alert" aria-live="assertive" aria-atomic="true">
+			<div class="toast-header">
+				<strong class="me-auto">@Title</strong>
+				<button type="button" class="btn-close" @onclick="OnCancel" aria-label="Close"></button>
+			</div>
+			@ChildContent
+			<div class="d-flex justify-content-center border-top">
+				@{
+					var addBtnClass = IsConfirm ? "btn-secondary" : "btn-warning";
+				}
+				@if (IsConfirm)
+				{
+					<button @onclick="OnConfirm" type="button" class="btn m-2 p-2 btn-danger btn-sm">@BtnOnConfirmText</button>
+				}
+				<button @onclick="OnCancel" type="button" class="btn m-2 p-2 @addBtnClass btn-sm">@BtnOnCancelText</button>
+			</div>
+		</div>
+	</div>
+}
+
+@code {
+	private bool displayConfirmation = false;
+
+	[Parameter]
+	public string Title { get; set; } = "Подтверждение действия";
+
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+
+	[Parameter]
+	public string Description { get; set; } = "Подтвердите действие";
+
+	[Parameter]
+	public string BtnOnConfirmText { get; set; } = "Удалить";
+
+	[Parameter]
+	public string BtnOnCancelText { get; set; } = "Закрыть";
+
+	[Parameter]
+	public EventCallback OnConfirm { get; set; }
+
+	[Parameter]
+	public EventCallback OnCancel { get; set; }
+
+	[Parameter]
+	public bool IsConfirm { get; set; }
+
+	public void Show() => displayConfirmation = true;
+	public void Hide() => displayConfirmation = false;
+}

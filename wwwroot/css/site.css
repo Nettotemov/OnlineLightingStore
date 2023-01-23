@@ -144,6 +144,7 @@ a {
 	height: 108px;
 	display: flex;
 	align-items: center;
+	background-color: #fff;
 }
 
 .header__wrapper {
@@ -805,11 +806,10 @@ html {
 
 .product-card-slider__wrapper .slick-track {
 	height: 75vh;
+	display: flex;
 }
 
 .slick-slider-card-img {
-	object-fit: cover;
-	width: 100%;
 	height: 100%;
 }
 
@@ -932,6 +932,10 @@ section.wrapper__everything {
 	line-height: 1.23em;
 	letter-spacing: 0em;
 	margin-bottom: 0;
+}
+
+.footer-hov:hover {
+	color: #fff;
 }
 
 .footer-text::selection {
@@ -1105,10 +1109,6 @@ section.wrapper__everything {
 .cart-chechout-name__wrapper {
 	width: 60%;
 	margin-left: 20px;
-}
-
-.product-cart-chechout__name {
-	
 }
 
 .product-cart-chechout__quantity {
@@ -1669,16 +1669,17 @@ section.wrapper__everything {
 	/* menu */
 	
 	.menu {
-		display: flex;
+		display: block;
 		position: fixed;
 		background-color: #ffffff;
-		overflow: hidden;
+		overflow: scroll;
 		top: 0;
 		bottom: 0;
 		width: 100%;
 		right: 100%;
 		transition: 1000ms;
 		z-index: 200;
+		padding-top: 75px;
 	}
 	
 	.menu__active {
@@ -1701,7 +1702,6 @@ section.wrapper__everything {
 	.menu-wrapper__items {
 		display: flex;
 		flex-direction: column;
-		margin-top: 12%;
 	}
 	
 	.menu__item {
@@ -1738,25 +1738,25 @@ section.wrapper__everything {
 	
 	.menu__h3 {
 		color: #070707;
-		font-size: 2.1em;
-		line-height: 1.7;
-		font-weight: 600;
+		font-size: 1.8em;
+		line-height: 1.8;
+		font-weight: 400;
 		border-color: transparent;
 		border-style: solid;
 	}
 	
 	.menu__contacts-soc {
 		display: flex;
-		flex-wrap: wrap;
+		flex-wrap: nowrap;
 		justify-content: space-between;
-		height: 100%;
 		align-content: center;
+		flex-direction: column;
 	}
 	
 	.menu__h4-contacts {
 		color: #070707;
-		font-size: 2em;
-		line-height: 1.5;
+		font-size: 1.55em;
+		line-height: 1.8;
 		font-weight: 400;
 		border-color: transparent;
 		border-bottom: 1px solid;
@@ -1780,9 +1780,6 @@ section.wrapper__everything {
 		color: #dc143c;
 	}
 	
-	.menu__tel-soc {
-		height: 25vh;
-	}
 	
 	/* menu */
 
@@ -1925,12 +1922,12 @@ section.wrapper__everything {
 	}
 
 	section.wrapper__everything {
-		margin-bottom: 62vh;
+		margin-bottom: 65vh;
 	}
 
 	.footer__wrapper {
 		background-color: #000000;
-		height: 62vh;
+		height: 65vh;
 		visibility: visible;
 		position: fixed;
 		bottom: 0;

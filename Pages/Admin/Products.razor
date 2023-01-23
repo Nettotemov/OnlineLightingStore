@@ -1,6 +1,20 @@
 @page "/admin/products"
 @page "/admin"
 @inherits OwningComponentBase<IStoreRepository>
+@inject IPopupNotification popupNotification
+
+<Confirmation @ref="confirmation" OnCancel="OnCancel" OnConfirm="OnConfirm" IsConfirm="true" Title="Удаление товара...">
+	<div class="toast-body">
+		Вы уверены что хотите удалить товар
+		@if (ProductToBeDelete != null)
+		{
+			<p>@ProductToBeDelete.Name ?</p>
+		}
+	</div>
+</Confirmation>
+<div class="admin-notification__wrapper">
+	<Popup ListNotifications="ListNotifications" />
+</div>
 
 <table class="table table-sm table-striped table-bordered">
 	<thead>
@@ -8,6 +22,7 @@
 			<th>ID</th>
 			<th>Изображение</th>
 			<th>Название</th>
+			<th>Артикул</th>
 			<th>Категория</th>
 			<th>Цена</th>
 			<th>Скидка %</th>
@@ -24,6 +39,7 @@
 					<td>@p.ProductID</td>
 					<td><img class="img-fluid" style="height: 80px;" src=@p.MainPhoto></td>
 					<td>@p.Name</td>
+					<td>@p.Artikul</td>
 					<td>@p.Category?.CategoryName</td>
 					<td>@p.Price.ToString("c")</td>
 					<td>@p.Discount</td>
@@ -57,11 +73,11 @@
 	public IEnumerable<Product> ProductData { get; set; } = Enumerable.Empty<Product>();
 
 	public List<Category>? DisplayedCategories { get; set; }
-	
+
 
 	protected async override Task OnInitializedAsync()
 	{
-		DisplayedCategories = Repository?.Category.Select(c => c).Distinct().ToList(); //получение категорий
+		DisplayedCategories = await Repository.Category.Select(c => c).Distinct().ToListAsync(); //получение категорий
 		await UpdateData();
 	}
 
@@ -69,13 +85,45 @@
 	{
 		ProductData = await Repository.Products.ToListAsync();
 	}
-	
-	public async Task DeleteProduct(Product p)
+
+	public void DeleteProduct(Product p)
 	{
-		Repository.DeleteProduct(p);
-		await UpdateData();
+		ProductToBeDelete = p;
+		confirmation?.Show();
 	}
 
 	public string GetDetailsUrl(long id) => $"/admin/products/details/{id}";
 	public string GetEditUrl(long id) => $"/admin/products/edit/{id}";
+
+	Confirmation? confirmation;
+	private Product? ProductToBeDelete { get; set; }
+
+	private async Task OnConfirm()
+	{
+		if (ProductToBeDelete != null)
+		{
+			Repository.DeleteProduct(ProductToBeDelete);
+			confirmation?.Hide();
+			Notification notification = new Notification(1, "Товар удалён", "Удалён товар", ProductToBeDelete!.Name);
+			popupNotification.AddItem(notification);
+			ProductToBeDelete = null;
+			await UpdateData();
+		}
+	}
+
+	private void OnCancel()
+	{
+		confirmation?.Hide();
+		Notification notification = new Notification(1, "Отмена удаления", "Отменено удаление товара", ProductToBeDelete!.Name);
+		popupNotification.AddItem(notification);
+		ProductToBeDelete = null;
+	}
+
+	private List<Notification> ListNotifications { get; set; } = new();
+
+	protected override async Task OnParametersSetAsync()
+	{
+		ListNotifications = await popupNotification.GetItems();
+		StateHasChanged();
+	}
 }

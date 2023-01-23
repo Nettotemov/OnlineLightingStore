@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using LampStore.Infrastructure;
 using LampStore.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace LampStore.Pages
 {
@@ -24,9 +25,9 @@ namespace LampStore.Pages
 			//Cart = HttpContext.Session.GetJson<Cart>("cart") ?? new Cart();
 		}
 
-		public IActionResult OnPost(long productId, string returnUrl, int quantityProducts = 1)
+		public async Task<IActionResult> OnPostAsync(long productId, string returnUrl, int quantityProducts = 1)
 		{
-			Product? product = repository.Products.FirstOrDefault(p => p.ProductID == productId);
+			Product? product = await repository.Products.FirstOrDefaultAsync(p => p.ProductID == productId);
 
 			if (product != null)
 			{

@@ -1,6 +1,16 @@
 @page "/admin/categories"
 @inherits OwningComponentBase<ICategoryRepository>
+@inject IPopupNotification popupNotification
 
+<Confirmation @ref="confirmation" OnCancel="OnCancel" OnConfirm="OnConfirm" IsConfirm="confirmationCheckOnDelete"
+	Title="Удаление категории...">
+	<div class="toast-body">
+		@confirmationText
+	</div>
+</Confirmation>
+<div class="admin-notification__wrapper">
+	<Popup ListNotifications="ListNotifications" />
+</div>
 
 <table class="table table-sm table-striped table-bordered">
 	<thead>
@@ -10,6 +20,7 @@
 			<th>Изображение</th>
 			<th>ID родительской категории</th>
 			<th>Описание категории</th>
+			<th>Количество товаров</th>
 			<th>Показывать на главной</th>
 			<td />
 		</tr>
@@ -25,6 +36,7 @@
 					<td><img class="img-fluid" style="height: 80px;" src=@c.CategoryImg></td>
 					<td>@c.ParentID</td>
 					<td>@c.Description</td>
+					<td>@Products.Where(p => p.CategoryId == c.ID).Count()</td>
 					<td>@c.DisplayHomePage</td>
 					<td class="text-center">
 						<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(c.ID ?? 0)">
@@ -51,8 +63,11 @@
 	public ICategoryRepository Repository => Service;
 	public IEnumerable<Category> CategoryData { get; set; } = Enumerable.Empty<Category>();
 
+	public List<Product> Products { get; set; } = new();
+
 	protected async override Task OnInitializedAsync()
-	{
+	{	
+		Products = await Repository.Products.Select(p => p).ToListAsync();
 		await UpdateData();
 	}
 
@@ -60,12 +75,63 @@
 	{
 		CategoryData = await Repository.Categorys.ToListAsync();
 	}
-	
-	public async Task DeleteCategory(Category category)
+
+	public void DeleteCategory(Category category)
 	{
-		Repository.DeleteCategory(category);
-		await UpdateData();
+		var CheckedProductsInCategory = Products.Where(p => p.CategoryId == category.ID).ToList();
+		if (CheckedProductsInCategory?.Count > 0)
+		{
+			confirmationCheckOnDelete = false;
+			confirmationText = $"В категории {category.CategoryName} есть товары, удаление невозможно. Перенести товары в другую категорию и повторите попытку.";
+		}
+		else
+		{
+			confirmationCheckOnDelete = true;
+			confirmationText = $"Вы уверены что хотите удалить категорию {category.CategoryName}?";
+		}
+		CategoryToBeDelete = category;
+		confirmation?.Show();
 	}
 
 	public string GetEditUrl(long id) => $"/admin/categories/edit/{id}";
+}
+
+@code {
+	Confirmation? confirmation;
+	private Category? CategoryToBeDelete { get; set; }
+	private string confirmationText = string.Empty;
+	private bool confirmationCheckOnDelete;
+
+	private async Task OnConfirm()
+	{
+		if (CategoryToBeDelete != null && confirmationCheckOnDelete)
+		{
+			Repository.DeleteCategory(CategoryToBeDelete);
+			confirmation?.Hide();
+			Notification notification = new Notification(1, "Удаление категории", "Удалена категория", CategoryToBeDelete.CategoryName);
+			popupNotification.AddItem(notification);
+			CategoryToBeDelete = null;
+			await UpdateData();
+		}
+	}
+
+	private void OnCancel()
+	{
+		Notification notification = new Notification(1, "Отмена удаления", "Отменено удаление категории", CategoryToBeDelete?.CategoryName);
+		if (!confirmationCheckOnDelete)
+		{
+			notification = new Notification(1, "Ошибка удаления категории", "Невозможно удалить категорию", CategoryToBeDelete?.CategoryName);
+		}
+		confirmation?.Hide();
+		popupNotification.AddItem(notification);
+		CategoryToBeDelete = null;
+	}
+
+	private List<Notification> ListNotifications { get; set; } = new();
+
+	protected override async Task OnParametersSetAsync()
+	{
+		ListNotifications = await popupNotification.GetItems();
+		StateHasChanged();
+	}
 }

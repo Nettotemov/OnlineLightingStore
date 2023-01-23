@@ -1,0 +1,61 @@
+<div class="btn-group" role="group">
+
+	@foreach (TabPage tabPage in Pages)
+	{
+		<button type="button" class="btn @GetButtonClass(tabPage) @AddDisabledClass(tabPage)" @onclick=@( () =>
+		ActivatePage(tabPage) )>
+			@tabPage.Text
+		</button>
+	}
+</div>
+
+<CascadingValue Value="this">
+	@ChildContent
+</CascadingValue>
+
+<Confirmation @ref="confirmation" OnCancel="OnCancel" IsConfirm="false" BtnOnCancelText="ОК" Title="Предупреждение!">
+	<div class="toast-body">
+		Для загрузки файлов в Галерею необходимо сначала создать (сохранить) товар.
+	</div>
+</Confirmation>
+
+@code {
+
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+
+	public TabPage? ActivePage { get; set; }
+	List<TabPage> Pages = new List<TabPage>();
+
+	internal void AddPage(TabPage tabPage)
+	{
+		Pages.Add(tabPage);
+		if (Pages.Count == 1)
+			ActivePage = tabPage;
+		StateHasChanged();
+	}
+
+	string GetButtonClass(TabPage page)
+	{
+		return page == ActivePage ? "btn-primary" : "btn-secondary";
+	}
+
+	string AddDisabledClass(TabPage page)
+	{
+		return page.IsActive ? "" : "btn-disabled";
+	}
+
+	Confirmation? confirmation;
+	void ActivatePage(TabPage page)
+	{
+		if (!page.IsActive)
+		{
+			confirmation!.Show();
+		}
+		else { ActivePage = page; }
+	}
+	private void OnCancel()
+	{
+		confirmation?.Hide();
+	}
+}

@@ -1,0 +1,156 @@
+@page "/admin/settings"
+@inherits OwningComponentBase<ISettingsRepository>
+
+<style>
+	div.validation-message {
+		color: rgb(220, 53, 69);
+		font-weight: 500
+	}
+</style>
+
+<table class="table table-sm table-striped table-bordered">
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Тип настройки</th>
+			<th>Название</th>
+			<th>Значение</th>
+			<th>Используется</th>
+			<td />
+		</tr>
+	</thead>
+	<tbody>
+		@if (SettingsData.Count() > 0)
+		{
+			@foreach (Settings s in SettingsData)
+			{
+				<tr>
+					<td>@s.ID</td>
+					<td>@EnumExtensions.GetDisplayName(@s.Setting)</td>
+					<td>@s.NameSettings</td>
+					<td>@s.Value</td>
+					<td>@s.IsVisible</td>
+					<td class="text-center">
+						<button class="btn btn-info btn-sm" @onclick="@(e => ChangeSetting(s))">
+							Изменить
+						</button>
+						<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteSetting(s))">
+							Удалить
+						</button>
+					</td>
+				</tr>
+			}
+		}
+		else
+		{
+			<tr>
+				<td colspan="5" class="text-center">Настройки, не найдены.</td>
+			</tr>
+		}
+	</tbody>
+</table>
+<EditForm Model="NewSetting" OnValidSubmit="CreateNewSetting">
+	<DataAnnotationsValidator />
+	@if (NewSetting.ID != 0)
+	{
+		<div class="form-group">
+			<label>ID</label>
+			<input class="form-control" disabled value="@NewSetting.ID" />
+		</div>
+	}
+	<div class="form-group">
+		<label>Тип Настройки</label>
+		<InputSelect class="form-select" @bind-Value="NewSetting.Setting">
+			@foreach (var setting in Enum.GetValues<TypeSettings>())
+			{
+				<option value="@setting">@EnumExtensions.GetDisplayName(setting)</option>
+			}
+		</InputSelect>
+	</div>
+	<div class="form-group">
+		<label>Название</label>
+		<ValidationMessage For="@(() => NewSetting.NameSettings)" />
+		<InputText class="form-control" @bind-Value="NewSetting.NameSettings" />
+	</div>
+	<div class="form-group">
+		<label>Значение</label>
+		<ValidationMessage For="@(() => NewSetting.Value)" />
+		<InputTextArea class="form-control" @bind-Value="NewSetting.Value" />
+	</div>
+	<div class="form-group">
+		<label>Используется</label>
+		<ValidationMessage For="@(() => NewSetting.IsVisible)" />
+		<InputCheckbox class="" @bind-Value="NewSetting.IsVisible" />
+	</div>
+	<div class="mt-2">
+		<button type="submit" class="btn btn-warning">Сохранить</button>
+		<a class="btn btn-secondary" @onclick="@(e => CancellationNewSetting())">Отмена</a>
+	</div>
+</EditForm>
+@* <NavLink class="btn btn-primary" href="/admin/products/create">Добавить</NavLink> *@
+
+@code {
+	public ISettingsRepository Repository => Service;
+	public IEnumerable<Settings> SettingsData { get; set; } = Enumerable.Empty<Settings>();
+	public Settings NewSetting { get; set; } = new Settings();
+	public int Id { get; set; } = 0;
+
+	public string? value;
+
+	protected async override Task OnParametersSetAsync()
+	{
+		await UpdateData();
+	}
+	public async Task UpdateData()
+	{
+		SettingsData = await Repository.Settings.ToListAsync();
+		StateHasChanged();
+		await InvokeAsync(StateHasChanged);
+	}
+
+	public async Task DeleteSetting(Settings settings)
+	{
+		Repository.DeleteSettings(settings);
+		await UpdateData();
+	}
+
+	public async Task CreateNewSetting()
+	{
+		if (Id == 0)
+		{
+			Repository.CreateSettings(NewSetting);
+			await UpdateData();
+			CancellationNewSetting();
+		}
+		else
+		{
+			Repository.SaveSettings(NewSetting);
+			await UpdateData();
+			CancellationNewSetting();
+		}
+
+	}
+
+	public void ChangeSetting(Settings settings)
+	{
+		Id = settings.ID;
+		NewSetting = Repository.Settings.FirstOrDefault(s => s.ID == Id) ?? new();
+	}
+
+	public void CancellationNewSetting()
+	{
+		if (Id == 0)
+		{
+			NewSetting.NameSettings = string.Empty;
+			NewSetting.Value = string.Empty;
+			NewSetting.IsVisible = false;
+			NewSetting = new();
+		}
+		else
+		{
+			Id = 0;
+			NewSetting = new();
+		}
+	}
+
+}

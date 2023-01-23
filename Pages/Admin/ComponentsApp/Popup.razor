@@ -1,0 +1,53 @@
+@if (ListNotifications?.Count > 0)
+{
+	@foreach (var notification in ListNotifications)
+	{
+		<div class="toast-container p-3 d-block" data-bs-autohide="true" data-bs-delay="5000">
+	<div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+		<div class="toast-header">
+			<strong class="me-auto">@notification.HeaderNotification</strong>
+			<button type="button" class="btn-close" @onclick="@(e => RemoveNotification(notification))"
+				aria-label="Close"></button>
+		</div>
+		<div class="toast-body">
+			<p class="font-monospace" style="color: #000;">@notification.BodyNotification
+				@notification.NameNotification!</p>
+		</div>
+	</div>
+</div>
+	}
+	RemoveItem();
+	<button class="btn btn-warning" @onclick="RemoveAllNotifications">Убрать все</button>
+}
+
+@code {
+	[Parameter]
+	public List<Notification> ListNotifications { get; set; } = new();
+
+	private void RemoveItem()
+	{
+		if (ListNotifications?.Count > 0)
+		{
+			foreach (var notification in ListNotifications)
+			{
+				RemoveTimerNotificationsAsync(notification);
+			}
+		}
+	}
+	private async void RemoveTimerNotificationsAsync(Notification notification)
+	{
+		await Task.Delay(7000);
+		ListNotifications.Remove(notification);
+		await InvokeAsync(StateHasChanged);
+	}
+
+	private void RemoveAllNotifications()
+	{
+		ListNotifications.Clear();
+	}
+
+	private void RemoveNotification(Notification notification)
+	{
+		ListNotifications.Remove(notification);
+	}
+}

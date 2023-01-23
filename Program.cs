@@ -1,6 +1,8 @@
 using LampStore.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using LampStore.Pages.Admin.Services.Interface;
+using LampStore.Pages.Admin.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,9 @@ builder.Services.AddScoped<IStoreRepository, EFStoreRepository>();
 builder.Services.AddScoped<ICatalogRepository, EFCatalogRepository>();
 builder.Services.AddScoped<IOrderRepository, EFOrderRepository>();
 builder.Services.AddScoped<ICategoryRepository, EFCategoryRepository>();
+builder.Services.AddScoped<ISettingsRepository, EFSettingsRepository>();
+builder.Services.AddScoped<IInfoRepository, EFInfoRepository>();
+builder.Services.AddScoped<ICooperationRepository, EFCooperationRepository>();
 builder.Services.AddDistributedMemoryCache(); //добавляем кеш в приложение
 builder.Services.AddSession(); //добавление сохранения сессии пользователя
 builder.Services.AddScoped<Cart>(sp => SessionCart.GetCart(sp)); //указывает, что один и тот же объект должен использоваться для удовлетворения связанных запросов для экземпляров Корзины
@@ -25,6 +30,8 @@ builder.Services.AddServerSideBlazor(); //создает службы, кото�
 builder.Services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlServer(builder.Configuration["ConnectionStrings:IdentityConnection"])); //подключение к БД для админа
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppIdentityDbContext>(); //добавление идентифкации для админа
 builder.Services.AddHttpClient(); //отправка файлов на сервер
+
+builder.Services.AddSingleton<IPopupNotification, PopupNotification>(); //регистриуем сервис уведомлений 
 var app = builder.Build();
 
 

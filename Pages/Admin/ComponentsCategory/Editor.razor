@@ -1,6 +1,7 @@
 @page "/admin/categories/edit/{id:long}"
 @page "/admin/categories/create"
 @inherits OwningComponentBase<ICategoryRepository>
+@inject IPopupNotification popupNotification
 
 <style>
 	div.validation-message {
@@ -10,87 +11,126 @@
 </style>
 
 <h3 class="bg-@ThemeColor text-white text-center p-1">@TitleText категорий</h3>
-<EditForm Model="Category" OnValidSubmit="SaveCategory">
-	<DataAnnotationsValidator />
-	@if (Category!.ID != 0)
-	{
-		<div class="form-group">
-			<label>ID</label>
-			<input class="form-control" disabled value="@Category.ID" />
-		</div>
-	}
-	<div class="form-group">
-		<label>Название категории</label>
-		<ValidationMessage For="@(() => Category.CategoryName)" />
-		<InputText class="form-control" @bind-Value="Category.CategoryName" />
-	</div>
-	<div class="form-group">
-		<img class="img-fluid" style="height: 250px;" src=@Category.CategoryImg>
-		<label>Изображение</label>
-		<ValidationMessage For="@(() => Category.CategoryImg)" />
-		<InputText class="form-control" @bind-Value="Category.CategoryImg" />
-	</div>
-	<div class="form-group">
-		<label>ID родительской категории</label>
-		<ValidationMessage For="@(() => Category.ParentID)" />
-		<InputNumber class="form-control" @bind-Value="Category.ParentID" />
-	</div>
-	<div class="form-group">
-		<label>Описание категории</label>
-		<ValidationMessage For="@(() => Category.Description)" />
-		<InputTextArea class="form-control" @bind-Value="Category.Description" />
-	</div>
-	<div class="form-group">
-		<label>Заголовок 2го блока</label>
-		<InputText class="form-control" @bind-Value="Category.HeadingTwo" />
-	</div>
-	<div class="form-group">
-		<img class="img-fluid" style="height: 250px;" src=@Category.ImgTwoUrl>
-		<label>Картинка для 2го блока</label>
-		<InputText class="form-control" @bind-Value="Category.ImgTwoUrl" />
-	</div>
-	<div class="form-group">
-		<label>Описнаие для 2го блока</label>
-		<InputTextArea class="form-control" @bind-Value="Category.DescriptionTwo" />
-	</div>
-	<div class="form-group">
-		<label>Заголовок 3го блока</label>
-		<InputText class="form-control" @bind-Value="Category.HeadingThree" />
-	</div>
-	<div class="form-group">
-		<label>Картинка для 3го блока</label>
-		<img class="img-fluid" style="height: 250px;" src=@Category.ImgThreeUrl>
-		<InputText class="form-control" @bind-Value="Category.ImgThreeUrl" />
-	</div>
-	<div class="form-group">
-		<label>Описнаие для 3го блока</label>
-		<InputTextArea class="form-control" @bind-Value="Category.DescriptionThree" />
-	</div>
-	<div class="form-group">
-		@if ( Category?.Slider != string.Empty )
-		{
-			var slider = Category?.Slider?.Split(',').ToList();
-			@foreach (var sl in slider ?? new List<string>())
+<TabControl>
+	<TabPage Text="Категория" IsActive="true">
+		<h1 class="">Свойства</h1>
+		<EditForm Model="Category" OnValidSubmit="SaveCategory">
+			<DataAnnotationsValidator />
+			@if (Category.ID != 0)
 			{
-				<img class="img-thumbnail col-2" src=@sl>
+				<div class="form-group">
+					<label>ID</label>
+					<input class="form-control" disabled value="@Category.ID" />
+				</div>
 			}
-		}
-		<label>Слайдер картинок</label>
-		<InputTextArea class="form-control" @bind-Value="Category!.Slider" />
-	</div>
-	<div class="form-group">
-		<label>Показывать слайдер</label>
-		<InputCheckbox class="" @bind-Value="Category.DisplaySlider" />
-	</div>
-	<div class="form-group">
-		<label>Показывать на главной</label>
-		<InputCheckbox class="" @bind-Value="Category.DisplayHomePage" />
-	</div>
-	<div class="mt-2">
-		<button type="submit" class="btn btn-@ThemeColor">Сохранить</button>
-		<NavLink class="btn btn-secondary" href="/admin/categories">Отмена</NavLink>
-	</div>
-</EditForm>
+			<div class="form-group">
+				<label>Название категории</label>
+				<ValidationMessage For="@(() => Category.CategoryName)" />
+				<InputText class="form-control" @bind-Value="Category.CategoryName" />
+			</div>
+			<div class="form-group">
+				<img class="img-fluid" style="height: 250px;" src=@Category.CategoryImg>
+				<label>Изображение</label>
+			</div>
+			<div class="form-group">
+				<label>ID родительской категории</label>
+				<ValidationMessage For="@(() => Category.ParentID)" />
+				<InputNumber class="form-control" @bind-Value="Category.ParentID" />
+			</div>
+			<div class="form-group">
+				<label>Описание категории</label>
+				<ValidationMessage For="@(() => Category.Description)" />
+				<InputTextArea class="form-control" @bind-Value="Category.Description" />
+			</div>
+			<div class="form-group">
+				<label>Заголовок 2го блока</label>
+				<InputText class="form-control" @bind-Value="Category.HeadingTwo" />
+			</div>
+			<div class="form-group">
+				<img class="img-fluid" style="height: 250px;" src=@Category.ImgTwoUrl>
+				<label>Картинка для 2го блока</label>
+				<InputText class="form-control" @bind-Value="Category.ImgTwoUrl" />
+			</div>
+			<div class="form-group">
+				<label>Описнаие для 2го блока</label>
+				<InputTextArea class="form-control" @bind-Value="Category.DescriptionTwo" />
+			</div>
+			<div class="form-group">
+				<label>Заголовок 3го блока</label>
+				<InputText class="form-control" @bind-Value="Category.HeadingThree" />
+			</div>
+			<div class="form-group">
+				<label>Картинка для 3го блока</label>
+				<img class="img-fluid" style="height: 250px;" src=@Category.ImgThreeUrl>
+				<InputText class="form-control" @bind-Value="Category.ImgThreeUrl" />
+			</div>
+			<div class="form-group">
+				<label>Описнаие для 3го блока</label>
+				<InputTextArea class="form-control" @bind-Value="Category.DescriptionThree" />
+			</div>
+			@* <div class="form-group">
+				@if (Category?.Slider != string.Empty)
+				{
+				var slider = Category?.Slider?.Split(',').ToList();
+				@foreach (var sl in slider ?? new List<string>())
+				{
+				<img class="img-thumbnail col-2" src=@sl>
+				}
+				}
+				<label>Слайдер картинок</label>
+				<InputTextArea class="form-control" @bind-Value="Category!.Slider" />
+				</div> *@
+			<div class="form-group">
+				<label>Показывать слайдер</label>
+				<InputCheckbox class="" @bind-Value="Category.DisplaySlider" />
+			</div>
+			<div class="form-group">
+				<label>Показывать на главной</label>
+				<InputCheckbox class="" @bind-Value="Category.DisplayHomePage" />
+			</div>
+			<div class="mt-2">
+				<button type="submit" class="btn btn-@ThemeColor">Сохранить</button>
+				<NavLink class="btn btn-secondary" href="/admin/categories">Отмена</NavLink>
+			</div>
+		</EditForm>
+	</TabPage>
+	<TabPage Text="Галерея" IsActive=@TabIsActive>
+		<EditForm Model="Category" OnValidSubmit="SaveCategory">
+			<DataAnnotationsValidator />
+			<div class="form-group">
+				<img class="img-fluid" style="height: 250px;" src="Category.CategoryImg">
+				<label>Изображение</label>
+				<ValidationMessage For="@(() => Category.CategoryImg)" />
+				<InputText class="form-control" @bind-Value="Category.CategoryImg" />
+			</div>
+			@* <div class="form-group row">
+				@if (Category?.Slider != string.Empty)
+				{
+				var slider = Category?.Slider?.Split(',').ToList();
+				@foreach (var img in slider ?? new List<string>())
+				{
+				<div class="card col-2">
+				<img class="img-thumbnail" src=@img>
+				<p class="">@img</p>
+				<a class="btn btn-danger" @onclick="@(e => DeletePhoto(@img))">Удалить</a>
+				<a class="btn btn-warning" @onclick="@(e => AddMainPhoto(@img))">Сделать основной</a>
+				</div>
+				}
+				}
+				<label>Галерея</label>
+				<InputTextArea class="form-control" @bind-Value="Category?.Slider" />
+				</div> *@
+			<div class="mt-2">
+				<button type="submit" class="btn btn-@ThemeColor">Сохранить</button>
+				<NavLink class="btn btn-secondary" href="/admin/categories">Отмена</NavLink>
+			</div>
+		</EditForm>
+		<FileUpload FolderName=@Category.ID.ToString() UrlPath="imegs/img-category/" OnClickAddPhoto="@AddPhotos" />
+	</TabPage>
+	<TabPage Text="Tab 3" IsActive="true">
+		<h1>The third tab</h1>
+	</TabPage>
+</TabControl>
 
 @code {
 
@@ -102,29 +142,97 @@
 	[Parameter]
 	public long Id { get; set; } = 0;
 	public Category Category { get; set; } = new Category();
-	
+	public bool TabIsActive { get; set; } = false;
 
 	protected override void OnParametersSet()
 	{
 		if (Id != 0)
 		{
 			Category = Repository.Categorys.FirstOrDefault(с => с.ID == Id) ?? new();
+			TabIsActive = true;
 		}
 	}
 
+	public string GetEditUrl(long id) => $"/admin/categories/edit/{id}";
 	public void SaveCategory()
 	{
 		if (Id == 0)
 		{
 			Repository.CreateCategory(Category);
+			NewDirectoryImgForCategory(Convert.ToInt64(Category.ID));
+			if (Category.ID != 0)
+			{
+				TabIsActive = true;
+				GetEditUrl(Convert.ToInt64(Category.ID));
+				NavManager?.NavigateTo(GetEditUrl(Convert.ToInt64(Category.ID)));
+				Notification notification = new Notification(1, "Категория сохранена", "Добавлена категория", Category.CategoryName);
+				popupNotification.AddItem(notification);
+				StateHasChanged();
+			}
 		}
 		else
 		{
 			Repository.SaveCategory(Category);
+			Notification notification = new Notification(1, "Изменения сохранены", "Запись отредактирована", Id.ToString());
+			popupNotification.AddItem(notification);
+			NavManager?.NavigateTo("/admin/categories");
 		}
-		NavManager?.NavigateTo("/admin/categories");
 	}
 
 	public string ThemeColor => Id == 0 ? "primary" : "warning";
 	public string TitleText => Id == 0 ? "Создание" : "Редактирование";
+}
+
+@code {
+	private string AddMainPhoto(string url)
+	{
+		Category.CategoryImg = url;
+		return Category.CategoryImg;
+	}
+
+	private List<string> urlPhotos { get; set; } = new();
+	private string DeletePhoto(string url)
+	{
+		if (Category?.Slider != string.Empty)
+		{
+			urlPhotos = Category.Slider.Split(", ").ToList();
+
+			urlPhotos.Remove(url);
+
+			return Category.Slider = String.Join(", ", urlPhotos);
+		}
+		return Category.Slider;
+	}
+
+	private void AddPhotos(string url)
+	{
+		if (Category.Slider != string.Empty) { Category.Slider += ", " + url; }
+		else { Category.Slider += url; }
+	}
+}
+
+@code {
+	private string? ErrorMassage { get; set; }
+	private string? NameDirectory { get; set; }
+	private string urlPath = "imegs/img-category/";
+	private void NewDirectoryImgForCategory(long id)
+	{
+		try
+		{
+			NameDirectory = $"wwwroot/{urlPath}{id.ToString()}";
+			if (Directory.Exists(NameDirectory))
+			{
+				ErrorMassage = "Такая папка существует";
+				return;
+			}
+
+			DirectoryInfo di = Directory.CreateDirectory(NameDirectory);
+			ErrorMassage = $"Каталог был успешно создан в {NameDirectory}. {Directory.GetCreationTime(NameDirectory)}";
+
+		}
+		catch (Exception e)
+		{
+			ErrorMassage = $"The process failed: {e.ToString()}";
+		}
+	}
 }

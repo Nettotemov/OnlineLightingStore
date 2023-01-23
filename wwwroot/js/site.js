@@ -107,23 +107,28 @@ $(document).on("click", ".pagination-btn", function (ev) {
 	$('#spinner-border').show();
 	let path = ev.target.baseURI.split("?"); // забираем путь
 	let page = ev.target.value;
+	console.log(ev);
 	var token = GetAntiForgeryToken();
 	let prodview = document.getElementById('prod-view');
 	if (typeof page !== 'undefined') {
 		$.ajax({
 			type: 'GET',
-			url: '/Catalog/' + page + "?handler=Products",
+			url: '/catalog/' + page + "?handler=Products",
 			data: path[1], // забираем страницу, которую нужно отобразить
 			dataType: 'json',
 			success: function (pages) {
-				let getUrl = '/Catalog/' + page + "?" + path[1];
+				let getUrl = '/catalog/' + page + "?" + path[1];
 				let pagingJson = JSON.parse(pages.pagingInfoJson)
 				let paging = document.getElementById('pagingbuttons');
 				$('#pagingbuttons').empty();
-
 				pagingButtons = document.createElement("li");
 				pagingButtons.classList.add("page-item");
-				pagingButtons.innerHTML = `<button form="catalogForm" class="pagination-btn page-link" type="submit" value="${pagingJson.CurrentPage - 1}" formaction="/${pagingJson.CurrentPage - 1}">Назад</button>`
+				if (pagingJson.CurrentPage <= 1) {
+					pagingButtons.innerHTML = `<button form="catalogForm" class="pagination-btn page-link" type="submit" value="1" formaction="/1">Назад</button>`
+				}
+				else {
+					pagingButtons.innerHTML = `<button form="catalogForm" class="pagination-btn page-link" type="submit" value="${pagingJson.CurrentPage - 1}" formaction="/${pagingJson.CurrentPage - 1}">Назад</button>`
+				}
 				paging.appendChild(pagingButtons);
 				if (pagingJson.CurrentPage <= 1) {
 					pagingButtons.classList.add("disabled");
@@ -166,7 +171,7 @@ $(document).on("click", ".pagination-btn", function (ev) {
 						let oldPrice = productJson[i].OldPrice;
 						postWrp = document.createElement("div");
 						postWrp.classList.add("search-card__wrapper");
-						postWrp.innerHTML = `<a class="search-card__info" href="/Catalog/${productJson[i].Category.CategoryName}/${productJson[i].Name}/${productJson[i].ProductID}">
+						postWrp.innerHTML = `<a class="search-card__info" href="/catalog/${productJson[i].Category.CategoryName}/${productJson[i].Name}/${productJson[i].ProductID}">
 							<div id="img-container">
     							<div class="search-card__image-wrapper">
     								<img class="search-card__image" src="${productJson[i].MainPhoto}">
@@ -236,7 +241,7 @@ $('.catalogForm-sub').on('change click', '.autocomplete__results-item, .form__cl
 	}
 	createURL();
 	let path = ev.target.baseURI.split("?"); // забираем путь
-	let getUrl = '/Catalog/' + 1 + "?" + path[1];
+	let getUrl = '/catalog/' + 1 + "?" + path[1];
 	let url = getUrl + "&handler=Products";
 	var token = GetAntiForgeryToken();
 	let prodview = document.getElementById('prod-view');
@@ -251,7 +256,12 @@ $('.catalogForm-sub').on('change click', '.autocomplete__results-item, .form__cl
 
 			pagingButtons = document.createElement("li");
 			pagingButtons.classList.add("page-item");
-			pagingButtons.innerHTML = `<button form="catalogForm" class="pagination-btn page-link" type="submit" value="${pagingJson.CurrentPage - 1}" formaction="/${pagingJson.CurrentPage - 1}">Назад</button>`
+			if (pagingJson.CurrentPage <= 1) {
+				pagingButtons.innerHTML = `<button form="catalogForm" class="pagination-btn page-link" type="submit" value="1" formaction="/1">Назад</button>`
+			}
+			else {
+				pagingButtons.innerHTML = `<button form="catalogForm" class="pagination-btn page-link" type="submit" value="${pagingJson.CurrentPage - 1}" formaction="/${pagingJson.CurrentPage - 1}">Назад</button>`
+			}
 			paging.appendChild(pagingButtons);
 			if (pagingJson.CurrentPage <= 1) {
 				pagingButtons.classList.add("disabled");
@@ -296,7 +306,7 @@ $('.catalogForm-sub').on('change click', '.autocomplete__results-item, .form__cl
 					let oldPrice = productJson[i].OldPrice;
 					postWrp = document.createElement("div");
 					postWrp.classList.add("search-card__wrapper");
-					postWrp.innerHTML = `<a class="search-card__info" href="/Catalog/${productJson[i].Category.CategoryName}/${productJson[i].Name}/${productJson[i].ProductID}">
+					postWrp.innerHTML = `<a class="search-card__info" href="/catalog/${productJson[i].Category.CategoryName}/${productJson[i].Name}/${productJson[i].ProductID}">
 						<div id="img-container">
     						<div class="search-card__image-wrapper">
     							<img class="search-card__image" src="${productJson[i].MainPhoto}">
@@ -325,7 +335,7 @@ $('.catalogForm-sub').on('change click', '.autocomplete__results-item, .form__cl
 
 $('.searchByName').on('input', function (ev) {
 	let searchName = document.querySelector(".searchByName").value
-	let getUrl = '/Catalog/?'// забираем путь
+	let getUrl = '/catalog/?'// забираем путь
 	let url = getUrl + "handler=AllProducts";
 	let autocompleteResults = document.getElementById('autocomplete__results');
 	let autocomplete;
@@ -340,8 +350,12 @@ $('.searchByName').on('input', function (ev) {
 				let elementIs = true;
 				for (let i = 0; i < productJson.length; i++) {
 					let productName = productJson[i].Name.toUpperCase();
+					let productArtikul = productJson[i].Artikul.toUpperCase();
 					if (productName.startsWith(searchName.toUpperCase())) {
 						namesArr.push(productName);
+					}
+					if (productArtikul.startsWith(searchName.toUpperCase())) {
+						namesArr.push(productArtikul);
 					}
 				}
 				if (searchName.length > 0) {
@@ -407,6 +421,20 @@ $(function () {
 		}
 		else {
 			header.removeClass("scrolled");
+		}
+	});
+});
+
+jQuery(document).ready(function () {
+	let check;
+	$('#menu-checkbox').on('click', function () {
+		if (check == false) {
+			$('body').css('overflow', '');
+			check = true;
+		}
+		else {
+			$('body').css('overflow', 'hidden');
+			check = false;
 		}
 	});
 });

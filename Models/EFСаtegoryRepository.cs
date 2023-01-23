@@ -6,6 +6,7 @@ namespace LampStore.Models
 
 		public EFCategoryRepository(StoreDbContext ctx) => context = ctx;
 
+		public IQueryable<Product> Products => context.Products;
 		public IQueryable<Category> Categorys => context.Categorys;
 
 		public void CreateCategory(Category category)

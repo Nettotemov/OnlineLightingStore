@@ -13,5 +13,11 @@ namespace LampStore.Models
 		public DbSet<Order> Orders => Set<Order>();
 
 		public DbSet<AboutPage> AboutPages => Set<AboutPage>();
+
+		public DbSet<Info> InfoPages => Set<Info>();
+
+		public DbSet<Cooperation> CooperationPages => Set<Cooperation>();
+
+		public DbSet<Settings> Settings => Set<Settings>();
 	}
 }

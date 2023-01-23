@@ -10,83 +10,11 @@
 	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 	<link rel="stylesheet" href="~/LampStore.styles.css" asp-append-version="true" />
 	<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
-	<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+	<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
 </head>
 
 <body>
-	<header class="header">
-		<div class="container">
-			<div class="header__wrapper">
-				<div class="burger">
-					<div class="burger-line"></div>
-					<div class="burger-line burger-line-center"></div>
-					<div class="burger-line"></div>
-				</div>
-				@Html.AntiForgeryToken()
-				<a class="logo" asp-area="" asp-page="/Index">Lights 4 Apart</a>
-				<nav id="navWrapper" class="nav__wrapper">
-					<ul class="nav">
-						<li class="nav-item">
-							<a class="nav-link a-btn__header" asp-area="" asp-page="/Index">Home</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link a-btn__header" asp-area="" asp-page="/Privacy">Privacy</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link a-btn__header" href="/About/1">Компания</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link a-btn__header" href="/Catalog/1?sortOrder=0">Каталог</a>
-						</li>
-					</ul>
-					@* <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-						data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false"
-						aria-label="Toggle navigation">
-						<span class="navbar-toggler-icon"></span>
-						</button> *@
-					<div class="cart__wrapper">
-						<vc:cart-summary /> @* корзина *@
-					</div>
-				</nav>
-			</div>
-		</div>
-	</header>
-	<div class="menu">
-		<div class="container">
-			<div class="menu__wrapper">
-				@* <h2 class="menu__h2">LIGHTS 4 APART</h2> *@
-				<div class="menu-wrapper__items">
-					<a href="/Catalog/1?sortOrder=0" class="menu__h3">Каталог</a>
-					<a href="/" class="menu__a">Test</a>
-					<a href="/" class="menu__a">Test</a>
-				</div>
-				<div class="menu-wrapper__items">
-					<a href="/About/1" class="menu__h3">О нас</a>
-					<a href="/" class="menu__a">Test</a>
-					<a href="/" class="menu__a">Test</a>
-					<a href="/" class="menu__a">Test</a>
-				</div>
-				<div class="menu__tel-soc">
-					<ul class="menu__contacts-soc">
-						<li class="menu__item-contact">
-							<a href="tel:+7 (985) 752-58-20" title="Telephone:Pigo" class="menu__h4-contacts">+7 (999)
-								999-99-99</a>
-						</li>
-						<li class="menu__item-contact">
-							<a href="mailto:info@divan-pigo.ru" title="info@divan-pigo.ru"
-								class="menu__h4-contacts">info@lights4apart.ru</a>
-						</li>
-						<li class="menu__item-soc">
-							<a href="" title="Telegram:Pigo" class="menu__h4-soc">Telegram</a>
-						</li>
-						<li class="menu__item-soc">
-							<a href="" title="WhatsApp:" class="menu__h4-soc">WhatsApp</a>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-	</div>
+	<vc:header-summary />
 
 	<section class="wrapper__everything mt-per-5">
 		<div class="container">
@@ -96,42 +24,7 @@
 		</div>
 	</section>
 
-	<footer class="footer__wrapper">
-		<div class="container">
-			<hr class="footer-line__wrapper">
-			<div class="footer-box">
-				@* &copy; 2022 - Lights 4 Apart - <a asp-area="" asp-page="/Privacy">Privacy</a> *@
-				<div class="footer-about__wrapper">
-					<h3 class="footer-caption">About Us</h3>
-					<p class="footer-text">Lights 4 Apart is a creative company founded on three fundamental disciplines: design, technology and strategy. With this setup, alongside our forward-thinking team and creative collaborators, we look to challenge the expected aesthetic conventions of industry sectors. Harnessing our of leading expertise to best shape the future and culture we want to see, we spearhead each project with design, technology and strategy in tandem.</p>
-				</div>
-				<div class="footer-contact__wrapper">
-					<h3 class="footer-caption">Contacts</h3>
-					<p class="footer-text">Email:</p>
-					<a href="mailto:@Contacts.Email" class="footer-text footer-hov">@Contacts.Email</a>
-					<p class="footer-text">Phone:</p>
-					<a href="tel:@Contacts.PhoneNumber" class="footer-text footer-hov">@Contacts.PhoneNumber</a>
-					<br>
-					<p class="footer-text">Address:</p>
-					<p class="footer-text">@Contacts.Address</p>
-				</div>
-				<div class="footer-social__wrapper">
-					<h3 class="footer-caption">Social:</h3>
-					<a href="@Contacts.Instagram" class="footer-text footer-hov">Instagram</a>
-					<a href="@Contacts.Telegram" class="footer-text footer-hov">Telegram</a>
-					<a href="@Contacts.WhatsApp" class="footer-text footer-hov">WhatsApp</a>
-				</div>
-				<div class="footer-corp__wrapper">
-					<h3 class="footer-caption">Project Developed:</h3>
-					<a href="mailto:@Contacts.Email" class="footer-text footer-hov">@Contacts.Email</a>
-					<a href="@Contacts.Telegram" class="footer-text footer-hov">Telegram</a>
-				</div>
-				<div class="footer-logo__wrapper">
-					<p class="footer-logo">LIGHTS 4 APART</p>
-				</div>
-			</div>
-		</div>
-	</footer>
+	<vc:footer-summary />
 
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

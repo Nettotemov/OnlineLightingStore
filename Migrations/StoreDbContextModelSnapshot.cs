@@ -148,6 +148,68 @@ namespace LampStore.Migrations
                     b.ToTable("Categorys");
                 });
 
+            modelBuilder.Entity("LampStore.Models.Cooperation", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+
+                    b.Property<string>("CategoryImg")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionTwo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HeadingTwo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImgTwoUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("NameCooperation")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("CooperationPages");
+                });
+
+            modelBuilder.Entity("LampStore.Models.Info", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameInfo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("InfoPages");
+                });
+
             modelBuilder.Entity("LampStore.Models.Order", b =>
                 {
                     b.Property<int>("OrderID")
@@ -212,6 +274,10 @@ namespace LampStore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long?>("ProductID"), 1L, 1);
 
+                    b.Property<string>("Artikul")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("Availability")
                         .HasColumnType("bit");
 
@@ -264,10 +330,6 @@ namespace LampStore.Migrations
                     b.Property<long?>("OldPrice")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("ParentCategoryId")
-                        .IsRequired()
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Photos")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -296,6 +358,33 @@ namespace LampStore.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("LampStore.Models.Settings", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("NameSettings")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte>("Setting")
+                        .HasColumnType("tinyint");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Settings");
                 });
 
             modelBuilder.Entity("LampStore.Models.CartLine", b =>

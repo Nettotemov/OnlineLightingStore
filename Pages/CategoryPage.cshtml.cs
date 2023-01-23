@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using LampStore.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace LampStore.Pages
 {
@@ -22,14 +23,15 @@ namespace LampStore.Pages
 		public List<Product> DisplayedProducts { get; private set; } = new();
 		public List<string> DisplayedTypes { get; private set; } = new();
 
-		public IActionResult OnGet(long categoryID) //инициализация категории
+		public async Task<IActionResult> OnGetAsync(long categoryID) //инициализация категории
 		{
 			try
 			{
-				DisplayedProducts = repository.Products.Where(p => p.Category!.ID == categoryID).ToList();
-				DisplayedTypes = repository.Products.Select(p => p.Type).ToList();
+				DisplayedProducts = await repository.Products.Where(p => p.Category!.ID == categoryID).ToListAsync();
+				DisplayedTypes = await repository.Products.Select(p => p.Type).ToListAsync();
+				List<Category> listCategories = await repository.Categorys.Select(c => c).OrderBy(c => c.ID).ToListAsync();
 
-				foreach (var category in repository.Categorys)
+				foreach (var category in listCategories)
 				{
 					if (category.ID == categoryID)
 					{

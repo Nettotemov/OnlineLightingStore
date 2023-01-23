@@ -1,0 +1,56 @@
+@using LampStore.Services
+@model System.Collections.Generic.List<Settings>
+
+<footer class="footer__wrapper">
+	<div class="container">
+		<hr class="footer-line__wrapper">
+		<div class="footer-box">
+			@* &copy; 2022 - Lights 4 Apart - <a asp-area="" asp-page="/Privacy">Privacy</a> *@
+			<div class="footer-about__wrapper">
+				<h3 class="footer-caption">About Us</h3>
+				@foreach (var text in Model.Where(s => s.Setting == TypeSettings.TextFooter && s.IsVisible ==
+						true).ToList())
+				{
+					<p class="footer-text">@text.Value</p>
+				}
+			</div>
+			<div class="footer-contact__wrapper">
+				<h3 class="footer-caption">Contacts</h3>
+				<p class="footer-text">Email:</p>
+				@foreach (var email in Model.Where(s => s.Setting == TypeSettings.Email && s.IsVisible ==
+						true).ToList())
+				{
+					<a href="mailto:@email.Value" class="footer-text footer-hov">@email.Value</a>
+				}
+				<p class="footer-text">Phone:</p>
+				@foreach (var phone in Model.Where(s => s.Setting == TypeSettings.PhoneNumber && s.IsVisible ==
+						true).ToList())
+				{
+					<a href="tel:@phone.Value" class="footer-text footer-hov">@phone.Value</a>
+				}
+				<p class="footer-text">Address:</p>
+				@foreach (var address in Model.Where(s => s.Setting == TypeSettings.Address && s.IsVisible ==
+						true).ToList())
+				{
+					<p class="footer-text">@address.Value</p>
+				}
+			</div>
+			<div class="footer-social__wrapper">
+				<h3 class="footer-caption">Social:</h3>
+				@foreach (var social in Model.Where(s => s.Setting == TypeSettings.Socials && s.IsVisible ==
+						true).ToList())
+				{
+					<a href="@social.Value" class="footer-text footer-hov">@social.NameSettings</a>
+				}
+			</div>
+			<div class="footer-corp__wrapper">
+				<h3 class="footer-caption">Project Developed:</h3>
+				<a href="mailto:eramakovbox@gmail.com" class="footer-text footer-hov">eramakovbox@gmail.com</a>
+				<a href="https://t.me/Ab_Konstantin" class="footer-text footer-hov">Telegram</a>
+			</div>
+			<div class="footer-logo__wrapper">
+				<p class="footer-logo">LIGHTS 4 APART</p>
+			</div>
+		</div>
+	</div>
+</footer>

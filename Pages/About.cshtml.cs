@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using LampStore.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace LampStore.Pages
 {
@@ -18,11 +19,12 @@ namespace LampStore.Pages
 
 		public AboutPage? aboutPage;
 
-		public IActionResult OnGet(long ID) //инициализация категории
+		public async Task<IActionResult> OnGetAsync(long ID) //инициализация категории
 		{
 			try
 			{
-				foreach (var page in repository.AboutPages)
+				List<AboutPage> aboutPageList = await repository.AboutPages.Select(p => p).OrderBy(p => p.ID).ToListAsync();
+				foreach (var page in aboutPageList)
 				{
 					if (page.ID == ID)
 					{

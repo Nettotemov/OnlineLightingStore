@@ -1,9 +1,7 @@
 @page "/admin/products/edit/{id:long}"
 @page "/admin/products/create"
 @inherits OwningComponentBase<IStoreRepository>
-@using System
-@using System.IO
-
+@inject IPopupNotification popupNotification
 
 <style>
 	div.validation-message {
@@ -13,158 +11,165 @@
 </style>
 
 <h3 class="bg-@ThemeColor text-white text-center p-1">@TitleText a Product</h3>
-<EditForm Model="Product" OnValidSubmit="SaveProduct">
-	<DataAnnotationsValidator />
-	@if (Product.ProductID != 0)
-	{
-		<div class="form-group">
-			<label>ID</label>
-			<input class="form-control" disabled value="@Product.ProductID" />
-		</div>
-	}
-	<div class="form-group">
-		<img class="img-fluid" style="height: 250px;" src=@Product.MainPhoto>
-		<label>Изображение</label>
-		<ValidationMessage For="@(() => Product.MainPhoto)" />
-		<InputText class="form-control" @bind-Value="Product.MainPhoto" />
-	</div>
-	<div class="form-group row">
-		@foreach (var img in @Product.Photos.Split(", ").ToList())
-		{
-			<div class="card col-2">
-				<img class="img-thumbnail" src=@img>
-				<p class="">@img</p>
-				<a class="btn btn-danger" @onclick="@(e => DeletePhoto(@img))">Удалить</a>
-				<a class="btn btn-warning" @onclick="@(e => AddMainPhoto(@img))">Сделать основной</a>
+<TabControl>
+	<TabPage Text="Товар" IsActive="true">
+		<h1 class="">Свойства</h1>
+		<EditForm Model="Product" OnValidSubmit="SaveProduct">
+			<DataAnnotationsValidator />
+			@if (Product.ProductID != 0)
+			{
+				<div class="form-group">
+					<label>ID</label>
+					<input class="form-control" disabled value="@Product.ProductID" />
+				</div>
+			}
+			<div class="form-group">
+				<img class="img-fluid" style="height: 250px;" src=@Product.MainPhoto>
+				<label>Изображение</label>
 			</div>
-		}
-		<label>Галерея</label>
-		<ValidationMessage For="@(() => Product.Photos)" />
-		<InputTextArea class="form-control" @bind-Value="Product.Photos" />
-	</div>
-	<div class="form-group">
-		<label>Название</label>
-		<ValidationMessage For="@(() => Product.Name)" />
-		<InputText class="form-control" @bind-Value="Product.Name" />
-	</div>
-	<div class="form-group">
-		<label>Описание</label>
-		<ValidationMessage For="@(() => Product.Description)" />
-		<InputTextArea class="form-control" @bind-Value="Product.Description" />
-	</div>
-	<div class="form-group">
-		<label>Короткое описание</label>
-		<ValidationMessage For="@(() => Product.MinDescription)" />
-		<InputTextArea class="form-control" @bind-Value="Product.MinDescription" />
-	</div>
-	<div class="form-group">
-		<label>ID Категории</label>
-		<ValidationMessage For="@(() => Product.CategoryId)" />
-		<InputNumber class="form-control" @bind-Value="Product.CategoryId" />
-	</div>
-	<div class="form-group">
-		<label>ID Родительской категории</label>
-		<ValidationMessage For="@(() => Product.ParentCategoryId)" />
-		<InputNumber class="form-control" @bind-Value="Product.ParentCategoryId" />
-	</div>
-	<div class="form-group">
-		<label>Название Категории</label>
-		<label>@Product?.Category?.CategoryName</label>
-	</div>
-	<div class="form-group">
-		<label>Цена</label>
-		<ValidationMessage For="@(() => Product!.Price)" />
-		@if (Product?.Discount != null && Product.OldPrice != null)
-		{
-			Product.Price = @PriceProduct((long)Product.OldPrice, (int)Product.Discount);
-		}
-		else { Product!.Price = Product.Price; }
-		<InputNumber class="form-control" @bind-Value="Product.Price" />
-	</div>
-	<div class="form-group">
-		<label>Скидка %</label>
-		<InputNumber class="form-control" @bind-Value="Product.Discount" />
-	</div>
-	<div class="form-group">
-		<label>Старая цена</label>
-		<InputNumber class="form-control" @bind-Value="Product.OldPrice" />
-	</div>
-	<div class="form-group">
-		<label>Тип</label>
-		<ValidationMessage For="@(() => Product.Type)" />
-		<InputText class="form-control" @bind-Value="Product.Type" />
-	</div>
-	<div class="form-group">
-		<label>Теги</label>
-		<ValidationMessage For="@(() => Product.Tags)" />
-		<InputText class="form-control" @bind-Value="Product.Tags" />
-	</div>
-	<div class="form-group">
-		<label>Размер</label>
-		<ValidationMessage For="@(() => Product.Size)" />
-		<InputText class="form-control" @bind-Value="Product.Size" />
-	</div>
-	<div class="form-group">
-		<label>Размер базы</label>
-		<InputText class="form-control" @bind-Value="Product.BaseSize" />
-	</div>
-	<div class="form-group">
-		<label>Источник света</label>
-		<ValidationMessage For="@(() => Product.LightSource)" />
-		<InputText class="form-control" @bind-Value="Product.LightSource" />
-	</div>
-	<div class="form-group">
-		<label>Длина шнура</label>
-		<InputNumber class="form-control" @bind-Value="Product.CordLength" />
-	</div>
-	<div class="form-group">
-		<label>Мощность</label>
-		<ValidationMessage For="@(() => Product.PowerW)" />
-		<InputText class="form-control" @bind-Value="Product.PowerW" />
-	</div>
-	<div class="form-group">
-		<label>Цвет</label>
-		<ValidationMessage For="@(() => Product.Color)" />
-		<InputText class="form-control" @bind-Value="Product.Color" />
-	</div>
-	<div class="form-group">
-		<label>Материал</label>
-		<ValidationMessage For="@(() => Product.Material)" />
-		<InputText class="form-control" @bind-Value="Product.Material" />
-	</div>
-	<div class="form-group">
-		<label>Цветовая температура</label>
-		<ValidationMessage For="@(() => Product.Kelvins)" />
-		<InputText class="form-control" @bind-Value="Product.Kelvins" />
-	</div>
-	<div class="form-group">
-		<label>Наличие</label>
-		<ValidationMessage For="@(() => Product.Availability)" />
-		<InputCheckbox class="" @bind-Value="Product.Availability" />
-	</div>
-	<div class="mt-2">
-		<button type="submit" class="btn btn-@ThemeColor">Сохранить</button>
-		<NavLink class="btn btn-secondary" href="/admin/products">Отмена</NavLink>
-	</div>
-</EditForm>
-<button @onclick="@(e => NewDirectoryImgForProduct(Convert.ToInt64(Product.ProductID)))">Создать папку</button>
-<p>@ErrorMassage</p>
-<div class="row">
-	@if (pathFiles.Count() > 0)
-	{
-		@foreach (var file in pathFiles)
-		{
-			<div class="card col-3">
-				<p>@file.FullName</p>
-				<img class="" src="@urlPath/@Product.ProductID.ToString()/@file.Name" />
-				@* <button class="btn btn-success"
-					@onclick="@(e => AddPhoto("/" + @urlPath + @Product.ProductID.ToString() + "/" + @file.Name))">Добавить</button>
-				*@
-				<p>wwwroot/@urlPath @file.Name</p>
+			<div class="form-group">
+				<label>Название</label>
+				<ValidationMessage For="@(() => Product.Name)" />
+				<InputText class="form-control" @bind-Value="Product.Name" />
 			</div>
-		}
-	}
-</div>
+			<div class="form-group">
+				<label>Артикул</label>
+				<ValidationMessage For="@(() => Product.Artikul)" />
+				<InputText class="form-control" @bind-Value="Product.Artikul" />
+			</div>
+			<div class="form-group">
+				<label>Описание</label>
+				<ValidationMessage For="@(() => Product.Description)" />
+				<InputTextArea class="form-control" @bind-Value="Product.Description" />
+			</div>
+			<div class="form-group">
+				<label>Короткое описание</label>
+				<ValidationMessage For="@(() => Product.MinDescription)" />
+				<InputTextArea class="form-control" @bind-Value="Product.MinDescription" />
+			</div>
+			<div class="form-group">
+				<label>ID Категории</label>
+				<ValidationMessage For="@(() => Product.CategoryId)" />
+				<InputSelect @bind-Value="Product.CategoryId" class="form-select">
+					<option value="">Выберите категорию</option>
+					@foreach (var item in DisplayedCategories)
+					{
+						<option value="@item.ID">@item.CategoryName</option>
+					}
+				</InputSelect>
+			</div>
+			<div class="form-group">
+				<label>Цена</label>
+				<ValidationMessage For="@(() => Product!.Price)" />
+				@if (Product?.Discount != null && Product.OldPrice != null)
+				{
+					Product.Price = @PriceProduct((long)Product.OldPrice, (int)Product.Discount);
+				}
+				else { Product!.Price = Product.Price; }
+				<InputNumber class="form-control" @bind-Value="Product.Price" />
+			</div>
+			<div class="form-group">
+				<label>Скидка %</label>
+				<InputNumber class="form-control" @bind-Value="Product.Discount" />
+			</div>
+			<div class="form-group">
+				<label>Старая цена</label>
+				<InputNumber class="form-control" @bind-Value="Product.OldPrice" />
+			</div>
+			<div class="form-group">
+				<label>Тип</label>
+				<ValidationMessage For="@(() => Product.Type)" />
+				<InputText class="form-control" @bind-Value="Product.Type" />
+			</div>
+			<div class="form-group">
+				<label>Теги</label>
+				<ValidationMessage For="@(() => Product.Tags)" />
+				<InputText class="form-control" @bind-Value="Product.Tags" />
+			</div>
+			<div class="form-group">
+				<label>Размер</label>
+				<ValidationMessage For="@(() => Product.Size)" />
+				<InputText class="form-control" @bind-Value="Product.Size" />
+			</div>
+			<div class="form-group">
+				<label>Размер базы</label>
+				<InputText class="form-control" @bind-Value="Product.BaseSize" />
+			</div>
+			<div class="form-group">
+				<label>Источник света</label>
+				<ValidationMessage For="@(() => Product.LightSource)" />
+				<InputText class="form-control" @bind-Value="Product.LightSource" />
+			</div>
+			<div class="form-group">
+				<label>Длина шнура</label>
+				<InputNumber class="form-control" @bind-Value="Product.CordLength" />
+			</div>
+			<div class="form-group">
+				<label>Мощность</label>
+				<ValidationMessage For="@(() => Product.PowerW)" />
+				<InputText class="form-control" @bind-Value="Product.PowerW" />
+			</div>
+			<div class="form-group">
+				<label>Цвет</label>
+				<ValidationMessage For="@(() => Product.Color)" />
+				<InputText class="form-control" @bind-Value="Product.Color" />
+			</div>
+			<div class="form-group">
+				<label>Материал</label>
+				<ValidationMessage For="@(() => Product.Material)" />
+				<InputText class="form-control" @bind-Value="Product.Material" />
+			</div>
+			<div class="form-group">
+				<label>Цветовая температура</label>
+				<ValidationMessage For="@(() => Product.Kelvins)" />
+				<InputText class="form-control" @bind-Value="Product.Kelvins" />
+			</div>
+			<div class="form-group">
+				<label>Наличие</label>
+				<ValidationMessage For="@(() => Product.Availability)" />
+				<InputCheckbox class="" @bind-Value="Product.Availability" />
+			</div>
+			<div class="mt-2">
+				<button type="submit" class="btn btn-@ThemeColor">Сохранить</button>
+				<NavLink class="btn btn-secondary" href="/admin/products">Отмена</NavLink>
+			</div>
+		</EditForm>
+	</TabPage>
+	<TabPage Text="Галерея" IsActive=@TabIsActive>
+		<EditForm Model="Product" OnValidSubmit="SaveProduct">
+			<DataAnnotationsValidator />
+			<div class="form-group">
+				<img class="img-fluid" style="height: 250px;" src="@Product.MainPhoto">
+				<label>Изображение</label>
+				<ValidationMessage For="@(() => Product.MainPhoto)" />
+				<InputText class="form-control" @bind-Value="Product.MainPhoto" />
+			</div>
+			<div class="form-group row">
+				@foreach (var img in @Product.Photos.Split(", ").ToList())
+				{
+					<div class="card col-2">
+						<img class="img-thumbnail" src=@img>
+						<p class="">@img</p>
+						<a class="btn btn-danger" @onclick="@(e => DeletePhoto(@img))">Удалить</a>
+						<a class="btn btn-warning" @onclick="@(e => AddMainPhoto(@img))">Сделать основной</a>
+					</div>
+				}
+				<label>Галерея</label>
+				<ValidationMessage For="@(() => Product.Photos)" />
+				<InputTextArea class="form-control" @bind-Value="Product.Photos" />
+			</div>
+			<div class="mt-2">
+				<button type="submit" class="btn btn-@ThemeColor">Сохранить</button>
+				<NavLink class="btn btn-secondary" href="/admin/products">Отмена</NavLink>
+			</div>
+		</EditForm>
+		<FileUpload FolderName=@Product.ProductID.ToString() UrlPath="imegs/img-products/"
+			OnClickAddPhoto="@AddPhotos" />
+	</TabPage>
+	<TabPage Text="Tab 3" IsActive="true">
+		<h1>The third tab</h1>
+	</TabPage>
+</TabControl>
 
 @code {
 
@@ -176,17 +181,23 @@
 	[Parameter]
 	public long Id { get; set; } = 0;
 	public Product Product { get; set; } = new Product();
+	public List<Category> DisplayedCategories { get; set; } = new();
+	public bool TabIsActive { get; set; } = false;
 
-	public List<Category>? DisplayedCategories { get; set; }
-	public Category? Category { get; set; }
-
+	protected override async Task OnInitializedAsync()
+	{
+		if (Id != 0)
+		{
+			TabIsActive = true;
+		}
+		DisplayedCategories = await Repository.Category.Select(c => c).Distinct().ToListAsync(); //получение категорий
+	}
 
 	protected override void OnParametersSet()
 	{
 		if (Id != 0)
 		{
 			Product = Repository.Products.FirstOrDefault(p => p.ProductID == Id) ?? new();
-			DisplayedCategories = Repository?.Category.Select(c => c).Distinct().ToList(); //получение категорий
 		}
 	}
 
@@ -196,13 +207,27 @@
 		{
 			Repository.CreateProduct(Product);
 			NewDirectoryImgForProduct(Convert.ToInt64(Product.ProductID));
+			if (Product.ProductID != 0)
+			{
+				TabIsActive = true;
+				GetEditUrl(Convert.ToInt64(Product.ProductID));
+				NavManager?.NavigateTo(GetEditUrl(Convert.ToInt64(Product.ProductID)));
+				Notification notification = new Notification(1, "Товар сохранен", "Товар добавлен", Product.Name);
+				popupNotification.AddItem(notification);
+				StateHasChanged();
+			}
 		}
 		else
 		{
 			Repository.SaveProduct(Product);
+			Notification notification = new Notification(1, "Изменения сохранены", "Запись отредактирована", Id.ToString());
+			popupNotification.AddItem(notification);
+			NavManager?.NavigateTo("/admin/products");
 		}
-		NavManager?.NavigateTo("/admin/products");
 	}
+
+	public string GetEditUrl(long id) => $"/admin/products/edit/{id}";
+
 
 	public string ThemeColor => Id == 0 ? "primary" : "warning";
 	public string TitleText => Id == 0 ? "Create" : "Edit";
@@ -213,7 +238,6 @@
 		return price = oldPrice - oldPrice * discount / 100;
 	}
 
-	private List<FileInfo> pathFiles = new();
 	private string urlPath = "imegs/img-products/";
 
 	private List<string> urlPhotos { get; set; } = new();
@@ -261,8 +285,6 @@
 		}
 	}
 }
-
-<FileUpload FolderName=@Product.ProductID.ToString() UrlPath="imegs/img-products/" OnClickAddPhoto="@AddPhotos" />
 
 @code {
 

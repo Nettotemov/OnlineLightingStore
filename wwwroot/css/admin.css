@@ -1,0 +1,18 @@
+.admin-notification__wrapper {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	width: 20%;
+	right: 0;
+}
+
+[type=button].btn-disabled {
+	background-color: #cccccc;
+	color: #666666;
+	cursor: default;
+}
+
+[type=button].btn-disabled:hover {
+	background-color: #cccccc;
+	color: #666666;
+}

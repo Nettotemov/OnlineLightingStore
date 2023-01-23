@@ -1,8 +1,10 @@
 @page "/admin/orders"
 @inherits OwningComponentBase<IOrderRepository>
 
-<OrderTable StyleTable="bg-warning" TableTitle="Новые заказы" Orders="UnshippedOrders" GetOrders="UnshippedOrders" ButtonLabel="Ожидает выполнения" OrderSelected="ShipOrder" />
-<OrderTable StyleTable="bg-success" TableTitle="Выполненые заказы" Orders="ShippedOrders" GetOrders="ShippedOrders" ButtonLabel="Выполнен" OrderSelected="ResetOrder" />
+<OrderTable StyleTable="bg-warning" TableTitle="Новые заказы" Orders="UnshippedOrders" GetOrders="UnshippedOrders"
+	ButtonLabel="Ожидает выполнения" OrderSelected="ShipOrder" />
+<OrderTable StyleTable="bg-success" TableTitle="Выполненые заказы" Orders="ShippedOrders" GetOrders="ShippedOrders"
+	ButtonLabel="Выполнен" OrderSelected="ResetOrder" />
 
 <button class="btn btn-info text-white" @onclick="@(e => UpdateData())">Обновить данные</button>
 
@@ -24,13 +26,13 @@
 		ShippedOrders = AllOrders.Where(o => o.Shipped);
 	}
 
-	public void ShipOrder(int id) => UpdateOrder(id, true);
+	public async Task ShipOrder(int id) => await UpdateOrder(id, true);
 
-	public void ResetOrder(int id) => UpdateOrder(id, false);
+	public async Task ResetOrder(int id) => await UpdateOrder(id, false);
 
-	private void UpdateOrder(int id, bool shipValue)
+	private async Task UpdateOrder(int id, bool shipValue)
 	{
-		Order? o = Repository.Orders.FirstOrDefault(o => o.OrderID == id);
+		Order? o = await Repository.Orders.FirstOrDefaultAsync(o => o.OrderID == id);
 		if (o != null)
 		{
 			o.Shipped = shipValue;

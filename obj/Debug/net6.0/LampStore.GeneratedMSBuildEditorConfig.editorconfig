@@ -31,6 +31,22 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vQ29tcG9uZW50c0Fib3V0L0VkaXRvci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Admin/ComponentsApp/Confirmation.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vQ29tcG9uZW50c0FwcC9Db25maXJtYXRpb24ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Admin/ComponentsApp/Popup.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vQ29tcG9uZW50c0FwcC9Qb3B1cC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Admin/ComponentsApp/TabControl.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vQ29tcG9uZW50c0FwcC9UYWJDb250cm9sLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Admin/ComponentsApp/TabPage.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vQ29tcG9uZW50c0FwcC9UYWJQYWdlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Admin/ComponentsCategory/Editor.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vQ29tcG9uZW50c0NhdGVnb3J5L0VkaXRvci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
@@ -63,16 +79,16 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vT3JkZXJUYWJsZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Admin/Popup.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vUG9wdXAucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = 
-
 [/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Admin/Products.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vUHJvZHVjdHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Admin/Routed.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vUm91dGVkLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Admin/Setting.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vU2V0dGluZy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Admin/_Imports.razor]
@@ -133,6 +149,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Shared/Components/CartSummary/Default.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvU2hhcmVkL0NvbXBvbmVudHMvQ2FydFN1bW1hcnkvRGVmYXVsdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Shared/Components/FooterSummary/Default.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvU2hhcmVkL0NvbXBvbmVudHMvRm9vdGVyU3VtbWFyeS9EZWZhdWx0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Shared/Components/HeaderSummary/Default.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvU2hhcmVkL0NvbXBvbmVudHMvSGVhZGVyU3VtbWFyeS9EZWZhdWx0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Shared/Login.cshtml]

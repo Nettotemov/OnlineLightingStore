@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using LampStore.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace LampStore.Pages
 {
@@ -23,18 +24,20 @@ namespace LampStore.Pages
 
 		public List<Product> DisplayedProducts { get; private set; } = new();
 
-		public IActionResult OnGet(long productId) //инициализация карточки товара
+		public async Task<IActionResult> OnGetAsync(long productId) //инициализация карточки товара
 		{
-			DisplayedCategories = repository.Categorys.Select(c => c).Distinct().ToList();
+			DisplayedCategories = await repository.Categorys.Select(c => c).Distinct().ToListAsync();
+			DisplayedProducts = await repository.Products.Select(p => p).ToListAsync();
 
-			foreach (var product in repository.Products)
+			foreach (var product in DisplayedProducts)
 			{
 				if (product.ProductID == productId)
 				{
 					DisplayedPhotos = product.Photos.Split(',').ToList();
-					
+
 					productCard = new Product()
 					{
+						Artikul = product.Artikul,
 						MainPhoto = product!.MainPhoto,
 						Photos = product.Photos,
 						Name = product.Name,
@@ -60,8 +63,7 @@ namespace LampStore.Pages
 					return Page();
 				}
 			}
-			
-			DisplayedProducts = repository.Products.Select(p => p).ToList();
+
 			return StatusCode(404);
 		}
 

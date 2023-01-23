@@ -1,4 +1,4 @@
-@page "{productPage?}"
+@page "/catalog/{productPage?}"
 @model CatalogModel
 
 @{
@@ -13,12 +13,12 @@
 	<div class="catalog__wrapper">
 		<div class="search-form__wrapper">
 			<div class="search-left-panel__wrapper">
-				<form id="catalogForm" method="get" asp-page="/Catalog" asp-page-handler="Products"
+				<form id="catalogForm" method="get" asp-page="/catalog" asp-page-handler="Products"
 					class="catalogForm-sub" asp-route-productPage="1">
 					<div class="">
 						<div class="search-name__wrapper">
-							<input id="input-name" placeholder="Поиск по названию" type="text" autocomplete="off"
-								name="name" value="@Model.Name" class="searchByName form-control" />
+							<input id="input-name" placeholder="Поиск по названию или артикулу" type="text"
+								autocomplete="off" name="name" value="@Model.Name" class="searchByName form-control" />
 							<span class="autocomplete__icon autocomplete__clear" hidden style="">
 								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
 									<path
@@ -117,11 +117,15 @@
 											@foreach (string material in Model.DisplayedMaterials ??
 													Enumerable.Empty<string>())
 											{
-												<li class="checkbox">
-													<input type="checkbox" name="materials" value="@material" id="@material"
+												@if (material != string.Empty)
+												{
+													<li class="checkbox">
+														<input type="checkbox" name="materials" value="@material" id="@material"
 													data-check="@material" class="types" />
-													<label for="@material" class="control-label">@material</label>
-												</li>
+														<label for="@material" class="control-label">@material</label>
+													</li>
+												}
+
 											}
 										</ul>
 									</div>
@@ -215,21 +219,9 @@
 			</div>
 		</div>
 		<div class="pagination__wrapper">
-			@* <ul id="pagingbuttons" class="pagination">
-				@for (int i = 1; i <= @Model.PagingInfo.TotalPages; i++)
-				{
-					<li class="page-item">
-						<button form="catalogForm" asp-route-productPage="@i" asp-route-name="@Model.Name"
-						asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice"
-						asp-route-sortOrder="@Model.SortedCatalog" asp-route-category="@Model.CategoryName"
-						class="pagination-btn page-link" type="submit" value="@i">@i
-						</button>
-					</li>
-				}
-			</ul> *@
-			<ul id="pagingbuttons" page-model="@Model?.PagingInfo" page-classes-enabled="true" page-class="pagination-btn page-link"
-				page-class-li="page-item" page-class-normal="" page-class-selected="active" page-disabled-class="disabled"
-				class="pagination">
+			<ul id="pagingbuttons" page-model="@Model?.PagingInfo" page-classes-enabled="true"
+				page-class="pagination-btn page-link" page-class-li="page-item" page-class-normal=""
+				page-class-selected="active" page-disabled-class="disabled" class="pagination">
 			</ul>
 		</div>
 

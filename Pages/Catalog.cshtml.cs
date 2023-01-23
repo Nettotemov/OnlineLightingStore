@@ -42,7 +42,7 @@ namespace LampStore.Pages
 
 		CatalogServices catalogServices = new CatalogServices(); //ссылка на сервисы каталога
 
-		public void OnGet(string name, string category, string maxPrice, string minPrice, string[] tags, string[] color, string[] materials, string[] types, SortCatalog sortOrder, int productPage = 1)
+		public async Task OnGetAsync(string name, string category, string maxPrice, string minPrice, string[] tags, string[] color, string[] materials, string[] types, SortCatalog sortOrder, int productPage = 1)
 		{
 			Name = name;
 			CategoryName = category;
@@ -51,14 +51,14 @@ namespace LampStore.Pages
 			SortedName = EnumExtensions.GetDisplayName(sortOrder);
 			string strTags = string.Join(",", repository.Products.Select(c => c.Tags).Distinct().OrderBy(p => p)).ToString();
 			DisplayedTags = ParametersExtensions.GetDisplayParameters(strTags);
-			DisplayedCategories = repository.Categorys.Select(c => c).Distinct().ToList(); //получение категорий
-			Category = new SelectList(repository.Categorys.Select(c => c.CategoryName).Distinct().ToList(), CategoryName); //получение списка категорий товара
-			DisplayedColors = repository.Products.Select(p => p.Color).Distinct().ToList(); //получаем цвета
-			DisplayedTypes = repository.Products.Select(p => p.Type).Distinct().ToList(); //получаем типы
+			DisplayedCategories = await repository.Categorys.Select(c => c).Distinct().ToListAsync(); //получение категорий
+			Category = new SelectList(await repository.Categorys.Select(c => c.CategoryName).Distinct().ToListAsync(), CategoryName); //получение списка категорий товара
+			DisplayedColors = await repository.Products.Select(p => p.Color).Distinct().ToListAsync(); //получаем цвета
+			DisplayedTypes = await repository.Products.Select(p => p.Type).Distinct().ToListAsync(); //получаем типы
 			string strMaterials = string.Join(",", repository.Products.Select(c => c.Material).Distinct().OrderBy(p => p)).ToString(); //получаем строку материалов
 			DisplayedMaterials = ParametersExtensions.GetDisplayParameters(strMaterials);
 
-			DisplayedProducts = repository.Products.Select(p => p).ToList(); //получаем все товары для фильтрации
+			DisplayedProducts = await repository.Products.Select(p => p).ToListAsync(); //получаем все товары для фильтрации
 
 			try
 			{
@@ -132,7 +132,7 @@ namespace LampStore.Pages
 				{
 					CurrentPage = productPage,
 					ItemsPerPage = PageSize,
-					TotalItems = repository.Products.Count(),
+					TotalItems = await repository.Products.CountAsync(),
 					TotalPages = (int)Math.Ceiling((decimal)DisplayedProducts.Count() / PageSize), //всего страниц
 					PlaceholderMaxPrice = DisplayedProducts.Select(p => p.Price).Max(),
 					PlaceholderMinPrice = DisplayedProducts.Select(p => p.Price).Min()
@@ -159,14 +159,14 @@ namespace LampStore.Pages
 		}
 
 		public List<Product> DPs { get; private set; } = new();
-		public IActionResult OnGetProducts(string name, string category, string maxPrice, string minPrice, string[] tags, string[] materials, string[] color, string[] types, SortCatalog sortOrder, int productPage = 1)
+		public async Task<IActionResult> OnGetProductsAsync(string name, string category, string maxPrice, string minPrice, string[] tags, string[] materials, string[] color, string[] types, SortCatalog sortOrder, int productPage = 1)
 		{
-			var dp = repository.Products.Select(p => p).ToList();
+			var dp = await repository.Products.Select(p => p).ToListAsync();
 
 			DPs.AddRange(dp);
-			DisplayedCategories = repository.Categorys.Select(c => c).Distinct().ToList(); //получение категорий
-			
-			try 
+			DisplayedCategories = await repository.Categorys.Select(c => c).Distinct().ToListAsync(); //получение категорий
+
+			try
 			{
 				switch (sortOrder) //сортировка
 				{
@@ -234,14 +234,14 @@ namespace LampStore.Pages
 				{
 					CurrentPage = productPage,
 					ItemsPerPage = PageSize,
-					TotalItems = repository.Products.Count(),
+					TotalItems = await repository.Products.CountAsync(),
 					TotalPages = (int)Math.Ceiling((decimal)DPs.Count() / PageSize), //всего страниц
 					PlaceholderMaxPrice = DPs.Select(p => p.Price).Max(),
 					PlaceholderMinPrice = DPs.Select(p => p.Price).Min()
 				};
 
 				DPs = DPs.Skip((productPage - 1) * PageSize).Take(PageSize).ToList();
-			
+
 				string json = JsonConvert.SerializeObject(DPs, Formatting.Indented);
 				string PagingInfoJson = JsonConvert.SerializeObject(PagingInfo, Formatting.Indented);
 
@@ -266,13 +266,13 @@ namespace LampStore.Pages
 			}
 		}
 
-		public IActionResult OnGetAllProducts()
+		public async Task<IActionResult> OnGetAllProductsAsync()
 		{
-			var products = repository.Products.Select(p => p).ToList();
+			var products = await repository.Products.Select(p => p).ToListAsync();
 
 			string json = JsonConvert.SerializeObject(products, Formatting.Indented);
 
-			return new JsonResult(new {json });
+			return new JsonResult(new { json });
 		}
 	}
 }

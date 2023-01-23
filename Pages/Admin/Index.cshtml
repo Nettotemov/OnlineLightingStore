@@ -17,6 +17,7 @@
 	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 	<link rel="stylesheet" href="~/LampStore.styles.css" asp-append-version="true" />
 	<link href="BlazorApp.styles.css" rel="stylesheet" />
+	<link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 	<title>@ViewData["Title"] - LampStore</title>
 	<base href="/" />
 </head>
@@ -24,13 +25,6 @@
 <body>
 	<component type="typeof(Routed)" render-mode="Server" />
 	<script src="/_framework/blazor.server.js"></script>
-	<script>
-		function previewImage(inputElem, imgElem) {
-			const url = URL.createObjectURL(inputElem.files[0]);
-			imgElem.addEventListener('load', () => URL.revokeObjectURL(url), { once: true });
-			imgElem.src = url;
-		}
-	</script>
 </body>
 
 </html>
