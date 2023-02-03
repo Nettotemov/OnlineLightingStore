@@ -1,0 +1,122 @@
+@inject IJSRuntime JSRuntime
+@using System.Text.Json
+
+@if (EditorEnabled)
+{
+	<div id="toolbar">
+	<span class="ql-formats">
+		<select class="ql-size">
+			<option value="small"></option>
+			<option selected=""></option>
+			<option value="large"></option>
+			<option value="huge"></option>
+		</select>
+	</span>
+	<span class="ql-formats">
+		<button class="ql-bold"></button>
+		<button class="ql-italic"></button>
+		<button class="ql-underline"></button>
+		<button class="ql-strike"></button>
+	</span>
+	<span class="ql-formats">
+		<select class="ql-color"></select>
+		<select class="ql-background"></select>
+	</span>
+	<span class="ql-formats">
+		<button class="ql-list" value="ordered"></button>
+		<button class="ql-list" value="bullet"></button>
+		<button class="ql-indent" value="-1"></button>
+		<button class="ql-indent" value="+1"></button>
+		<select class="ql-align">
+			<option selected=""></option>
+			<option value="center"></option>
+			<option value="right"></option>
+			<option value="justify"></option>
+		</select>
+	</span>
+	<span class="ql-formats">
+		<button class="ql-header" value="1"></button>
+		<button class="ql-header" value="2"></button>
+		<button class="ql-code-block"></button>
+	</span>
+	<span class="ql-formats">
+		<button class="ql-link"></button>
+	</span>
+</div>
+}
+<div @ref="@divEditorElement" />
+<br />
+<button type="button" class="btn btn-primary" @onclick="GetHTML">Get HTML</button>
+<button type="button" class="btn btn-primary" @onclick="GetEditorContent">Get Content</button>
+<br />
+<br />
+<button type="button" class="btn btn-danger" @onclick="SaveContent">Save Content</button>
+@* <button type="button" class="btn btn-success" @onclick="LoadContent">Load Saved Content</button> *@
+<br />
+@code {
+	private ElementReference divEditorElement;
+
+	private string? EditorContent { get; set; }
+
+	private bool EditorEnabled = true;
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			await JSRuntime.InvokeAsync<string>(
+			"QuillFunctions.createQuill", divEditorElement);
+			if (!string.IsNullOrEmpty(ChildName))
+			{
+				await LoadContent(ChildName);
+			}
+		}
+	}
+}
+
+@code {
+	async Task GetHTML()
+	{
+		EditorContent = await JSRuntime.InvokeAsync<string>(
+		"QuillFunctions.getQuillHTML", divEditorElement);
+		await AddText(EditorContent);
+	}
+	async Task GetEditorContent()
+	{
+		EditorContent = await JSRuntime.InvokeAsync<string>(
+		"QuillFunctions.getQuillContent", divEditorElement);
+	}
+
+	public async Task SaveContent()
+	{
+		await GetHTML();
+	}
+
+	async Task LoadContent(string input)
+	{
+		string json = JsonSerializer.Serialize(input);
+		var QuillDelta = await JSRuntime.InvokeAsync<object>(
+		"QuillFunctions.loadQuillContent", divEditorElement, json);
+	}
+}
+
+@code {
+
+	[Parameter]
+	public string? ChildName { get; set; }
+
+	[Parameter]
+	public EventCallback<string> ChildNameChanged { get; set; }
+
+	public async Task AddText(string input)
+	{
+		ChildName = input;
+		await OnChildNameChanged();
+	}
+
+	private async Task OnChildNameChanged()
+	{
+		await ChildNameChanged.InvokeAsync(ChildName);
+		await InvokeAsync(StateHasChanged);
+	}
+}
+

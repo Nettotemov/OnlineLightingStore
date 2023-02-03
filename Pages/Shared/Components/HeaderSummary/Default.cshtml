@@ -1,39 +1,44 @@
 @using LampStore.Services
 @model System.Collections.Generic.List<Settings>
-
-<header class="header">
-	<div class="container">
-		<div class="header__wrapper">
-			<div id="menu-checkbox" class="burger">
-				<div class="burger-line"></div>
-				<div class="burger-line burger-line-center"></div>
-				<div class="burger-line"></div>
-			</div>
-			@Html.AntiForgeryToken()
-			<a class="logo" asp-area="" asp-page="/Index">Lights 4 Apart</a>
-			<nav id="navWrapper" class="nav__wrapper">
-				<ul class="nav">
-					<li class="nav-item">
-						<a class="nav-link a-btn__header" asp-area="" asp-page="/Index">Home</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link a-btn__header" asp-area="" asp-page="/Privacy">Privacy</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link a-btn__header" asp-page="/about" asp-route-ID="1">Компания</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link a-btn__header" asp-page="/catalog" asp-route-productPage="1"
-							asp-route-sortOrder="0">Каталог</a>
-					</li>
-				</ul>
-				<div class="cart__wrapper">
-					<vc:cart-summary /> @* корзина *@
+<div class="header-animation">
+	<header id="header" class="header">
+		<div class="container">
+			<div class="header__wrapper">
+				<div id="menu-checkbox" class="burger">
+					<div class="burger-line"></div>
+					<div class="burger-line burger-line-center"></div>
+					<div class="burger-line"></div>
 				</div>
-			</nav>
+				@Html.AntiForgeryToken()
+				<a class="logo" asp-area="" asp-page="/Index">Lights 4 Apart</a>
+				<nav id="navWrapper" class="nav__wrapper">
+					<ul class="nav">
+						<li class="nav-item">
+							<a class="nav-link a-btn__header" asp-area="" asp-page="/Index">Сотрудничество</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link a-btn__header" asp-area="" asp-page="/contacts">Контакты</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link a-btn__header" asp-page="/faq" asp-area="">Информация</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link a-btn__header" asp-page="/about" asp-route-ID="1">Компания</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link a-btn__header" asp-page="/catalog" asp-route-productPage="1"
+								asp-route-sortOrder="0">Каталог</a>
+						</li>
+					</ul>
+					<div class="cart__wrapper">
+						<vc:cart-summary /> @* корзина *@
+					</div>
+				</nav>
+			</div>
 		</div>
-	</div>
-</header>
+
+	</header>
+</div>
 <div class="menu">
 	<div class="container">
 		<div class="menu__wrapper">
@@ -45,9 +50,9 @@
 			<hr class="footer-line__wrapper">
 			<div class="menu-wrapper__items">
 				<a asp-page="/about" asp-route-ID="1" class="menu__h3">Компания</a>
-				<a href="/" class="menu__h3">Доставка и оплата</a>
+				<a asp-page="/faq" asp-area="" class="menu__h3">Информация</a>
 				<a href="/" class="menu__h3">Сотрудничество</a>
-				<a href="/" class="menu__h3">Контакты</a>
+				<a asp-area="" asp-page="/contacts" class="menu__h3">Контакты</a>
 			</div>
 			<hr class="footer-line__wrapper">
 			<div class="menu__tel-soc">

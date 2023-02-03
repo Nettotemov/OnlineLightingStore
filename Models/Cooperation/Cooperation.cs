@@ -9,15 +9,11 @@ namespace LampStore.Models
 
 		[Required(ErrorMessage = "Пожалуйста, введите название")]
 		public string? NameCooperation { get; set; }
+		public string? CooperationImg { get; set; }
 
-		[Required(ErrorMessage = "Пожалуйста, укажите путь до изображения категории")]
-		public string? CategoryImg { get; set; }
-
-		[Required(ErrorMessage = "Пожалуйста, укажите описание")]
+		[Required(ErrorMessage = "Пожалуйста, укажите описание для привью")]
+		public string? MinDescription { get; set; }
 		public string Description { get; set; } = string.Empty;
 		public bool IsVisible { get; set; }
-		public string? HeadingTwo { get; set; } = string.Empty;
-		public string? ImgTwoUrl { get; set; } = string.Empty;
-		public string? DescriptionTwo { get; set; } = string.Empty;
 	}
 }

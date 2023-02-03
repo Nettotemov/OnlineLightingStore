@@ -16,3 +16,20 @@
 	background-color: #cccccc;
 	color: #666666;
 }
+
+div.validation-message {
+	color: rgb(220, 53, 69);
+	font-weight: 500
+}
+
+.files-manager__wrapper
+{
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+	grid-column-gap: 20px;
+	grid-row-gap: 20px;
+}
+
+textarea.form-control {
+	height: 250px;
+}

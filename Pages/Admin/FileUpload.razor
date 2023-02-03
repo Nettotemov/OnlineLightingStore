@@ -55,7 +55,7 @@ else
 
 }
 <p>@UrlPath@FolderName</p>
-<button @onclick="@(e => ShowFiles())">Получить все изображения</button>
+
 
 @if (pathFiles.Count() > 0)
 {
@@ -83,7 +83,7 @@ else
 	private string path = string.Empty;
 
 	[Parameter]
-	public string UrlPath { get; set; } = "imegs/img-products/";
+	public string UrlPath { get; set; } = string.Empty;
 
 	[Parameter]
 	public string FolderName { get; set; } = string.Empty;

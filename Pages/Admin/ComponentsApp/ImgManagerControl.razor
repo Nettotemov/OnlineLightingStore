@@ -1,0 +1,117 @@
+<ImgManager @ref="ActiveImgManager" OnCancel="OnCancel" PathFolder="@PathFolder" FolderName="@FolderName"
+	IsSlider="@IsSlider" OnClickAddPhoto="AddPhoto" OnClickDeletePhoto="DeletePhoto"></ImgManager>
+
+
+@if (IsSlider)
+{
+	@if (!string.IsNullOrEmpty(ChildName))
+	{
+		@foreach (var img in ChildName!.Split(", ").ToList())
+		{
+			<div class="card col-2 mb-4">
+				<img class="img-thumbnail" src="@img">
+				<p class="">@img</p>
+				<button type="button" class="btn btn-warning" @onclick="@(e => DeletePhoto(@img))">Убрать</button>
+			</div>
+		}
+	}
+	<div class="row row-cols-2">
+		<input type="text" class="form-control mb-2 col-6" @bind="ChildName" @oninput="OnChildNameChanged" />
+		<button type="button" class="btn btn-primary mb-2 col-2" @onclick="Сhoose">Выбрать изображение(я)</button>
+	</div>
+
+}
+@if (!IsSlider)
+{
+	<input type="text" class="form-control" @bind="ChildName" @oninput="OnChildNameChanged" />
+	@if (!string.IsNullOrEmpty(ChildName))
+	{
+		<button type="button" class="btn btn-warning" @onclick="@(e => DeletePhoto(ChildName))">Убрать</button>
+	}
+	else
+	{
+		<button type="button" class="btn btn-primary" @onclick="Сhoose">Выбрать изображение(я)</button>
+	}
+}
+
+
+
+@code {
+
+	[Parameter]
+	public string PathFolder { get; set; } = string.Empty;
+
+	[Parameter]
+	public string FolderName { get; set; } = string.Empty;
+
+	[Parameter]
+	public bool IsSlider { get; set; }
+
+	public ImgManager? ActiveImgManager { get; set; }
+
+	public void Сhoose()
+	{
+		ActiveImgManager?.Show();
+	}
+
+	private void OnCancel()
+	{
+		ActiveImgManager?.Hide();
+	}
+}
+
+@code {
+	[Parameter]
+	public string? ChildName { get; set; }
+
+	[Parameter]
+	public EventCallback<string> ChildNameChanged { get; set; }
+	public async Task AddPhoto(string input)
+	{
+		if (IsSlider)
+		{
+			if (ChildName != string.Empty)
+			{
+				ChildName += ", " + input;
+			}
+			else { ChildName += input; }
+
+			await OnChildNameChanged();
+		}
+		else
+		{
+			ChildName = input;
+			await OnChildNameChanged();
+		}
+	}
+
+	private async Task DeletePhoto(string input)
+	{
+		if (!string.IsNullOrEmpty(ChildName) && !string.IsNullOrEmpty(input))
+		{
+			if (IsSlider)
+			{
+				List<string> urlPhotos = await ConvertStringToArray(ChildName);
+				urlPhotos.Remove(input);
+				ChildName = String.Join(", ", urlPhotos);
+			}
+			else
+			{
+				ChildName = string.Empty;
+			}
+			await OnChildNameChanged();
+		}
+	}
+
+	public async Task<List<string>> ConvertStringToArray(string input)
+	{
+		await Task.Delay(100);
+		return input.Split(", ").ToList();
+	}
+
+	private async Task OnChildNameChanged()
+	{
+		await ChildNameChanged.InvokeAsync(ChildName);
+		await InvokeAsync(StateHasChanged);
+	}
+}

@@ -1,0 +1,25 @@
+@page "/faq/{ID}"
+@model InfoPage
+
+@{
+	Layout = "_Layout";
+	ViewData["Title"] = @Model.infoPage!.NameInfo;
+}
+@await Component.InvokeAsync("BreadcrumbSummary", new [] { (url: "/", page: "Главная"),
+(url: "/faq", page: "Информация"), (url: @Model.infoPage.ID.ToString(), page: @Model.infoPage.NameInfo) })
+
+<div class="info-page__wrapper row-cols-2">
+	<div class="info-page__h-wrapper col-2">
+		<h1 class="info-page__caption fw-bold">@Model.infoPage!.NameInfo</h1>
+	</div>
+	<div class="info-page__txt-wrapper col">
+		@Html.Raw(Model.infoPage.Value)
+		@if (@Model.infoPage.InfoProp.Count > 0)
+		{
+			@foreach (var item in @Model.infoPage.InfoProp)
+			{
+				<p class="info-page__p"><b>@item.Value</b></p>
+			}
+		}
+	</div>
+</div>

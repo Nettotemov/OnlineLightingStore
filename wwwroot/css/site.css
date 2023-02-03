@@ -1210,6 +1210,34 @@ section.wrapper__everything {
 	}
 }
 
+.black-img-faq-h {
+	color: white;
+	font-size: 3em;
+	font-weight: 600;
+	text-shadow: 0 2px 0 #5f5f60, -9px 7px 6px #030304;
+	text-transform: uppercase;
+}
+
+.black-img-faq-svg {
+	width: 25%;
+	margin-bottom: 30px;
+}
+
+.info-page__wrapper {
+	display: flex;
+	height: 100vh;
+}
+
+.info-page__caption {
+	font-size: 1.85rem;
+}
+
+.info-page__p {
+	line-height: 1.45;
+	font-size: 1.2rem;
+	font-weight: 400;
+}
+
 @media (min-width: 1880px) {
 	.container,
 	.container-lg,

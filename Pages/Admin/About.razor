@@ -1,5 +1,21 @@
 @page "/admin/about"
 @inherits OwningComponentBase<IAboutPageRepository>
+@inject IPopupNotification popupNotification
+@inject IFolderManager folderManager
+
+<Confirmation @ref="confirmation" OnCancel="OnCancel" OnConfirm="OnConfirm" IsConfirm="true"
+	Title="Удаление страницы о компании...">
+	<div class="toast-body">
+		Вы уверены что хотите удалить запись
+		@if (AboutPageToBeDelete != null)
+		{
+			<p>@AboutPageToBeDelete.HeadingOneNode ?</p>
+		}
+	</div>
+</Confirmation>
+<div class="admin-notification__wrapper">
+	<Popup ListNotifications="ListNotifications" />
+</div>
 
 <table class="table table-sm table-striped table-bordered">
 	<thead>
@@ -37,7 +53,7 @@
 		else
 		{
 			<tr>
-				<td colspan="5" class="text-center">Категории, не найдены.</td>
+				<td colspan="5" class="text-center">Записи, не найдены.</td>
 			</tr>
 		}
 	</tbody>
@@ -50,19 +66,63 @@
 
 	protected async override Task OnInitializedAsync()
 	{
-		await UpdateData();
+		try
+		{
+			await UpdateData();
+		}
+		catch (InvalidOperationException ex)
+		{
+			Console.WriteLine("Исключение InvalidOperationException About: " + ex.Message);
+		}
 	}
 
 	public async Task UpdateData()
 	{
 		AboutPageData = await Repository.AboutPages.ToListAsync();
 	}
-	
-	public async Task DeleteAboutPage(AboutPage aboutPage)
+
+	public void DeleteAboutPage(AboutPage aboutPage)
 	{
-		Repository.DeleteAboutPage(aboutPage);
-		await UpdateData();
+		AboutPageToBeDelete = aboutPage;
+		confirmation?.Show();
 	}
 
 	public string GetEditUrl(long id) => $"/admin/about/edit/{id}";
+}
+
+@code {
+	Confirmation? confirmation;
+	private AboutPage? AboutPageToBeDelete { get; set; }
+	private string urlPath = "wwwroot/imegs/img-about/";
+	private async Task OnConfirm()
+	{
+		if (AboutPageToBeDelete != null)
+		{
+			folderManager.DeleteDirectory(urlPath + AboutPageToBeDelete.ID);
+			Repository.DeleteAboutPage(AboutPageToBeDelete);
+			confirmation?.Hide();
+			Notification notification = new Notification(1, "Удаление записи", "Удалена страницы о компании",
+			AboutPageToBeDelete.HeadingOneNode);
+			popupNotification.AddItem(notification);
+			AboutPageToBeDelete = null;
+			await UpdateData();
+		}
+	}
+
+	private void OnCancel()
+	{
+		confirmation?.Hide();
+		Notification notification = new Notification(1, "Отмена удаления", "Отменено удаление страницы о компании",
+		AboutPageToBeDelete!.HeadingOneNode);
+		popupNotification.AddItem(notification);
+		AboutPageToBeDelete = null;
+	}
+
+	private List<Notification> ListNotifications { get; set; } = new();
+
+	protected override async Task OnParametersSetAsync()
+	{
+		ListNotifications = await popupNotification.GetItems();
+		StateHasChanged();
+	}
 }

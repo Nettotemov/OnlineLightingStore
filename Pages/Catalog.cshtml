@@ -4,7 +4,7 @@
 @{
 	ViewData["Title"] = "Каталог освещения";
 }
-
+@await Component.InvokeAsync("BreadcrumbSummary", new [] { (url: "/", page: "Главная"), (url: "/catalog", page: "Каталог") })
 
 <div class="">
 	<div class="catalog__h">
@@ -28,7 +28,7 @@
 							<ul id="autocomplete__results" class="autocomplete__results">
 							</ul>
 							@* <input type="submit" value="Поиск по названию" asp-route-productPage="1"
-								class="element_a btn btn-default" /> *@
+							class="element_a btn btn-default" /> *@
 						</div>
 
 						<div class="price-wrapper mt-per-5">
@@ -73,7 +73,7 @@
 											{
 												<li class="checkbox">
 													<input type="checkbox" name="color" value="@color" id="@color"
-													data-check="@color" class="" />
+														data-check="@color" class="" />
 													<label for="@color" class="control-label">@color</label>
 												</li>
 											}
@@ -96,7 +96,7 @@
 											{
 												<li class="checkbox">
 													<input type="checkbox" name="types" value="@types" id="@types"
-													data-check="@types" class="types" />
+														data-check="@types" class="types" />
 													<label for="@types" class="control-label">@types</label>
 												</li>
 											}
@@ -121,7 +121,7 @@
 												{
 													<li class="checkbox">
 														<input type="checkbox" name="materials" value="@material" id="@material"
-													data-check="@material" class="types" />
+															data-check="@material" class="types" />
 														<label for="@material" class="control-label">@material</label>
 													</li>
 												}
@@ -145,7 +145,7 @@
 											{
 												<li class="checkbox">
 													<input type="checkbox" name="tags" value="@tags" id="@tags"
-													data-check="@tags" class="" />
+														data-check="@tags" class="" />
 													<label for="@tags" class="control-label">@tags</label>
 												</li>
 											}
@@ -163,7 +163,7 @@
 			<div class="">
 				<div class="catalog-sort__wrapper catalogForm-sub mb-per-4">
 					<select name="sortOrder" form="catalogForm" asp-items="Html.GetEnumSelectList<SortCatalog>()"
-						SelectedValue="@Model.SortedCatalog" class="form-catalog__select">
+	  SelectedValue="@Model.SortedCatalog" class="form-catalog__select">
 						<option value="@Model.SortedCatalog">
 							@Model.SortedName
 						</option>
@@ -194,19 +194,19 @@
 										<p class="footer-card__text">@pr.Name</p>
 										<p class="footer-card__price">@pr.Price.ToString("C")</p>
 										@* @if (@pr.Discount != null && @pr.OldPrice != null)
-											{
-											<p class="footer-card__text">-@pr.Discount%</p>
-											<p class="footer-card__text"><s>@pr.OldPrice?.ToString()</s></p>
-											} *@
+								{
+								<p class="footer-card__text">-@pr.Discount%</p>
+								<p class="footer-card__text"><s>@pr.OldPrice?.ToString()</s></p>
+								} *@
 									</div>
 								</a>
 								@* <a asp-page="CardProduct" asp-route-CategoryName="@pr.Category!.CategoryName"
-									asp-route-ProductID="@pr.ProductID" asp-route-Name="@pr.Name">Подробнее</a> *@
+						asp-route-ProductID="@pr.ProductID" asp-route-Name="@pr.Name">Подробнее</a> *@
 
 								<form id="ProductID=@pr.ProductID" class="addToCart" asp-page="/Cart" method="post">
 									<input type="hidden" name="ProductID" asp-for="@pr.ProductID" />
 									<input type="hidden" name="returnUrl"
-								value="@ViewContext.HttpContext.Request.PathAndQuery()" />
+										value="@ViewContext.HttpContext.Request.PathAndQuery()" />
 									<button type="submit" class="btn-addToCart form-catalog__text">
 										Добавить в корзину
 									</button>

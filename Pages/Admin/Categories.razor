@@ -1,6 +1,7 @@
 @page "/admin/categories"
 @inherits OwningComponentBase<ICategoryRepository>
 @inject IPopupNotification popupNotification
+@inject IFolderManager folderManager
 
 <Confirmation @ref="confirmation" OnCancel="OnCancel" OnConfirm="OnConfirm" IsConfirm="confirmationCheckOnDelete"
 	Title="Удаление категории...">
@@ -101,11 +102,12 @@
 	private Category? CategoryToBeDelete { get; set; }
 	private string confirmationText = string.Empty;
 	private bool confirmationCheckOnDelete;
-
+	private string urlPath = "wwwroot/imegs/img-category/";
 	private async Task OnConfirm()
 	{
 		if (CategoryToBeDelete != null && confirmationCheckOnDelete)
 		{
+			folderManager.DeleteDirectory(urlPath + CategoryToBeDelete.ID);
 			Repository.DeleteCategory(CategoryToBeDelete);
 			confirmation?.Hide();
 			Notification notification = new Notification(1, "Удаление категории", "Удалена категория", CategoryToBeDelete.CategoryName);

@@ -9,16 +9,16 @@
 	{
 		@foreach (var aboutPage in @Model.DisplayAboutPages.Where(c => c.DisplayHomePage == true))
 		{
-			<div class="row justify-content-between align-items-xl-center">
+			<div class="scroll-m row justify-content-between align-items-xl-center">
 				<div class="col-12 col-xl-6">
 					<div class="black-img__wrapper">
 						<div class="black-img">
-							<h1 class="black-img-h">Lights 4 Apart</h1>
-							<p class="black-img-p">WE CREATE LIGHT</p>
+							<h3 class="black-img-h">Lights 4 Apart</h3>
+							<h4 class="black-img-p">WE CREATE LIGHT</h4>
 						</div>
 					</div>
 				</div>
-				<div class="col-12 col-xl-5 col-xs-12">
+				<div class="col-12 col-xl-5 col-xs-12 hook">
 					<h1 class="p__caption mb-per-5">@aboutPage.HeadingOneNode</h1>
 					<a asp-page="About" asp-route-ID="@aboutPage.ID" class="a-btn-link">Узнать больше</a>
 				</div>
@@ -35,8 +35,8 @@
 		{
 			@if (categoryNum % 2 == 0)
 			{
-				<div class="row justify-content-between align-items-xl-center mb-per-10">
-					<div class="col-12 col-xl-5 col-xs-12 order-block-2">
+				<div class="scroll-m row justify-content-between align-items-xl-center mb-per-10">
+					<div class="col-12 col-xl-5 col-xs-12 order-block-2 hook">
 						<h1 class="h1__caption mb-per-5">@category.CategoryName</h1>
 						<p class="p__caption mb-per-5">@category.Description</p>
 						<a asp-page="CategoryPage" asp-route-CategoryID="@category.ID" class="a-btn-link">Узнать больше</a>
@@ -51,13 +51,13 @@
 			}
 			else
 			{
-				<div class="row justify-content-between align-items-xl-center mb-per-10">
+				<div class="scroll-m row justify-content-between align-items-xl-center mb-per-10">
 					<div class="col-12 col-xl-6 order-block-1">
 						<div class="img-center__wrapper">
 							<img class="img-responsive" src="@category.CategoryImg">
 						</div>
 					</div>
-					<div class="col-12 col-xl-5 col-xs-12 order-block-2">
+					<div class="col-12 col-xl-5 col-xs-12 order-block-2 hook">
 						<h1 class="h1__caption mb-per-5">@category.CategoryName</h1>
 						<p class="p__caption mb-per-5">@category.Description</p>
 						<a asp-page="CategoryPage" asp-route-CategoryID="@category.ID" class="a-btn-link">Узнать больше</a>

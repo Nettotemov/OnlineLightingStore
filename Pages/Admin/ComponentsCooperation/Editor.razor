@@ -1,0 +1,129 @@
+@page "/admin/cooperation/edit/{id:long}"
+@page "/admin/cooperation/create"
+@inherits OwningComponentBase<ICooperationRepository>
+@inject IPopupNotification popupNotification
+@inject IFolderManager folderManager
+
+<h3 class="bg-@ThemeColor text-white text-center p-1">@TitleText о компании</h3>
+<TabControl>
+	<TabPage Text="Основное" IsActive="true">
+		<h1 class="">Свойства</h1>
+		<EditForm Model="CooperationPage" OnValidSubmit="SaveCooperationPage" id="creatCooperationPageForm">
+			<DataAnnotationsValidator />
+			<div class="row row-cols-2">
+				<div class="col">
+					@if (CooperationPage!.ID != 0)
+					{
+						<div class="form-group mb-4">
+							<label>ID</label>
+							<input class="form-control" disabled value="@CooperationPage.ID" />
+						</div>
+					}
+					<div class="form-group mb-4">
+						<label>Заголовок</label>
+						<ValidationMessage For="@(() => CooperationPage.NameCooperation)" />
+						<InputText class="form-control" @bind-Value="CooperationPage.NameCooperation" />
+					</div>
+					<div class="form-group mb-4">
+						<label>Описание для привью</label>
+						<InputTextArea class="form-control" @bind-Value="CooperationPage.MinDescription" />
+					</div>
+					<div class="form-group mb-4">
+						<label>Описание страницы</label>
+						<TextEditor @ref="textEditor" @bind-ChildName="CooperationPage.Description" />
+						<InputTextArea class="form-control" @bind-Value="CooperationPage.Description" />
+					</div>
+					<div class="form-group mb-4">
+						<label>Опубликовано</label>
+						<InputCheckbox class="" @bind-Value="CooperationPage.IsVisible" />
+					</div>
+				</div>
+				<div class="col">
+					<div class="form-group">
+						<img class="img-fluid" style="height: 250px;" src="@CooperationPage.CooperationImg">
+					</div>
+				</div>
+			</div>
+		</EditForm>
+	</TabPage>
+	<TabPage Text="Галерея" IsActive=@TabIsActive>
+		<EditForm Model="CooperationPage" OnValidSubmit="SaveCooperationPage" id="creatCooperationPageForm">
+			<DataAnnotationsValidator />
+			<div class="form-group mb-4">
+				<img class="img-fluid" style="height: 250px;" src="@CooperationPage.CooperationImg">
+				<label>Изображение</label>
+				<ImgManagerControl @bind-ChildName="CooperationPage.CooperationImg" PathFolder="@urlPath"
+					FolderName="@CooperationPage.ID.ToString()" IsSlider="false" />
+			</div>
+		</EditForm>
+	</TabPage>
+	<TabPage Text="Доп. блок" IsActive="@TabIsActive">
+	</TabPage>
+</TabControl>
+<div class="mt-2">
+	<button form="creatCooperationPageForm" type="submit" class="btn btn-@ThemeColor">Сохранить</button>
+	<NavLink class="btn btn-secondary" href="/admin/cooperation">Отмена</NavLink>
+</div>
+
+@code {
+
+	public ICooperationRepository Repository => Service;
+
+	[Inject]
+	public NavigationManager? NavManager { get; set; }
+
+	[Parameter]
+	public long Id { get; set; } = 0;
+	public Cooperation CooperationPage { get; set; } = new Cooperation();
+	public bool TabIsActive { get; set; } = false;
+
+
+	protected override void OnInitialized()
+	{
+		if (Id != 0)
+		{
+			TabIsActive = true;
+		}
+	}
+
+	protected override void OnParametersSet()
+	{
+		if (Id != 0)
+		{
+			CooperationPage = Repository.Cooperations.FirstOrDefault(с => с.ID == Id) ?? new();
+		}
+	}
+
+	TextEditor? textEditor;
+	private string urlPath = "imegs/img-cooperation/";
+	public void SaveCooperationPage()
+	{
+		if (Id == 0)
+		{
+			textEditor!.SaveContent();
+			Repository.CreateCooperations(CooperationPage);
+			folderManager.CeateDirectory(urlPath, Convert.ToInt64(CooperationPage.ID));
+			if (CooperationPage.ID != 0)
+			{
+				TabIsActive = true;
+				GetEditUrl(Convert.ToInt64(CooperationPage.ID));
+				NavManager?.NavigateTo(GetEditUrl(Convert.ToInt64(CooperationPage.ID)));
+				Notification notification = new Notification(1, "Старница сохранена", "Страница о компании добавлена", CooperationPage.NameCooperation);
+				popupNotification.AddItem(notification);
+				StateHasChanged();
+			}
+		}
+		else
+		{
+			textEditor!.SaveContent();
+			Repository.SaveCooperations(CooperationPage);
+			Notification notification = new Notification(1, "Изменения сохранены", "Запись отредактирована: Страница о компании под номером", Id.ToString());
+			popupNotification.AddItem(notification);
+			NavManager?.NavigateTo("/admin/cooperation");
+		}
+	}
+	public string GetEditUrl(long id) => $"/admin/cooperation/edit/{id}";
+
+	public string ThemeColor => Id == 0 ? "primary" : "warning";
+	public string TitleText => Id == 0 ? "Создание" : "Редактирование";
+}

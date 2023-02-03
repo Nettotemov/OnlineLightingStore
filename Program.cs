@@ -32,6 +32,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkSto
 builder.Services.AddHttpClient(); //отправка файлов на сервер
 
 builder.Services.AddSingleton<IPopupNotification, PopupNotification>(); //регистриуем сервис уведомлений 
+builder.Services.AddScoped<IFolderManager, FolderManager>(); //регистриуем сервис для создания/удаления папок
 var app = builder.Build();
 
 
@@ -48,7 +49,7 @@ app.UseStaticFiles();
 
 app.MapDefaultControllerRoute(); //рассказывает ASP.NET Core, как сопоставить URL
 app.UseRouting();
-
+app.UseStatusCodePagesWithRedirects("/errors/{0}"); //стртаницы ошибок
 app.UseAuthentication();
 app.UseAuthorization();
 

@@ -1,10 +1,14 @@
-@page "/Catalog/{CategoryName}/{Name}/{ProductID}"
+@page "/catalog/{CategoryName}/{Name}/{ProductID}"
 @model CardProduct
 
 @{
 	ViewData["Title"] = "Светильник " + @Model.productCard?.Name + " купить";
 	Layout = "_Layout";
 }
+
+@await Component.InvokeAsync("BreadcrumbSummary", new [] { (url: "/", page: "Главная"), (url: "/catalog", page: "Каталог"),
+(url: "/category/" + @Model.productCard?.Category?.ID.ToString(), page: @Model.productCard?.Category?.CategoryName),
+(url: "/catalog/{CategoryName}/{Name}/{ProductID}", page: @Model.productCard?.Name) })
 
 <section class="product-card-slider__wrapper pt-per-5">
 	<div class="variable-width">
@@ -132,7 +136,7 @@
 
 @{
 	var SimilarProduct = @Model.DisplayedProducts.Where(p => p.Type == @Model.productCard?.Type && p.Material ==
-			@Model.productCard.Material && p.ProductID != @Model.productCard.ProductID);
+	@Model.productCard.Material && p.ProductID != @Model.productCard.ProductID);
 }
 
 @if (@SimilarProduct.Count() > 0)

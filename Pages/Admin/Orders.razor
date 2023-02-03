@@ -1,5 +1,6 @@
 @page "/admin/orders"
 @inherits OwningComponentBase<IOrderRepository>
+@inject NavigationManager NavigationManager
 
 <OrderTable StyleTable="bg-warning" TableTitle="Новые заказы" Orders="UnshippedOrders" GetOrders="UnshippedOrders"
 	ButtonLabel="Ожидает выполнения" OrderSelected="ShipOrder" />
@@ -16,14 +17,30 @@
 
 	protected async override Task OnInitializedAsync()
 	{
-		await UpdateData();
+		try
+		{
+			await UpdateData();
+		}
+		catch (InvalidOperationException ex)
+		{
+			Console.WriteLine("Исключение InvalidOperationException Orders: " + ex.Message);
+			NavigationManager.NavigateTo("/admin/orders");
+
+		}
+
 	}
 
 	public async Task UpdateData()
 	{
-		AllOrders = await Repository.Orders.ToListAsync();
+		AllOrders = await GetOrders();
 		UnshippedOrders = AllOrders.Where(o => !o.Shipped);
 		ShippedOrders = AllOrders.Where(o => o.Shipped);
+	}
+
+	private async Task<List<Order>> GetOrders()
+	{
+		var result = await Repository.Orders.ToListAsync();
+		return result;
 	}
 
 	public async Task ShipOrder(int id) => await UpdateOrder(id, true);

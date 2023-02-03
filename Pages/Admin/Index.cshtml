@@ -20,11 +20,19 @@
 	<link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 	<title>@ViewData["Title"] - LampStore</title>
 	<base href="/" />
+
+	@* редактор *@
+	<link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+	<link href="//cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">
 </head>
 
 <body>
 	<component type="typeof(Routed)" render-mode="Server" />
 	<script src="/_framework/blazor.server.js"></script>
+
+	@* редактор *@
+	<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+	<script src="/js/Quill.js"></script>
 </body>
 
 </html>

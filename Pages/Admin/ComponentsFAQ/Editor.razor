@@ -1,0 +1,342 @@
+@page "/admin/faq/edit/{id:long}"
+@page "/admin/faq/create"
+@inherits OwningComponentBase<IInfoRepository>
+@inject IPopupNotification popupNotification
+@inject IFolderManager folderManager
+
+<div class="admin-notification__wrapper">
+	<Popup ListNotifications="ListNotifications" />
+</div>
+
+<Confirmation @ref="confirmation" OnCancel="OnCancel" OnConfirm="OnConfirm" IsConfirm="confirmationCheckOnDelete"
+	Title=@confirmationTitle>
+	<div class="toast-body">
+		@if (confirmationCheckOnDelete)
+		{
+			<p>Удалить дополнительное поле @InfoPropToBeDelete?.Name?</p>
+		}
+		else 
+		{
+			<EditForm Model="AdditionalField" OnValidSubmit="CreateNewAdditionalField" id="сreateNewAdditionalField">
+			<DataAnnotationsValidator />
+				<div class="col">
+						@if (AdditionalField.ID != 0)
+						{
+							<div class="form-group">
+								<label>ID</label>
+								<input class="form-control" disabled value="@AdditionalField.ID" />
+							</div>
+						}
+						<div class="form-group mb-4">
+							<label>ID FAQ-страницы</label>
+							<input class="form-control" disabled value="@AdditionalField.InfoId" />
+						</div>
+					<div class="form-group mb-4">
+						<label>Название поля</label>
+						<ValidationMessage For="@(() => AdditionalField.Name)" />
+						<InputText class="form-control" @bind-Value="AdditionalField.Name" />
+					</div>
+					<div class="form-group mb-4">
+						<label>Содержимое</label>
+						<ValidationMessage For="@(() => AdditionalField.Value)" />
+						<InputTextArea class="form-control" @bind-Value="AdditionalField.Value" />
+					</div>
+						<div class="form-group">
+							<label>Тип поля</label>
+							<InputSelect class="form-select" @bind-Value="AdditionalField.TypesAddintionalFields">
+								<option value="">Выберите тип поля для вывода</option>
+								@foreach (var type in Enum.GetValues<TypesAdditionalFields>())
+								{
+									<option value="@type">@EnumExtensions.GetDisplayName(type)</option>
+								}
+							</InputSelect>
+						</div>
+						<div class="mt-2">
+							<button form="сreateNewAdditionalField" type="submit" class="btn btn-warning">Сохранить</button>
+							@* <a class="btn btn-secondary" @onclick="@(e => CancellationNewSetting())">Отмена</a> *@
+						</div>
+				</div>
+			</EditForm>
+		}
+	</div>
+</Confirmation>
+
+<h3 class="bg-@ThemeColor text-white text-center p-1">@TitleText о компании</h3>
+<TabControl>
+	<TabPage Text="Основное" IsActive="true">
+		<h1 class="">Свойства</h1>
+		<EditForm Model="FaqPage" OnValidSubmit="SaveFaqPage" id="creatFaqPageForm">
+			<DataAnnotationsValidator />
+			<div class="row row-cols-2">
+				<div class="col">
+					@if (FaqPage!.ID != 0)
+					{
+						<div class="form-group mb-4">
+							<label>ID</label>
+							<input class="form-control" disabled value="@FaqPage.ID" />
+						</div>
+					}
+					<div class="form-group mb-4">
+						<label>Название записи</label>
+						<ValidationMessage For="@(() => FaqPage.NameInfo)" />
+						<InputText class="form-control" @bind-Value="FaqPage.NameInfo" />
+					</div>
+					<div class="form-group mb-4">
+						<label>Описание записи для админ. панели</label>
+						<InputTextArea class="form-control" @bind-Value="FaqPage.Description" />
+					</div>
+					<div class="form-group mb-4">
+						<label>Текст для баннера</label>
+						<ValidationMessage For="@(() => FaqPage.TextForBanner)" />
+						<InputText class="form-control" @bind-Value="FaqPage.TextForBanner" />
+					</div>
+					<div class="form-group mb-4">
+						<img style="background: black" src="@FaqPage.SvgUrl">
+						<label>SVG для баннера</label>
+						<ValidationMessage For="@(() => FaqPage.SvgUrl)" />
+						<InputText class="form-control" @bind-Value="FaqPage.SvgUrl" />
+					</div>
+					<div class="form-group mb-4">
+						<TextEditor @ref="textEditor" @bind-ChildName="FaqPage.Value" />
+						<label>Содержимое</label>
+						<InputTextArea class="form-control" disabled @bind-Value="FaqPage.Value" />
+					</div>
+					<div class="form-group mb-4">
+						<label>Опубликована</label>
+						<InputCheckbox class="" @bind-Value="FaqPage.IsAvailable" />
+					</div>
+				</div>
+			</div>
+			<div class="mt-2">
+				<button form="creatFaqPageForm" type="submit" class="btn btn-@ThemeColor">Сохранить</button>
+				<NavLink class="btn btn-secondary" href="/admin/faq">Отмена</NavLink>
+			</div>
+		</EditForm>
+	</TabPage>
+	<TabPage Text="Созданые поля" IsActive=@TabIsActive>
+		<EditForm Model="FaqPage" OnValidSubmit="SaveFaqPage" id="creatFaqPageForm">
+			<DataAnnotationsValidator />
+		</EditForm>
+		<table class="table table-sm table-striped table-bordered">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Название</th>
+					<th>Значение</th>
+					<th>Тип поля</th>
+					<td />
+				</tr>
+			</thead>
+			<tbody>
+				@if(FaqPage.InfoProp?.Count > 0)
+				{
+					@foreach (InfoProp item in FaqPage.InfoProp)
+					{
+						<tr>
+							<td>@item.ID</td>
+							<td>@item.Name</td>
+							<td>@item.Value</td>
+							<td>@item.TypesAddintionalFields</td>
+							<td class="text-center">
+								<button class="btn btn-info btn-sm" @onclick="@(e => ChangeInfoProp(item))">Изменить</button>
+								<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteInfoProp(item))">Удалить</button>
+							</td>
+						</tr>
+					}
+				}
+			</tbody>
+		</table>	
+	</TabPage>
+	<TabPage Text="Создание доп. полей" IsActive="@TabIsActive">
+		<EditForm Model="AdditionalField" OnValidSubmit="CreateNewAdditionalField" id="сreateNewAdditionalField">
+			<DataAnnotationsValidator />
+			<div class="row row-cols-2">
+				<div class="col">
+						<div class="form-group mb-4">
+							<label>ID FAQ-страницы</label>
+							<input class="form-control" disabled value="@AdditionalField.InfoId" />
+						</div>
+					<div class="form-group mb-4">
+						<label>Название поля</label>
+						<ValidationMessage For="@(() => AdditionalField.Name)" />
+						<InputText class="form-control" @bind-Value="AdditionalField.Name" />
+					</div>
+					<div class="form-group mb-4">
+						<label>Содержимое</label>
+						<ValidationMessage For="@(() => AdditionalField.Value)" />
+						<InputTextArea class="form-control" @bind-Value="AdditionalField.Value" />
+					</div>
+						<div class="form-group">
+							<label>Тип поля</label>
+							<InputSelect class="form-select" @bind-Value="AdditionalField.TypesAddintionalFields">
+								<option value="">Выберите тип поля для вывода</option>
+								@foreach (var type in Enum.GetValues<TypesAdditionalFields>())
+								{
+									<option value="@type">@EnumExtensions.GetDisplayName(type)</option>
+								}
+							</InputSelect>
+						</div>
+						<div class="mt-2">
+							<button form="сreateNewAdditionalField" type="submit" class="btn btn-warning">Сохранить</button>
+							@* <a class="btn btn-secondary" @onclick="@(e => CancellationNewSetting())">Отмена</a> *@
+						</div>
+				</div>
+			</div>
+		</EditForm>
+	</TabPage>
+</TabControl>
+
+@code {
+
+	public IInfoRepository Repository => Service;
+
+	[Inject]
+	public NavigationManager? NavManager { get; set; }
+
+	[Parameter]
+	public long Id { get; set; } = 0;
+	public Info FaqPage { get; set; } = new Info();
+	public bool TabIsActive { get; set; } = false;
+
+	public List<InfoProp> InfoPropList { get; set; } = new();
+
+	protected override void OnInitialized()
+	{
+		if (Id != 0)
+		{
+			AdditionalField.InfoId = FaqPage.ID;
+			TabIsActive = true;
+		}
+	}
+
+	private List<Notification> ListNotifications { get; set; } = new();
+	protected override async Task OnParametersSetAsync()
+	{
+		if (Id != 0)
+		{
+			AdditionalField.InfoId = FaqPage.ID;
+			FaqPage = await Repository.Info.FirstOrDefaultAsync(с => с.ID == Id) ?? new();
+		}
+		ListNotifications = await popupNotification.GetItems();
+		StateHasChanged();
+	}
+
+	TextEditor? textEditor;
+	private string urlPath = "imegs/img-faq/";
+	public async Task SaveFaqPage()
+	{
+		if (Id == 0)
+		{
+			await textEditor!.SaveContent();
+			Repository.CreateInfo(FaqPage);
+			folderManager.CeateDirectory(urlPath, Convert.ToInt64(FaqPage.ID));
+			if (FaqPage.ID != 0)
+			{
+				TabIsActive = true;
+				GetEditUrl(Convert.ToInt64(FaqPage.ID));
+				NavManager?.NavigateTo(GetEditUrl(Convert.ToInt64(FaqPage.ID)));
+				Notification notification = new Notification(1, "Старница сохранена", "Страница FAQ добавлена", FaqPage.NameInfo);
+				popupNotification.AddItem(notification);
+				StateHasChanged();
+			}
+		}
+		else
+		{
+			await textEditor!.SaveContent();
+			Repository.SaveInfo(FaqPage);
+			Notification notification = new Notification(1, "Изменения сохранены", "Запись отредактирована: Страница FAQ под номером", Id.ToString());
+			popupNotification.AddItem(notification);
+			NavManager?.NavigateTo("/admin/faq");
+		}
+	}
+	public string GetEditUrl(long id) => $"/admin/faq/edit/{id}";
+
+	public string ThemeColor => Id == 0 ? "primary" : "warning";
+	public string TitleText => Id == 0 ? "Создание" : "Редактирование";
+}
+
+@code {
+	public long IdAdditionalFiel { get; set; } = 0;
+	public InfoProp AdditionalField {get; set; } = new InfoProp();
+	public IEnumerable<InfoProp> AdditionalFieldData { get; set; } = Enumerable.Empty<InfoProp>();
+	public async Task UpdateData()
+	{
+		AdditionalFieldData = await Repository.InfoProp.ToListAsync();
+		await InvokeAsync(StateHasChanged);
+	}
+
+	public async Task CreateNewAdditionalField()
+	{
+		if (IdAdditionalFiel == 0)
+		{
+			AdditionalField.InfoId = FaqPage.ID;
+			Repository.CreateAdditionalField(AdditionalField);
+			Notification notification = new Notification(1, "Поле сохранено", "Новое поле добавлено", AdditionalField.Name);
+			popupNotification.AddItem(notification);
+			await UpdateData();
+		}
+		else
+		{
+			AdditionalField.InfoId = FaqPage.ID;
+			Repository.SaveAdditionalField(AdditionalField);
+			Notification notification = new Notification(1, "Изменения сохранены", "Дополнительное поле изменено", AdditionalField.ID.ToString());
+			popupNotification.AddItem(notification);
+			await UpdateData();
+		}
+	}
+
+	public void DeleteInfoProp(InfoProp infoProp)
+	{
+		InfoPropToBeDelete = infoProp;
+		confirmationCheckOnDelete = true;
+		confirmationTitle = "Удаление дополнительного поля";
+		confirmation?.Show();
+	}
+
+	Confirmation? confirmation;
+	private InfoProp? InfoPropToBeDelete { get; set; }
+
+	private async Task OnConfirm()
+	{
+		if (InfoPropToBeDelete != null)
+		{
+			Repository.DeleteAdditionalField(InfoPropToBeDelete);
+			confirmation?.Hide();
+			Notification notification = new Notification(1, "Удаление дополнительного поля", "Удалено дополнительное поле", InfoPropToBeDelete.Name);
+			popupNotification.AddItem(notification);
+			InfoPropToBeDelete = null;
+			await UpdateData();
+		}
+	}
+
+	private void OnCancel()
+	{
+		confirmation?.Hide();
+		if (confirmationCheckOnDelete = true && InfoPropToBeDelete != null)
+		{
+			Notification notification = new Notification(1, "Отмена удаления", "Отменено удаление дополнительного поля",
+			InfoPropToBeDelete!.Name);
+			popupNotification.AddItem(notification);
+			InfoPropToBeDelete = null;
+		}
+		else
+		{
+			Notification notification = new Notification(1, "Отмена редактирования", "Отменено редактирование дополнительного поля",
+			AdditionalField?.Name);
+			popupNotification.AddItem(notification);
+		}
+	}
+}
+
+@code {
+	private bool confirmationCheckOnDelete;
+	private string confirmationTitle = string.Empty;
+	public void ChangeInfoProp(InfoProp infoProp)
+	{
+		IdAdditionalFiel = infoProp.ID;
+		confirmationCheckOnDelete = false;
+		confirmationTitle = "Редактирование дополнительного поля";
+		AdditionalField = Repository.InfoProp.FirstOrDefault(i => i.ID == infoProp.ID) ?? new();
+		confirmation?.Show();
+	}
+}

@@ -1,0 +1,117 @@
+@page "/admin/faq"
+@inherits OwningComponentBase<IInfoRepository>
+@inject IPopupNotification popupNotification
+@inject IFolderManager folderManager
+
+<Confirmation @ref="confirmation" OnCancel="OnCancel" OnConfirm="OnConfirm" IsConfirm="confirmationCheckOnDelete"
+	Title="Удаление страницы FAQ">
+	<div class="toast-body">
+		@confirmationText
+	</div>
+</Confirmation>
+<div class="admin-notification__wrapper">
+	<Popup ListNotifications="ListNotifications" />
+</div>
+
+<table class="table table-sm table-striped table-bordered">
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Название</th>
+			<th>Описание</th>
+			<th>Опубликовано</th>
+			<td />
+		</tr>
+	</thead>
+	<tbody>
+		@if (FaqData?.Count() > 0)
+		{
+			@foreach (Info i in FaqData)
+			{
+				<tr>
+					<td>@i.ID</td>
+					<td>@i.NameInfo</td>
+					<td>@i.Description</td>
+					<td>@i.IsAvailable</td>
+					<td class="text-center">
+						<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(i.ID)">
+							Изменить
+						</NavLink>
+						<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteFaqPage(i))">
+							Удалить
+						</button>
+					</td>
+				</tr>
+			}
+		}
+		else
+		{
+			<tr>
+				<td colspan="5" class="text-center">Записи, не найдены.</td>
+			</tr>
+		}
+	</tbody>
+</table>
+<NavLink class="btn btn-primary" href="/admin/faq/create">Добавить</NavLink>
+
+@code {
+	public IInfoRepository Repository => Service;
+	public IEnumerable<Info> FaqData { get; set; } = Enumerable.Empty<Info>();
+	protected async override Task OnInitializedAsync()
+	{
+		await UpdateData();
+	}
+
+	public async Task UpdateData()
+	{
+		FaqData = await Repository.Info.ToListAsync();
+	}
+
+	public void DeleteFaqPage(Info infoPage)
+	{
+		FaqToBeDelete = infoPage;
+		confirmationCheckOnDelete = true;
+		confirmationText = "Удалить стрницу информации: " + infoPage.NameInfo;
+		confirmation?.Show();
+	}
+
+	public string GetEditUrl(long id) => $"/admin/faq/edit/{id}";
+}
+
+@code {
+	Confirmation? confirmation;
+	private Info? FaqToBeDelete { get; set; }
+	private string confirmationText = string.Empty;
+	private bool confirmationCheckOnDelete;
+	private string urlPath = "wwwroot/imegs/img-faq/";
+	private async Task OnConfirm()
+	{
+		if (FaqToBeDelete != null)
+		{
+			folderManager.DeleteDirectory(urlPath + FaqToBeDelete.ID);
+			Repository.DeleteInfo(FaqToBeDelete);
+			confirmation?.Hide();
+			Notification notification = new Notification(1, "Удаление FAQ записи", "Удалена запись", FaqToBeDelete.NameInfo);
+			popupNotification.AddItem(notification);
+			FaqToBeDelete = null;
+			await UpdateData();
+		}
+	}
+
+	private void OnCancel()
+	{
+		Notification notification = new Notification(1, "Отмена удаления", "Отменено удаление FAQ записи",
+		FaqToBeDelete?.NameInfo);
+		confirmation?.Hide();
+		popupNotification.AddItem(notification);
+		FaqToBeDelete = null;
+	}
+
+	private List<Notification> ListNotifications { get; set; } = new();
+
+	protected override async Task OnParametersSetAsync()
+	{
+		ListNotifications = await popupNotification.GetItems();
+		StateHasChanged();
+	}
+}

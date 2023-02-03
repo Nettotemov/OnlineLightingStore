@@ -156,25 +156,19 @@ namespace LampStore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
 
-                    b.Property<string>("CategoryImg")
-                        .IsRequired()
+                    b.Property<string>("CooperationImg")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DescriptionTwo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HeadingTwo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImgTwoUrl")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsVisible")
                         .HasColumnType("bit");
+
+                    b.Property<string>("MinDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NameCooperation")
                         .IsRequired()
@@ -197,17 +191,55 @@ namespace LampStore.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
                     b.Property<string>("NameInfo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Value")
+                    b.Property<string>("SvgUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TextForBanner")
                         .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
+                    b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
                     b.ToTable("InfoPages");
+                });
+
+            modelBuilder.Entity("LampStore.Models.InfoProp", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+
+                    b.Property<int>("InfoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte>("TypesAddintionalFields")
+                        .HasColumnType("tinyint");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("InfoId");
+
+                    b.ToTable("InfoProp");
                 });
 
             modelBuilder.Entity("LampStore.Models.Order", b =>
@@ -402,6 +434,15 @@ namespace LampStore.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("LampStore.Models.InfoProp", b =>
+                {
+                    b.HasOne("LampStore.Models.Info", null)
+                        .WithMany("InfoProp")
+                        .HasForeignKey("InfoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("LampStore.Models.Product", b =>
                 {
                     b.HasOne("LampStore.Models.Category", "Category")
@@ -411,6 +452,11 @@ namespace LampStore.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("LampStore.Models.Info", b =>
+                {
+                    b.Navigation("InfoProp");
                 });
 
             modelBuilder.Entity("LampStore.Models.Order", b =>

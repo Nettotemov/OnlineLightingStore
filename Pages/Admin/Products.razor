@@ -2,6 +2,7 @@
 @page "/admin"
 @inherits OwningComponentBase<IStoreRepository>
 @inject IPopupNotification popupNotification
+@inject IFolderManager folderManager
 
 <Confirmation @ref="confirmation" OnCancel="OnCancel" OnConfirm="OnConfirm" IsConfirm="true" Title="Удаление товара...">
 	<div class="toast-body">
@@ -77,8 +78,15 @@
 
 	protected async override Task OnInitializedAsync()
 	{
-		DisplayedCategories = await Repository.Category.Select(c => c).Distinct().ToListAsync(); //получение категорий
-		await UpdateData();
+		try
+		{
+			DisplayedCategories = await Repository.Category.Select(c => c).Distinct().ToListAsync(); //получение категорий
+			await UpdateData();
+		}
+		catch (InvalidOperationException ex)
+		{
+			Console.WriteLine("Исключение InvalidOperationException Products: " + ex.Message);
+		}
 	}
 
 	public async Task UpdateData()
@@ -98,10 +106,12 @@
 	Confirmation? confirmation;
 	private Product? ProductToBeDelete { get; set; }
 
+	private string urlPath = "wwwroot/imegs/img-products/";
 	private async Task OnConfirm()
 	{
 		if (ProductToBeDelete != null)
 		{
+			folderManager.DeleteDirectory(urlPath + ProductToBeDelete.ProductID);
 			Repository.DeleteProduct(ProductToBeDelete);
 			confirmation?.Hide();
 			Notification notification = new Notification(1, "Товар удалён", "Удалён товар", ProductToBeDelete!.Name);

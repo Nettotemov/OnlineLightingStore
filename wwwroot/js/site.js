@@ -405,25 +405,25 @@ function GetAntiForgeryToken() {
 	}
 }
 
-$(function () {
-	var header = $(".header");
-	let scroll = $(window).scrollTop();
-	if (scroll > 1) {
-		header.addClass("scrolled");
-	} else {
-		header.removeClass("scrolled");
-	}
-	$(window).scroll(function () {
-		scroll = $(window).scrollTop();
+// $(function () {
+// 	var header = $(".header");
+// 	let scroll = $(window).scrollTop();
+// 	if (scroll > 1) {
+// 		header.addClass("scrolled");
+// 	} else {
+// 		header.removeClass("scrolled");
+// 	}
+// 	$(window).scroll(function () {
+// 		scroll = $(window).scrollTop();
 
-		if (scroll > 1) {
-			header.addClass("scrolled");
-		}
-		else {
-			header.removeClass("scrolled");
-		}
-	});
-});
+// 		if (scroll > 1) {
+// 			header.addClass("scrolled");
+// 		}
+// 		else {
+// 			header.removeClass("scrolled");
+// 		}
+// 	});
+// });
 
 jQuery(document).ready(function () {
 	let check;
@@ -526,5 +526,74 @@ $('#checkout-form').on("change click", "#tel", function () {
 	document.getElementById('tel').addEventListener('input', function (e) {
 		var x = e.target.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,4})/);
 		e.target.value = '+' + (x[1] = 7) + ' (' + x[2] + ') ' + x[3] + '-' + x[4]
+	});
+});
+
+
+$(document).ready(function () {
+	var windowWidth = window.innerWidth;
+	// Set the threshold for mobile devices (e.g. 767px)
+	var mobileThreshold = 767;
+	// Check if the window width is below the mobile threshold
+	if (windowWidth < mobileThreshold) {
+		// Disable ScrollMagic on mobile devices
+		var controller = new ScrollMagic.Controller();
+		controller.enabled(false);
+	} else {
+		// Initialize ScrollMagic on desktop devices
+		var ctrl = new ScrollMagic.Controller();
+		// Your ScrollMagic code here...
+		$(".scroll-m").each(function (i) {
+			let target = $(this).find(".hook");
+			var tl = new TimelineMax();
+			tl.from(target, 1, { opacity: 0.4, y: 105 })
+				.to(target, 1, { opacity: 0.4 });
+
+			new ScrollMagic.Scene({
+				triggerElement: this,
+				duration: "67%", //40
+				triggerHook: 0.55 //0.85
+			})
+				.setTween(tl)
+				.addTo(ctrl)
+			// .addIndicators({
+			// 	colorTrigger: "black",
+			// 	colorStart: "black",
+			// 	colorEnd: "black",
+			// 	indent: 40
+			// });
+		});
+	}
+});
+
+
+$(document).ready(function () {
+	var ctrl = new ScrollMagic.Controller();
+	// Your ScrollMagic code here...
+	$(".header-animation").each(function (i) {
+		let target = $(this).find(".header");
+		let targetLogo = $(this).find(".logo");
+		let targetBtn = $(this).find(".a-btn__header");
+		let targetBtnAfter = CSSRulePlugin.getRule(".a-btn__header:after");
+		let targetCart = $(this).find(".cart-btn");
+		var tl = new TimelineMax();
+		tl.to(target, 1, { height: 75, backgroundColor: "#000000" });
+		tl.to(targetLogo, 0.5, { color: "#ffffff", fontSize: "1.5rem" });
+		tl.to(targetCart, 0.5, { color: "#ffffff", fill: "#ffffff" });
+		tl.to(targetBtn, 0.5, { color: "#ffffff", fontSize: "0.75rem" });
+		tl.to(targetBtnAfter, 0.5, { background: "#ffffff" });
+		new ScrollMagic.Scene({
+			triggerElement: this,
+			duration: "30%", //40
+			triggerHook: 0 //0.85
+		})
+			.setTween(tl)
+			.addTo(ctrl)
+		// .addIndicators({
+		// 	colorTrigger: "black",
+		// 	colorStart: "black",
+		// 	colorEnd: "black",
+		// 	indent: 40
+		// });
 	});
 });

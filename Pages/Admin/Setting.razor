@@ -1,12 +1,20 @@
 @page "/admin/settings"
 @inherits OwningComponentBase<ISettingsRepository>
+@inject IPopupNotification popupNotification
 
-<style>
-	div.validation-message {
-		color: rgb(220, 53, 69);
-		font-weight: 500
-	}
-</style>
+<Confirmation @ref="confirmation" OnCancel="OnCancel" OnConfirm="OnConfirm" IsConfirm="true"
+	Title="Удаление страницы о компании...">
+	<div class="toast-body">
+		Вы уверены что хотите удалить настройку
+		@if (SettingToBeDelete != null)
+		{
+			<p>@SettingToBeDelete.NameSettings ?</p>
+		}
+	</div>
+</Confirmation>
+<div class="admin-notification__wrapper">
+	<Popup ListNotifications="ListNotifications" />
+</div>
 
 <table class="table table-sm table-striped table-bordered">
 	<thead>
@@ -87,7 +95,6 @@
 		<a class="btn btn-secondary" @onclick="@(e => CancellationNewSetting())">Отмена</a>
 	</div>
 </EditForm>
-@* <NavLink class="btn btn-primary" href="/admin/products/create">Добавить</NavLink> *@
 
 @code {
 	public ISettingsRepository Repository => Service;
@@ -96,9 +103,11 @@
 	public int Id { get; set; } = 0;
 
 	public string? value;
+	private List<Notification> ListNotifications { get; set; } = new();
 
 	protected async override Task OnParametersSetAsync()
 	{
+		ListNotifications = await popupNotification.GetItems();
 		await UpdateData();
 	}
 	public async Task UpdateData()
@@ -108,10 +117,10 @@
 		await InvokeAsync(StateHasChanged);
 	}
 
-	public async Task DeleteSetting(Settings settings)
+	public void DeleteSetting(Settings settings)
 	{
-		Repository.DeleteSettings(settings);
-		await UpdateData();
+		SettingToBeDelete = settings;
+		confirmation?.Show();
 	}
 
 	public async Task CreateNewSetting()
@@ -119,12 +128,17 @@
 		if (Id == 0)
 		{
 			Repository.CreateSettings(NewSetting);
+			Notification notification = new Notification(1, "Настройка сохранена", "Запись настройки добавлена",
+			NewSetting.NameSettings);
+			popupNotification.AddItem(notification);
 			await UpdateData();
 			CancellationNewSetting();
 		}
 		else
 		{
 			Repository.SaveSettings(NewSetting);
+			Notification notification = new Notification(1, "Изменения сохранены", "Настройка изменена", NewSetting.ID.ToString());
+			popupNotification.AddItem(notification);
 			await UpdateData();
 			CancellationNewSetting();
 		}
@@ -152,5 +166,31 @@
 			NewSetting = new();
 		}
 	}
+}
 
+@code {
+	Confirmation? confirmation;
+	private Settings? SettingToBeDelete { get; set; }
+	private async Task OnConfirm()
+	{
+		if (SettingToBeDelete != null)
+		{
+			Repository.DeleteSettings(SettingToBeDelete);
+			confirmation?.Hide();
+			Notification notification = new Notification(1, "Удаление записи", "Удалена настройка",
+			SettingToBeDelete.NameSettings);
+			popupNotification.AddItem(notification);
+			SettingToBeDelete = null;
+			await UpdateData();
+		}
+	}
+
+	private void OnCancel()
+	{
+		confirmation?.Hide();
+		Notification notification = new Notification(1, "Отмена удаления", "Отменено удаление настройки",
+		SettingToBeDelete!.NameSettings);
+		popupNotification.AddItem(notification);
+		SettingToBeDelete = null;
+	}
 }

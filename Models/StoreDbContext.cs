@@ -15,6 +15,7 @@ namespace LampStore.Models
 		public DbSet<AboutPage> AboutPages => Set<AboutPage>();
 
 		public DbSet<Info> InfoPages => Set<Info>();
+		public DbSet<InfoProp> InfoProp => Set<InfoProp>();
 
 		public DbSet<Cooperation> CooperationPages => Set<Cooperation>();
 

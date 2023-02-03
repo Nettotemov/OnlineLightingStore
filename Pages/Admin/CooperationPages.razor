@@ -1,0 +1,128 @@
+@page "/admin/cooperation"
+@inherits OwningComponentBase<ICooperationRepository>
+@inject IPopupNotification popupNotification
+@inject IFolderManager folderManager
+
+<Confirmation @ref="confirmation" OnCancel="OnCancel" OnConfirm="OnConfirm" IsConfirm="true"
+	Title="Удаление страницы сотрудничество...">
+	<div class="toast-body">
+		Вы уверены что хотите удалить запись
+		@if (CooperationPageToBeDelete != null)
+		{
+			<p>@CooperationPageToBeDelete.NameCooperation ?</p>
+		}
+	</div>
+</Confirmation>
+<div class="admin-notification__wrapper">
+	<Popup ListNotifications="ListNotifications" />
+</div>
+
+<table class="table table-sm table-striped table-bordered">
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Заголовок</th>
+			<th>Изображение</th>
+			<th>Описание странциы</th>
+			<th>Опубликовано</th>
+			<td />
+		</tr>
+	</thead>
+	<tbody>
+		@if (CooperationData?.Count() > 0)
+		{
+			@foreach (Cooperation c in CooperationData)
+			{
+				<tr>
+					<td>@c.ID</td>
+					<td>@c.NameCooperation</td>
+					<td><img class="img-fluid" style="height: 80px;" src="@c.CooperationImg"></td>
+					<td>@c.MinDescription</td>
+					<td>@c.IsVisible</td>
+					<td class="text-center">
+						<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(c.ID)">
+							Изменить
+						</NavLink>
+						<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteAboutPage(c))">
+							Удалить
+						</button>
+					</td>
+				</tr>
+			}
+		}
+		else
+		{
+			<tr>
+				<td colspan="5" class="text-center">Записи, не найдены.</td>
+			</tr>
+		}
+	</tbody>
+</table>
+<NavLink class="btn btn-primary" href="/admin/cooperation/create">Добавить</NavLink>
+
+@code {
+	public ICooperationRepository Repository => Service;
+	public IEnumerable<Cooperation> CooperationData { get; set; } = Enumerable.Empty<Cooperation>();
+
+	protected async override Task OnInitializedAsync()
+	{
+		try
+		{
+			await UpdateData();
+		}
+		catch (InvalidOperationException ex)
+		{
+			Console.WriteLine("Исключение InvalidOperationException About: " + ex.Message);
+		}
+	}
+
+	public async Task UpdateData()
+	{
+		CooperationData = await Repository.Cooperations.ToListAsync();
+	}
+
+	public void DeleteAboutPage(Cooperation сooperation)
+	{
+		CooperationPageToBeDelete = сooperation;
+		confirmation?.Show();
+	}
+
+	public string GetEditUrl(long id) => $"/admin/cooperation/edit/{id}";
+}
+
+@code {
+	Confirmation? confirmation;
+	private Cooperation? CooperationPageToBeDelete { get; set; }
+	private string urlPath = "wwwroot/imegs/img-cooperation/";
+	private async Task OnConfirm()
+	{
+		if (CooperationPageToBeDelete != null)
+		{
+			folderManager.DeleteDirectory(urlPath + CooperationPageToBeDelete.ID);
+			Repository.DeleteCooperations(CooperationPageToBeDelete);
+			confirmation?.Hide();
+			Notification notification = new Notification(1, "Удаление записи", "Удалена страница сотрудничества",
+			CooperationPageToBeDelete.NameCooperation);
+			popupNotification.AddItem(notification);
+			CooperationPageToBeDelete = null;
+			await UpdateData();
+		}
+	}
+
+	private void OnCancel()
+	{
+		confirmation?.Hide();
+		Notification notification = new Notification(1, "Отмена удаления", "Отменено удаление страницы сотрудничество",
+		CooperationPageToBeDelete!.NameCooperation);
+		popupNotification.AddItem(notification);
+		CooperationPageToBeDelete = null;
+	}
+
+	private List<Notification> ListNotifications { get; set; } = new();
+
+	protected override async Task OnParametersSetAsync()
+	{
+		ListNotifications = await popupNotification.GetItems();
+		StateHasChanged();
+	}
+}

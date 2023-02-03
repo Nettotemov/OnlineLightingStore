@@ -1,0 +1,116 @@
+@inject ILogger<FileUpload> Logger
+
+@if (displayImgManager)
+{
+	<div class="modal d-block" tabindex="-1" role="dialog" id="imgManagerModal">
+	<div class="modal-dialog modal-fullscreen" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" @onclick="OnCancel"
+					aria-label="Close"></button>
+			</div>
+			<button type="button" class="btn btn-primary" @onclick="ShowFiles">Выбрать изображение(я)</button>
+			<div class="files-manager__wrapper">
+				@if (pathFiles.Count() > 0)
+					{
+						@foreach (var file in pathFiles)
+						{
+							<div class="card">
+								<img class="" src="@fullPathFile/@file.Name" />
+								<p>wwwroot/@PathFolder@FolderName/@file.Name</p>
+								<button type="button" class="btn btn-success"
+						@onclick="@(e => AddPhoto('/' + @PathFolder + @FolderName + '/' + @file.Name))">
+									Добавить</button>
+								<button type="button" class="btn btn-danger"
+						@onclick="@(e => DeleteFile("wwwroot/" + @PathFolder + @FolderName + '/' + @file.Name))">
+									Удалить на всегда</button>
+							</div>
+						}
+					}
+				</div>
+				<FileUpload FolderName="@FolderName" UrlPath="@PathFolder" />
+			</div>
+		</div>
+	</div>
+}
+
+@code {
+	private bool displayImgManager = false;
+
+	[Parameter]
+	public EventCallback OnCancel { get; set; }
+	public void Show() => displayImgManager = true;
+	public void Hide() => displayImgManager = false;
+
+	[Parameter]
+	public string PathFolder { get; set; } = string.Empty;
+
+	[Parameter]
+	public string FolderName { get; set; } = string.Empty;
+
+	[Parameter]
+	public EventCallback<string> OnClickAddPhoto { get; set; }
+
+	[Parameter]
+	public EventCallback<string> OnClickDeletePhoto { get; set; }
+
+	[Parameter]
+	public bool IsSlider { get; set; }
+
+	private string fullPathFile = string.Empty;
+	private List<FileInfo> pathFiles = new();
+	private async Task ShowFiles()
+	{
+		fullPathFile = PathFolder + FolderName;
+		await Task.Run(() => pathFiles = GetFiles());
+	}
+
+	private List<FileInfo> GetFiles()
+	{
+		var directory = new DirectoryInfo("wwwroot/" + PathFolder + FolderName);
+
+		return directory.GetFiles().ToList();
+	}
+
+	public Task AddPhoto(string url)
+	{
+		return OnClickAddPhoto.InvokeAsync(url);
+	}
+
+	private List<string> urlPhotos { get; set; } = new();
+	private Task DeletePhoto(string url)
+	{
+		if (url != string.Empty)
+		{
+			urlPhotos = url.Split(", ").ToList();
+			urlPhotos.Remove(url);
+			url = String.Join(", ", urlPhotos);
+
+			return OnClickDeletePhoto.InvokeAsync(url);
+		}
+		return OnClickDeletePhoto.InvokeAsync(url);
+	}
+
+	private string fileNameError = string.Empty;
+	private async Task DeleteFile(string urlPath)
+	{
+		if (File.Exists(urlPath))
+		{
+			try
+			{
+				File.Delete(urlPath);
+				await ShowFiles();
+			}
+			catch (Exception ex)
+			{
+				Logger.LogError("File: {Filename} Error: {Error}",
+				urlPath, ex.Message);
+			}
+		}
+		else
+		{
+			fileNameError = "Указанный файл не существует";
+		}
+	}
+}
