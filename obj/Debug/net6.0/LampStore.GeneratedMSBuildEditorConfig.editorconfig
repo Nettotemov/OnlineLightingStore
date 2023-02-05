@@ -159,6 +159,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQ29udGFjdHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/CooperationPage.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQ29vcGVyYXRpb25QYWdlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/CooperationPages.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQ29vcGVyYXRpb25QYWdlcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
@@ -177,10 +185,6 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/InfoPage.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvSW5mb1BhZ2UuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Privacy.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUHJpdmFjeS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Shared/Checkout.cshtml]

@@ -14,9 +14,6 @@
 				<nav id="navWrapper" class="nav__wrapper">
 					<ul class="nav">
 						<li class="nav-item">
-							<a class="nav-link a-btn__header" asp-area="" asp-page="/Index">Сотрудничество</a>
-						</li>
-						<li class="nav-item">
 							<a class="nav-link a-btn__header" asp-area="" asp-page="/contacts">Контакты</a>
 						</li>
 						<li class="nav-item">
@@ -24,6 +21,9 @@
 						</li>
 						<li class="nav-item">
 							<a class="nav-link a-btn__header" asp-page="/about" asp-route-ID="1">Компания</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link a-btn__header" asp-area="" asp-page="/cooperationpages">Сотрудничество</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link a-btn__header" asp-page="/catalog" asp-route-productPage="1"
@@ -51,7 +51,7 @@
 			<div class="menu-wrapper__items">
 				<a asp-page="/about" asp-route-ID="1" class="menu__h3">Компания</a>
 				<a asp-page="/faq" asp-area="" class="menu__h3">Информация</a>
-				<a href="/" class="menu__h3">Сотрудничество</a>
+				<a asp-area="" asp-page="/cooperationpages" class="menu__h3">Сотрудничество</a>
 				<a asp-area="" asp-page="/contacts" class="menu__h3">Контакты</a>
 			</div>
 			<hr class="footer-line__wrapper">

@@ -14,9 +14,9 @@ namespace LampStore.Models
 		[MaxLength(60)]
 		[Required(ErrorMessage = "Пожалуйста, укажите текст для баннера")]
 		public string? TextForBanner { get; set; }
-		public string? Value { get; set; }
+		public string Value { get; set; } = string.Empty;
 		public string Description { get; set; } = string.Empty;
-		public string? SvgUrl { get; set; }
+		public string? SvgUrl { get; set; } = string.Empty;
 		public bool IsAvailable { get; set; }
 
 		[BindNever]

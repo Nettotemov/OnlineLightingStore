@@ -1,8 +1,62 @@
 @page "/contacts"
 @model ContactsModel
+@using LampStore.Services
 
 @{
 	Layout = "_Layout";
+	ViewData["Title"] = "Контакты";
 }
 
-<p></p>
+@await Component.InvokeAsync("BreadcrumbSummary", new [] { (url: "/", page: "Главная"),
+(url: "/contacts", page: "Контакты") })
+
+<div class="contacts__wrapper mt-5">
+	<div class="row">
+		<div class="col-6">
+			<h1 class="h1__caption mb-4">Наши контакты</h1>
+			@foreach (var text in @Model.SettingsList.Where(s => s.Setting == TypeSettings.TextFooter))
+			{
+				<p class="info-page__p mb-4">@text.Value</p>
+			}
+			<div class="row">
+				<div class="col-6 mb-per-5">
+					<p class="info-page__p"><b>Телефон</b></p>
+					@foreach (var phone in @Model.SettingsList.Where(s => s.Setting == TypeSettings.PhoneNumber))
+					{
+						<a href="tel:@phone.Value" class="a-btn-link a-btn-link__contacts">@phone.Value</a>
+					}
+				</div>
+				<div class="col-6 mb-per-5">
+					<p class="info-page__p"><b>Email</b></p>
+					@foreach (var email in @Model.SettingsList.Where(s => s.Setting == TypeSettings.Email))
+					{
+						<a href="mailto:@email.Value" class="a-btn-link a-btn-link__contacts">@email.Value</a>
+					}
+				</div>
+				<div class="col-12 mb-per-5">
+					<p class="info-page__p"><b>Социальные сети</b></p>
+					@foreach (var social in @Model.SettingsList.Where(s => s.Setting == TypeSettings.Socials))
+					{
+						<a href="@social.Value" class="a-btn-link a-btn-link__contacts">@social.NameSettings</a>
+					}
+				</div>
+				<div class="col-12 mb-per-5">
+					<p class="info-page__p"><b>Время работы</b></p>
+					@foreach (var hours in @Model.SettingsList.Where(s => s.Setting == TypeSettings.WorkingHours))
+					{
+						<p class="info-page__p mb-2">@Html.Raw(@hours.Value)</p>
+					}
+				</div>
+				<div class="col-12 mb-per-5">
+					<p class="info-page__p"><b>Адрес</b></p>
+					@foreach (var adress in @Model.SettingsList.Where(s => s.Setting == TypeSettings.Address))
+					{
+						<p class="info-page__p mb-2">@Html.Raw(adress.Value)</p>
+					}
+				</div>
+			</div>
+		</div>
+		<div class="col-6">
+		</div>
+	</div>
+</div>

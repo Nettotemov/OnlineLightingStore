@@ -1,0 +1,24 @@
+@page "/cooperation/{ID}"
+@model CooperationPage
+
+@{
+	Layout = "_Layout";
+	ViewData["Title"] = @Model.cooperationPage!.NameCooperation;
+}
+@await Component.InvokeAsync("BreadcrumbSummary", new [] { (url: "/", page: "Главная"),
+(url: "/cooperation", page: "Сотрудничество"), (url: @Model.cooperationPage.ID.ToString(), page:
+@Model.cooperationPage.NameCooperation) })
+
+<div class="info-page__wrapper row mt-5">
+	<div class="col-12 col-xl-6">
+		<div class="img-cooperation__wrapper">
+			<div class="img-center__wrapper">
+				<img class="img-responsive" src="@Model.cooperationPage.CooperationImg">
+			</div>
+		</div>
+	</div>
+	<div class="col-12 col-xl-5 col-xs-12">
+		<h1 class="h3__caption fw-bold">@Model.cooperationPage.NameCooperation</h1>
+		@Html.Raw(Model.cooperationPage.Description)
+	</div>
+</div>

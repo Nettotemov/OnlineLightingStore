@@ -5,61 +5,57 @@
 @inject IFolderManager folderManager
 
 <h3 class="bg-@ThemeColor text-white text-center p-1">@TitleText о компании</h3>
-<TabControl>
-	<TabPage Text="Основное" IsActive="true">
-		<h1 class="">Свойства</h1>
-		<EditForm Model="CooperationPage" OnValidSubmit="SaveCooperationPage" id="creatCooperationPageForm">
-			<DataAnnotationsValidator />
-			<div class="row row-cols-2">
-				<div class="col">
-					@if (CooperationPage!.ID != 0)
-					{
-						<div class="form-group mb-4">
-							<label>ID</label>
-							<input class="form-control" disabled value="@CooperationPage.ID" />
-						</div>
-					}
-					<div class="form-group mb-4">
-						<label>Заголовок</label>
-						<ValidationMessage For="@(() => CooperationPage.NameCooperation)" />
-						<InputText class="form-control" @bind-Value="CooperationPage.NameCooperation" />
-					</div>
-					<div class="form-group mb-4">
-						<label>Описание для привью</label>
-						<InputTextArea class="form-control" @bind-Value="CooperationPage.MinDescription" />
-					</div>
-					<div class="form-group mb-4">
-						<label>Описание страницы</label>
-						<TextEditor @ref="textEditor" @bind-ChildName="CooperationPage.Description" />
-						<InputTextArea class="form-control" @bind-Value="CooperationPage.Description" />
-					</div>
-					<div class="form-group mb-4">
-						<label>Опубликовано</label>
-						<InputCheckbox class="" @bind-Value="CooperationPage.IsVisible" />
-					</div>
+<h1 class="">Свойства</h1>
+<EditForm Model="CooperationPage" OnValidSubmit="SaveCooperationPage" id="creatCooperationPageForm">
+	<DataAnnotationsValidator />
+	<div class="row row-cols-2">
+		<div class="col">
+			@if (CooperationPage!.ID != 0)
+			{
+				<div class="form-group mb-4">
+					<label>ID</label>
+					<input class="form-control" disabled value="@CooperationPage.ID" />
 				</div>
-				<div class="col">
-					<div class="form-group">
-						<img class="img-fluid" style="height: 250px;" src="@CooperationPage.CooperationImg">
-					</div>
-				</div>
-			</div>
-		</EditForm>
-	</TabPage>
-	<TabPage Text="Галерея" IsActive=@TabIsActive>
-		<EditForm Model="CooperationPage" OnValidSubmit="SaveCooperationPage" id="creatCooperationPageForm">
-			<DataAnnotationsValidator />
+			}
 			<div class="form-group mb-4">
-				<img class="img-fluid" style="height: 250px;" src="@CooperationPage.CooperationImg">
-				<label>Изображение</label>
-				<ImgManagerControl @bind-ChildName="CooperationPage.CooperationImg" PathFolder="@urlPath"
-					FolderName="@CooperationPage.ID.ToString()" IsSlider="false" />
+				<label>Заголовок</label>
+				<ValidationMessage For="@(() => CooperationPage.NameCooperation)" />
+				<InputText class="form-control" @bind-Value="CooperationPage.NameCooperation" />
 			</div>
-		</EditForm>
-	</TabPage>
-	<TabPage Text="Доп. блок" IsActive="@TabIsActive">
-	</TabPage>
-</TabControl>
+			<div class="form-group mb-4">
+				<label>Описание для привью</label>
+				<ValidationMessage For="@(() => CooperationPage.MinDescription)" />
+				<InputTextArea class="form-control" @bind-Value="CooperationPage.MinDescription" />
+			</div>
+			<div class="form-group mb-4">
+				<label>Описание страницы</label>
+				<TextEditor @ref="textEditor" @bind-ChildName="CooperationPage.Description" />
+				<InputTextArea class="form-control" disabled @bind-Value="CooperationPage.Description" />
+			</div>
+			<div class="form-group mb-4">
+				<label>Опубликовано</label>
+				<InputCheckbox class="" @bind-Value="CooperationPage.IsVisible" />
+			</div>
+		</div>
+		<div class="col">
+			@if (TabIsActive)
+			{
+				<div class="form-group mb-4">
+					<img class="img-fluid" style="height: 250px;" src="@CooperationPage.CooperationImg">
+					<label>Изображение</label>
+					<ImgManagerControl @bind-ChildName="CooperationPage.CooperationImg" PathFolder="@urlPath"
+						FolderName="@CooperationPage.ID.ToString()" IsSlider="false" />
+				</div>
+			}
+			else
+			{
+				<div class="form-group mb-4">
+					<label>Изображение можно загзуить после сохрания записи</label>
+				</div>
+			}
+		</div>
+	</div>
+</EditForm>
 <div class="mt-2">
 	<button form="creatCooperationPageForm" type="submit" class="btn btn-@ThemeColor">Сохранить</button>
 	<NavLink class="btn btn-secondary" href="/admin/cooperation">Отмена</NavLink>
@@ -96,11 +92,11 @@
 
 	TextEditor? textEditor;
 	private string urlPath = "imegs/img-cooperation/";
-	public void SaveCooperationPage()
+	public async Task SaveCooperationPage()
 	{
 		if (Id == 0)
 		{
-			textEditor!.SaveContent();
+			await textEditor!.SaveContent();
 			Repository.CreateCooperations(CooperationPage);
 			folderManager.CeateDirectory(urlPath, Convert.ToInt64(CooperationPage.ID));
 			if (CooperationPage.ID != 0)
@@ -115,7 +111,7 @@
 		}
 		else
 		{
-			textEditor!.SaveContent();
+			await textEditor!.SaveContent();
 			Repository.SaveCooperations(CooperationPage);
 			Notification notification = new Notification(1, "Изменения сохранены", "Запись отредактирована: Страница о компании под номером", Id.ToString());
 			popupNotification.AddItem(notification);

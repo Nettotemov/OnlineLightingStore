@@ -573,6 +573,7 @@ $(document).ready(function () {
 	$(".header-animation").each(function (i) {
 		let target = $(this).find(".header");
 		let targetLogo = $(this).find(".logo");
+		let targetBurger = $(this).find(".burger-line");
 		let targetBtn = $(this).find(".a-btn__header");
 		let targetBtnAfter = CSSRulePlugin.getRule(".a-btn__header:after");
 		let targetCart = $(this).find(".cart-btn");
@@ -580,6 +581,7 @@ $(document).ready(function () {
 		tl.to(target, 1, { height: 75, backgroundColor: "#000000" });
 		tl.to(targetLogo, 0.5, { color: "#ffffff", fontSize: "1.5rem" });
 		tl.to(targetCart, 0.5, { color: "#ffffff", fill: "#ffffff" });
+		tl.to(targetBurger, 0.5, { backgroundColor: "#ffffff" });
 		tl.to(targetBtn, 0.5, { color: "#ffffff", fontSize: "0.75rem" });
 		tl.to(targetBtnAfter, 0.5, { background: "#ffffff" });
 		new ScrollMagic.Scene({

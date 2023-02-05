@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "vV9uBillyIYoCnT1z7pHCcGdYaRXRpW8BrKCghrjnIc=",
+  "Hash": "riWyI5keMc8sLZzGkxSElAhUD6vsUEpNGhpkQyUyNaY=",
   "Source": "LampStore",
   "BasePath": "_content/LampStore",
   "Mode": "Default",
@@ -306,6 +306,23 @@
       "OriginalItemSpec": "wwwroot/imegs/img-cooperation/2/3PS (2).jpg"
     },
     {
+      "Identity": "/Users/konstantinermakov/Projects/LampStore/LampStore/wwwroot/imegs/img-cooperation/6/1PS1 (1).png",
+      "SourceId": "LampStore",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/konstantinermakov/Projects/LampStore/LampStore/wwwroot/",
+      "BasePath": "_content/LampStore",
+      "RelativePath": "imegs/img-cooperation/6/1PS1 (1).png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/imegs/img-cooperation/6/1PS1 (1).png"
+    },
+    {
       "Identity": "/Users/konstantinermakov/Projects/LampStore/LampStore/wwwroot/imegs/img-faq/1/ret-prod.svg",
       "SourceId": "LampStore",
       "SourceType": "Discovered",
@@ -355,6 +372,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/imegs/img-faq/1/return.svg"
+    },
+    {
+      "Identity": "/Users/konstantinermakov/Projects/LampStore/LampStore/wwwroot/imegs/img-faq/22/return.svg",
+      "SourceId": "LampStore",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/konstantinermakov/Projects/LampStore/LampStore/wwwroot/",
+      "BasePath": "_content/LampStore",
+      "RelativePath": "imegs/img-faq/22/return.svg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/imegs/img-faq/22/return.svg"
     },
     {
       "Identity": "/Users/konstantinermakov/Projects/LampStore/LampStore/wwwroot/imegs/img-products/001.png",

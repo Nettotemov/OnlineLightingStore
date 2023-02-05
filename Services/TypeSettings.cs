@@ -21,5 +21,8 @@ namespace LampStore.Services
 
 		[Display(Name = "Текст для футера")]
 		TextFooter = 5,
+
+		[Display(Name = "Время работы")]
+		WorkingHours = 6
 	}
 }
