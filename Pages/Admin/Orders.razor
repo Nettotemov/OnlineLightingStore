@@ -2,10 +2,18 @@
 @inherits OwningComponentBase<IOrderRepository>
 @inject NavigationManager NavigationManager
 
-<OrderTable StyleTable="bg-warning" TableTitle="Новые заказы" Orders="UnshippedOrders" GetOrders="UnshippedOrders"
+@if (loading)
+{
+	<p>Loading...</p>
+}
+else
+{
+	<OrderTable StyleTable="bg-warning" TableTitle="Новые заказы" Orders="UnshippedOrders" GetOrders="UnshippedOrders"
 	ButtonLabel="Ожидает выполнения" OrderSelected="ShipOrder" />
-<OrderTable StyleTable="bg-success" TableTitle="Выполненые заказы" Orders="ShippedOrders" GetOrders="ShippedOrders"
+	<OrderTable StyleTable="bg-success" TableTitle="Выполненые заказы" Orders="ShippedOrders" GetOrders="ShippedOrders"
 	ButtonLabel="Выполнен" OrderSelected="ResetOrder" />
+}
+
 
 <button class="btn btn-info text-white" @onclick="@(e => UpdateData())">Обновить данные</button>
 
@@ -15,11 +23,14 @@
 	public IEnumerable<Order> UnshippedOrders { get; set; } = Enumerable.Empty<Order>();
 	public IEnumerable<Order> ShippedOrders { get; set; } = Enumerable.Empty<Order>();
 
+	private bool loading = false;
 	protected async override Task OnInitializedAsync()
 	{
 		try
 		{
+			loading = true;
 			await UpdateData();
+			loading = false;
 		}
 		catch (InvalidOperationException ex)
 		{

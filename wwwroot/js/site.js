@@ -599,3 +599,75 @@ $(document).ready(function () {
 		// });
 	});
 });
+
+$(document).ready(function () {
+
+	$('#callback-form').submit(function (e) {
+		e.preventDefault();
+		let error = false;
+		var name = $('#name').val();
+		var phone = $('#phone').val();
+		var email = $('#email').val();
+		var message = $('#message').val();
+		var giftWrap = $('#gift').is(":checked");
+
+		$(".text-danger").remove();
+
+		if (name.length < 1) {
+			$('#name').after('<span class="text-danger">This field is required</span>');
+			error = true;
+		}
+		if (phone.length < 1) {
+			$('#phone').after('<span class="text-danger">This field is required</span>');
+			error = true;
+		}
+		if (email.length < 6) {
+			$('#email').after('<span class="text-danger">This field is required</span>');
+			error = true;
+		}
+		if (message.length < 10) {
+			$('#message').after('<span class="text-danger">This field is required</span>');
+			error = true;
+		}
+		if (giftWrap == false) {
+			$('#gift').after('<span class="text-danger">This field is required</span>');
+			error = true;
+		}
+
+		if (error == false) {
+			var th = $(this);
+			$.ajax({
+				type: "POST",
+				url: "contacts", //Change
+				data: th.serialize()
+			}).done(function () {
+				console.log("Ok");
+				// $(".modal-wr2").addClass("active");
+				// setTimeout(function () {
+				// 	// Done Functions
+				// 	$(".modal-wr2").removeClass("active");
+				// 	th.trigger("reset");
+				// }, 3000);
+			});
+		}
+
+	});
+
+	// $("#callback-form").submit(function () { //Change
+	// 	var th = $(this);
+	// 	$.ajax({
+	// 		type: "POST",
+	// 		url: "contacts", //Change
+	// 		data: th.serialize()
+	// 	}).done(function () {
+	// 		console.log("Ok");
+	// 		// $(".modal-wr2").addClass("active");
+	// 		// setTimeout(function () {
+	// 		// 	// Done Functions
+	// 		// 	$(".modal-wr2").removeClass("active");
+	// 		// 	th.trigger("reset");
+	// 		// }, 3000);
+	// 	});
+	// 	return false;
+	// });
+});

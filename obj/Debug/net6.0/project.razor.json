@@ -1616,194 +1616,6 @@
         }
       },
       {
-        "HashCode": 790721588,
-        "Kind": "Components.Component",
-        "Name": "LampStore.Pages.Admin.Orders",
-        "AssemblyName": "LampStore",
-        "CaseSensitive": true,
-        "TagMatchingRules": [
-          {
-            "TagName": "Orders"
-          }
-        ],
-        "Metadata": {
-          "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "LampStore.Pages.Admin.Orders",
-          "Common.TypeNamespace": "LampStore.Pages.Admin",
-          "Common.TypeNameIdentifier": "Orders"
-        }
-      },
-      {
-        "HashCode": -1842822414,
-        "Kind": "Components.Component",
-        "Name": "LampStore.Pages.Admin.Orders",
-        "AssemblyName": "LampStore",
-        "CaseSensitive": true,
-        "TagMatchingRules": [
-          {
-            "TagName": "LampStore.Pages.Admin.Orders"
-          }
-        ],
-        "Metadata": {
-          "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "LampStore.Pages.Admin.Orders",
-          "Common.TypeNamespace": "LampStore.Pages.Admin",
-          "Common.TypeNameIdentifier": "Orders",
-          "Components.NameMatch": "Components.FullyQualifiedNameMatch"
-        }
-      },
-      {
-        "HashCode": 1384131613,
-        "Kind": "Components.Component",
-        "Name": "LampStore.Pages.Admin.OrderTable",
-        "AssemblyName": "LampStore",
-        "CaseSensitive": true,
-        "TagMatchingRules": [
-          {
-            "TagName": "OrderTable"
-          }
-        ],
-        "BoundAttributes": [
-          {
-            "Kind": "Components.Component",
-            "Name": "TableTitle",
-            "TypeName": "System.String",
-            "Metadata": {
-              "Common.PropertyName": "TableTitle",
-              "Common.GloballyQualifiedTypeName": "global::System.String"
-            }
-          },
-          {
-            "Kind": "Components.Component",
-            "Name": "Orders",
-            "TypeName": "System.Collections.Generic.IEnumerable<LampStore.Models.Order>",
-            "Metadata": {
-              "Common.PropertyName": "Orders",
-              "Common.GloballyQualifiedTypeName": "global::System.Collections.Generic.IEnumerable<global::LampStore.Models.Order>"
-            }
-          },
-          {
-            "Kind": "Components.Component",
-            "Name": "ButtonLabel",
-            "TypeName": "System.String",
-            "Metadata": {
-              "Common.PropertyName": "ButtonLabel",
-              "Common.GloballyQualifiedTypeName": "global::System.String"
-            }
-          },
-          {
-            "Kind": "Components.Component",
-            "Name": "OrderSelected",
-            "TypeName": "Microsoft.AspNetCore.Components.EventCallback<System.Int32>",
-            "Metadata": {
-              "Common.PropertyName": "OrderSelected",
-              "Common.GloballyQualifiedTypeName": "global::Microsoft.AspNetCore.Components.EventCallback<global::System.Int32>",
-              "Components.EventCallback": "True"
-            }
-          },
-          {
-            "Kind": "Components.Component",
-            "Name": "StyleTable",
-            "TypeName": "System.String",
-            "Metadata": {
-              "Common.PropertyName": "StyleTable",
-              "Common.GloballyQualifiedTypeName": "global::System.String"
-            }
-          },
-          {
-            "Kind": "Components.Component",
-            "Name": "GetOrders",
-            "TypeName": "System.Collections.Generic.IEnumerable<LampStore.Models.Order>",
-            "Metadata": {
-              "Common.PropertyName": "GetOrders",
-              "Common.GloballyQualifiedTypeName": "global::System.Collections.Generic.IEnumerable<global::LampStore.Models.Order>"
-            }
-          }
-        ],
-        "Metadata": {
-          "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "LampStore.Pages.Admin.OrderTable",
-          "Common.TypeNamespace": "LampStore.Pages.Admin",
-          "Common.TypeNameIdentifier": "OrderTable"
-        }
-      },
-      {
-        "HashCode": 2056300199,
-        "Kind": "Components.Component",
-        "Name": "LampStore.Pages.Admin.OrderTable",
-        "AssemblyName": "LampStore",
-        "CaseSensitive": true,
-        "TagMatchingRules": [
-          {
-            "TagName": "LampStore.Pages.Admin.OrderTable"
-          }
-        ],
-        "BoundAttributes": [
-          {
-            "Kind": "Components.Component",
-            "Name": "TableTitle",
-            "TypeName": "System.String",
-            "Metadata": {
-              "Common.PropertyName": "TableTitle",
-              "Common.GloballyQualifiedTypeName": "global::System.String"
-            }
-          },
-          {
-            "Kind": "Components.Component",
-            "Name": "Orders",
-            "TypeName": "System.Collections.Generic.IEnumerable<LampStore.Models.Order>",
-            "Metadata": {
-              "Common.PropertyName": "Orders",
-              "Common.GloballyQualifiedTypeName": "global::System.Collections.Generic.IEnumerable<global::LampStore.Models.Order>"
-            }
-          },
-          {
-            "Kind": "Components.Component",
-            "Name": "ButtonLabel",
-            "TypeName": "System.String",
-            "Metadata": {
-              "Common.PropertyName": "ButtonLabel",
-              "Common.GloballyQualifiedTypeName": "global::System.String"
-            }
-          },
-          {
-            "Kind": "Components.Component",
-            "Name": "OrderSelected",
-            "TypeName": "Microsoft.AspNetCore.Components.EventCallback<System.Int32>",
-            "Metadata": {
-              "Common.PropertyName": "OrderSelected",
-              "Common.GloballyQualifiedTypeName": "global::Microsoft.AspNetCore.Components.EventCallback<global::System.Int32>",
-              "Components.EventCallback": "True"
-            }
-          },
-          {
-            "Kind": "Components.Component",
-            "Name": "StyleTable",
-            "TypeName": "System.String",
-            "Metadata": {
-              "Common.PropertyName": "StyleTable",
-              "Common.GloballyQualifiedTypeName": "global::System.String"
-            }
-          },
-          {
-            "Kind": "Components.Component",
-            "Name": "GetOrders",
-            "TypeName": "System.Collections.Generic.IEnumerable<LampStore.Models.Order>",
-            "Metadata": {
-              "Common.PropertyName": "GetOrders",
-              "Common.GloballyQualifiedTypeName": "global::System.Collections.Generic.IEnumerable<global::LampStore.Models.Order>"
-            }
-          }
-        ],
-        "Metadata": {
-          "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "LampStore.Pages.Admin.OrderTable",
-          "Common.TypeNamespace": "LampStore.Pages.Admin",
-          "Common.TypeNameIdentifier": "OrderTable",
-          "Components.NameMatch": "Components.FullyQualifiedNameMatch"
-        }
-      },
-      {
         "HashCode": 1039242385,
         "Kind": "Components.Component",
         "Name": "LampStore.Pages.Admin.Products",
@@ -1970,6 +1782,194 @@
           "Common.TypeName": "LampStore.Pages.Admin.ComponentsFAQ.Editor",
           "Common.TypeNamespace": "LampStore.Pages.Admin.ComponentsFAQ",
           "Common.TypeNameIdentifier": "Editor",
+          "Components.NameMatch": "Components.FullyQualifiedNameMatch"
+        }
+      },
+      {
+        "HashCode": 1384131613,
+        "Kind": "Components.Component",
+        "Name": "LampStore.Pages.Admin.OrderTable",
+        "AssemblyName": "LampStore",
+        "CaseSensitive": true,
+        "TagMatchingRules": [
+          {
+            "TagName": "OrderTable"
+          }
+        ],
+        "BoundAttributes": [
+          {
+            "Kind": "Components.Component",
+            "Name": "TableTitle",
+            "TypeName": "System.String",
+            "Metadata": {
+              "Common.PropertyName": "TableTitle",
+              "Common.GloballyQualifiedTypeName": "global::System.String"
+            }
+          },
+          {
+            "Kind": "Components.Component",
+            "Name": "Orders",
+            "TypeName": "System.Collections.Generic.IEnumerable<LampStore.Models.Order>",
+            "Metadata": {
+              "Common.PropertyName": "Orders",
+              "Common.GloballyQualifiedTypeName": "global::System.Collections.Generic.IEnumerable<global::LampStore.Models.Order>"
+            }
+          },
+          {
+            "Kind": "Components.Component",
+            "Name": "ButtonLabel",
+            "TypeName": "System.String",
+            "Metadata": {
+              "Common.PropertyName": "ButtonLabel",
+              "Common.GloballyQualifiedTypeName": "global::System.String"
+            }
+          },
+          {
+            "Kind": "Components.Component",
+            "Name": "OrderSelected",
+            "TypeName": "Microsoft.AspNetCore.Components.EventCallback<System.Int32>",
+            "Metadata": {
+              "Common.PropertyName": "OrderSelected",
+              "Common.GloballyQualifiedTypeName": "global::Microsoft.AspNetCore.Components.EventCallback<global::System.Int32>",
+              "Components.EventCallback": "True"
+            }
+          },
+          {
+            "Kind": "Components.Component",
+            "Name": "StyleTable",
+            "TypeName": "System.String",
+            "Metadata": {
+              "Common.PropertyName": "StyleTable",
+              "Common.GloballyQualifiedTypeName": "global::System.String"
+            }
+          },
+          {
+            "Kind": "Components.Component",
+            "Name": "GetOrders",
+            "TypeName": "System.Collections.Generic.IEnumerable<LampStore.Models.Order>",
+            "Metadata": {
+              "Common.PropertyName": "GetOrders",
+              "Common.GloballyQualifiedTypeName": "global::System.Collections.Generic.IEnumerable<global::LampStore.Models.Order>"
+            }
+          }
+        ],
+        "Metadata": {
+          "Runtime.Name": "Components.IComponent",
+          "Common.TypeName": "LampStore.Pages.Admin.OrderTable",
+          "Common.TypeNamespace": "LampStore.Pages.Admin",
+          "Common.TypeNameIdentifier": "OrderTable"
+        }
+      },
+      {
+        "HashCode": 2056300199,
+        "Kind": "Components.Component",
+        "Name": "LampStore.Pages.Admin.OrderTable",
+        "AssemblyName": "LampStore",
+        "CaseSensitive": true,
+        "TagMatchingRules": [
+          {
+            "TagName": "LampStore.Pages.Admin.OrderTable"
+          }
+        ],
+        "BoundAttributes": [
+          {
+            "Kind": "Components.Component",
+            "Name": "TableTitle",
+            "TypeName": "System.String",
+            "Metadata": {
+              "Common.PropertyName": "TableTitle",
+              "Common.GloballyQualifiedTypeName": "global::System.String"
+            }
+          },
+          {
+            "Kind": "Components.Component",
+            "Name": "Orders",
+            "TypeName": "System.Collections.Generic.IEnumerable<LampStore.Models.Order>",
+            "Metadata": {
+              "Common.PropertyName": "Orders",
+              "Common.GloballyQualifiedTypeName": "global::System.Collections.Generic.IEnumerable<global::LampStore.Models.Order>"
+            }
+          },
+          {
+            "Kind": "Components.Component",
+            "Name": "ButtonLabel",
+            "TypeName": "System.String",
+            "Metadata": {
+              "Common.PropertyName": "ButtonLabel",
+              "Common.GloballyQualifiedTypeName": "global::System.String"
+            }
+          },
+          {
+            "Kind": "Components.Component",
+            "Name": "OrderSelected",
+            "TypeName": "Microsoft.AspNetCore.Components.EventCallback<System.Int32>",
+            "Metadata": {
+              "Common.PropertyName": "OrderSelected",
+              "Common.GloballyQualifiedTypeName": "global::Microsoft.AspNetCore.Components.EventCallback<global::System.Int32>",
+              "Components.EventCallback": "True"
+            }
+          },
+          {
+            "Kind": "Components.Component",
+            "Name": "StyleTable",
+            "TypeName": "System.String",
+            "Metadata": {
+              "Common.PropertyName": "StyleTable",
+              "Common.GloballyQualifiedTypeName": "global::System.String"
+            }
+          },
+          {
+            "Kind": "Components.Component",
+            "Name": "GetOrders",
+            "TypeName": "System.Collections.Generic.IEnumerable<LampStore.Models.Order>",
+            "Metadata": {
+              "Common.PropertyName": "GetOrders",
+              "Common.GloballyQualifiedTypeName": "global::System.Collections.Generic.IEnumerable<global::LampStore.Models.Order>"
+            }
+          }
+        ],
+        "Metadata": {
+          "Runtime.Name": "Components.IComponent",
+          "Common.TypeName": "LampStore.Pages.Admin.OrderTable",
+          "Common.TypeNamespace": "LampStore.Pages.Admin",
+          "Common.TypeNameIdentifier": "OrderTable",
+          "Components.NameMatch": "Components.FullyQualifiedNameMatch"
+        }
+      },
+      {
+        "HashCode": 790721588,
+        "Kind": "Components.Component",
+        "Name": "LampStore.Pages.Admin.Orders",
+        "AssemblyName": "LampStore",
+        "CaseSensitive": true,
+        "TagMatchingRules": [
+          {
+            "TagName": "Orders"
+          }
+        ],
+        "Metadata": {
+          "Runtime.Name": "Components.IComponent",
+          "Common.TypeName": "LampStore.Pages.Admin.Orders",
+          "Common.TypeNamespace": "LampStore.Pages.Admin",
+          "Common.TypeNameIdentifier": "Orders"
+        }
+      },
+      {
+        "HashCode": -1842822414,
+        "Kind": "Components.Component",
+        "Name": "LampStore.Pages.Admin.Orders",
+        "AssemblyName": "LampStore",
+        "CaseSensitive": true,
+        "TagMatchingRules": [
+          {
+            "TagName": "LampStore.Pages.Admin.Orders"
+          }
+        ],
+        "Metadata": {
+          "Runtime.Name": "Components.IComponent",
+          "Common.TypeName": "LampStore.Pages.Admin.Orders",
+          "Common.TypeNamespace": "LampStore.Pages.Admin",
+          "Common.TypeNameIdentifier": "Orders",
           "Components.NameMatch": "Components.FullyQualifiedNameMatch"
         }
       },
@@ -17088,6 +17088,23 @@
         }
       },
       {
+        "HashCode": 1426729123,
+        "Kind": "MVC.ViewComponent",
+        "Name": "__Generated__CallbackFormSummaryViewComponentTagHelper",
+        "AssemblyName": "LampStore",
+        "CaseSensitive": false,
+        "TagMatchingRules": [
+          {
+            "TagName": "vc:callback-form-summary"
+          }
+        ],
+        "Metadata": {
+          "Runtime.Name": "ITagHelper",
+          "Common.TypeName": "__Generated__CallbackFormSummaryViewComponentTagHelper",
+          "MVC.ViewComponent.Name": "CallbackFormSummary"
+        }
+      },
+      {
         "HashCode": 80706471,
         "Kind": "Components.Bind",
         "Name": "Bind",
@@ -21155,6 +21172,11 @@
       "FilePath": "/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Admin/ComponentsCategory/Editor.razor",
       "TargetPath": "Pages\\Admin\\ComponentsCategory\\Editor.razor",
       "FileKind": "component"
+    },
+    {
+      "FilePath": "/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/Shared/Components/CallbackFormSummary/Default.cshtml",
+      "TargetPath": "Pages\\Shared\\Components\\CallbackFormSummary\\Default.cshtml",
+      "FileKind": "mvc"
     },
     {
       "FilePath": "/Users/konstantinermakov/Projects/LampStore/LampStore/Pages/CardProduct.cshtml",

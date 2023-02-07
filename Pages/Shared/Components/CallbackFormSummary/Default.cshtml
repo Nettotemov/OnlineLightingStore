@@ -1,0 +1,26 @@
+<form id="callback-form" method="post">
+	<div class="form-group__cont">
+		<div class="form-group__cont-input__wrapper">
+			<input placeholder="Полное имя*" id="name" class="form-group__cont-input" name="name" />
+		</div>
+		<div class="form-group__cont-input__wrapper">
+			<input type="tel" placeholder="Телефон*" id="phone" class="form-group__cont-input" name="phone" />
+		</div>
+		<div class="form-group__cont-input__wrapper">
+			<input type="email" placeholder="Email*" id="email" class="form-group__cont-input" name="email" />
+		</div>
+	</div>
+	<h2 class="info-page__p mt-per-5">Комментарий</h2>
+	<div class="form-group">
+		<input placeholder="Написать" id="message" class="form-group__cont-input" name="message" />
+	</div>
+	<div class="checkbox form-group-gift__wrapper">
+		<input type="checkbox" id="gift" class="form-control" name="gift" />
+		<label for="gift" class="control-label">Принимаю политику политику обработки заказов</label>
+		<span id="gift" class="text-danger"></span>
+	</div>
+</form>
+<div class="text-center">
+	<button form="callback-form" class="form-catalog__text cart__btn-checkout" type="submit">Отправить
+		сообщение</button>
+</div>
