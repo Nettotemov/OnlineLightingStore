@@ -21,14 +21,14 @@ namespace LampStore.Pages
 		public long CategoryID { get; private set; }
 
 		public List<Product> DisplayedProducts { get; private set; } = new();
-		public List<string> DisplayedTypes { get; private set; } = new();
+		public List<ProductType> DisplayedTypes { get; private set; } = new();
 
 		public async Task<IActionResult> OnGetAsync(long categoryID) //инициализация категории
 		{
 			try
 			{
 				DisplayedProducts = await repository.Products.Where(p => p.Category!.ID == categoryID).ToListAsync();
-				DisplayedTypes = await repository.Products.Select(p => p.Type).ToListAsync();
+				DisplayedTypes = await repository.Types.Select(p => p).Distinct().ToListAsync();
 				List<Category> listCategories = await repository.Categorys.Select(c => c).OrderBy(c => c.ID).ToListAsync();
 
 				foreach (var category in listCategories)

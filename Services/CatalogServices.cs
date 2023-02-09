@@ -14,7 +14,12 @@ namespace LampStore.Services
 		}
 		public List<Product> ProductsByTags(List<Product> products, string[] tags) //проверка тегов
 		{
-			return products.Where(p => tags.All(tag => p.Tags.Contains(tag))).ToList();
+			// return products.Where(prod => prod.ProductTags
+			// 							   .Select(p => p.ID)
+			// 							   .Intersect(tags)
+			// 							   .Any()).ToList();
+
+			return products.Where(p => tags.All(t => p.ProductTags.Select(s => s.Value).Any(tag => tag.Contains(t)))).ToList();
 		}
 
 		public List<Product> ProductsByColors(List<Product> products, string[] colors) //проверка цвета
@@ -24,7 +29,7 @@ namespace LampStore.Services
 
 		public List<Product> ProductsByTypes(List<Product> products, string[] types) //проверка типа
 		{
-			return products.Where(p => types.Any(type => p.Type.Contains(type))).ToList();
+			return products.Where(p => types.Any(type => p.ProductType!.Name.Contains(type))).ToList();
 		}
 		public List<Product> ProductsByMaterials(List<Product> products, string[] materials) //проверка типа
 		{

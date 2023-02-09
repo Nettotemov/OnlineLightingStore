@@ -23,11 +23,14 @@ namespace LampStore.Pages
 		public List<string> DisplayedPhotos { get; private set; } = new();
 
 		public List<Product> DisplayedProducts { get; private set; } = new();
+		public List<ProductType> DisplayedType { get; private set; } = new();
 
 		public async Task<IActionResult> OnGetAsync(long productId) //инициализация карточки товара
 		{
 			DisplayedCategories = await repository.Categorys.Select(c => c).Distinct().ToListAsync();
 			DisplayedProducts = await repository.Products.Select(p => p).ToListAsync();
+			DisplayedType = await repository.Types.Select(c => c).Distinct().ToListAsync();
+
 
 			foreach (var product in DisplayedProducts)
 			{
@@ -47,10 +50,10 @@ namespace LampStore.Pages
 						Discount = product.Discount,
 						OldPrice = product.OldPrice,
 						ProductID = product.ProductID,
-						Tags = product.Tags,
+						ProductTags = product.ProductTags,
 						Color = product.Color,
 						Kelvins = product.Kelvins,
-						Type = product.Type,
+						ProductType = product.ProductType,
 						Material = product.Material,
 						Availability = product.Availability,
 						Size = product.Size,
@@ -58,7 +61,7 @@ namespace LampStore.Pages
 						CordLength = product.CordLength,
 						LightSource = product.LightSource,
 						PowerW = product.PowerW,
-						Category = product.Category,
+						Category = product.Category
 					};
 					return Page();
 				}

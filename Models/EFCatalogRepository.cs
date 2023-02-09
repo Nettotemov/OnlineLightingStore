@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace LampStore.Models
 {
 	public class EFCatalogRepository : ICatalogRepository
@@ -9,7 +11,9 @@ namespace LampStore.Models
 			this.context = ctx;
 		}
 
-		public IQueryable<Product> Products => context.Products;
+		public IQueryable<Product> Products => context.Products.Include(p => p.ProductTags).Include(p => p.ProductType);
 		public IQueryable<Category> Categorys => context.Categorys;
+		public IQueryable<Tag> Tags => context.Tags;
+		public IQueryable<ProductType> Types => context.TypeProducts;
 	}
 }

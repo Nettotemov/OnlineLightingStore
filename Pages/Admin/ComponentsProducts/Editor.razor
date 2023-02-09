@@ -77,14 +77,19 @@
 			</div>
 			<div class="form-group mb-4">
 				<label>Тип</label>
-				<ValidationMessage For="@(() => Product.Type)" />
-				<InputText class="form-control" @bind-Value="Product.Type" />
+				<ValidationMessage For="@(() => Product.ProductTypeId)" />
+				@foreach (var type in ProductTypesData)
+				{
+					<option value="@type.ID">@type.Name</option>
+					<a class="btn btn-secondary" @onclick="@(e => AddTypeProduct(type))">Выбрать</a>
+
+				}
 			</div>
-			<div class="form-group mb-4">
-				<label>Теги</label>
-				<ValidationMessage For="@(() => Product.Tags)" />
-				<InputText class="form-control" @bind-Value="Product.Tags" />
-			</div>
+			@* <div class="form-group mb-4">
+			<label>Теги</label>
+			<ValidationMessage For="@(() => Product.Tags)" />
+			<InputText class="form-control" @bind-Value="Product.Tags" />
+			</div> *@
 			<div class="form-group mb-4">
 				<label>Размер</label>
 				<ValidationMessage For="@(() => Product.Size)" />
@@ -128,6 +133,30 @@
 				<ValidationMessage For="@(() => Product.Availability)" />
 				<InputCheckbox class="" @bind-Value="Product.Availability" />
 			</div>
+			<div class="form-group mb-4">
+				<label>Теги</label>
+				<p></p>
+				@* <InputText class="" @bind-Value="Product.ProductTags.Add" /> *@
+
+				<InputSelect @bind-Value="Product.ProductTags" class="form-select">
+					<option value="">Выберите категорию</option>
+					@foreach (var item in TagsData)
+					{
+						<option value="@item">@item.Value</option>
+					}
+				</InputSelect>
+				@foreach (var item in TagsData)
+				{
+					<option value="@item">@item.Value</option>
+					<a class="btn btn-secondary" @onclick="@(e => AddTagsforProduct(item))">Добавить</a>
+
+				}
+
+				@foreach (var item in ListAddTags)
+				{
+					<option value="@item">@item.Value</option>
+				}
+			</div>
 		</EditForm>
 	</TabPage>
 	<TabPage Text="Галерея" IsActive=@TabIsActive>
@@ -146,7 +175,46 @@
 		</EditForm>
 	</TabPage>
 	<TabPage Text="Tab 3" IsActive="true">
-		<h1>The third tab</h1>
+		<EditForm Model="NewTag" OnValidSubmit="CreateNewTag" id="сreateNewTag">
+			<DataAnnotationsValidator />
+			<div class="row row-cols-2">
+				<div class="col">
+					<div class="form-group mb-4">
+						<label>ID tyg</label>
+						<input class="form-control" disabled value="@NewTag.ID" />
+					</div>
+					<div class="form-group mb-4">
+						<label>Название поля</label>
+						<ValidationMessage For="@(() => NewTag.Value)" />
+						<InputText class="form-control" @bind-Value="NewTag.Value" />
+					</div>
+					<div class="mt-2">
+						<button form="сreateNewTag" type="submit" class="btn btn-warning">Сохранить</button>
+						@* <a class="btn btn-secondary" @onclick="@(e => CancellationNewSetting())">Отмена</a> *@
+					</div>
+				</div>
+			</div>
+		</EditForm>
+		<EditForm Model="Type" OnValidSubmit="CreateTypeProduct" id="createTypeProduct">
+			<DataAnnotationsValidator />
+			<div class="row row-cols-2">
+				<div class="col">
+					<div class="form-group mb-4">
+						<label>ID типа продкта</label>
+						<input class="form-control" disabled value="@Type.ID" />
+					</div>
+					<div class="form-group mb-4">
+						<label>Тип продукта</label>
+						<ValidationMessage For="@(() => Type.Name)" />
+						<InputText class="form-control" @bind-Value="Type.Name" />
+					</div>
+					<div class="mt-2">
+						<button form="createTypeProduct" type="submit" class="btn btn-warning">Сохранить</button>
+						@* <a class="btn btn-secondary" @onclick="@(e => CancellationNewSetting())">Отмена</a> *@
+					</div>
+				</div>
+			</div>
+		</EditForm>
 	</TabPage>
 </TabControl>
 <div class="mt-2">
@@ -174,6 +242,7 @@
 			TabIsActive = true;
 		}
 		DisplayedCategories = await Repository.Category.Select(c => c).Distinct().ToListAsync(); //получение категорий
+		await UpdateData();
 	}
 
 	protected override void OnParametersSet()
@@ -203,7 +272,7 @@
 		}
 		else
 		{
-			Repository.SaveProduct(Product);
+			Repository.SaveProduct(Product, ListAddTags);
 			Notification notification = new Notification(1, "Изменения сохранены", "Запись отредактирована", Id.ToString());
 			popupNotification.AddItem(notification);
 			NavManager?.NavigateTo("/admin/products");
@@ -223,3 +292,66 @@
 	}
 }
 
+@code {
+	public long IdTag { get; set; } = 0;
+	public Tag NewTag { get; set; } = new Tag();
+	public IEnumerable<Tag> TagsData { get; set; } = Enumerable.Empty<Tag>();
+
+	public List<Tag> ListAddTags { get; set; } = new();
+
+	public async Task UpdateData()
+	{
+		TagsData = await Repository.Tags.ToListAsync();
+		ProductTypesData = await Repository.Types.ToListAsync();
+		await InvokeAsync(StateHasChanged);
+	}
+
+	public async Task CreateNewTag()
+	{
+		Repository.CreateTag(NewTag);
+		await UpdateData();
+		@* if (IdTag == 0)
+{
+Repository.CreateAdditionalField(AdditionalField);
+Notification notification = new Notification(1, "Поле сохранено", "Новое поле добавлено", AdditionalField.Name);
+popupNotification.AddItem(notification);
+await UpdateData();
+}
+else
+{
+NewTag.InfoId = FaqPage.ID;
+Repository.SaveAdditionalField(AdditionalField);
+Notification notification = new Notification(1, "Изменения сохранены", "Дополнительное поле изменено",
+AdditionalField.ID.ToString());
+popupNotification.AddItem(notification);
+await UpdateData();
+} *@
+	}
+
+	@* public void DeleteInfoProp(InfoProp infoProp)
+{
+InfoPropToBeDelete = infoProp;
+confirmationCheckOnDelete = true;
+confirmationTitle = "Удаление дополнительного поля";
+confirmation?.Show();
+} *@
+
+	public List<Tag> AddTagsforProduct(Tag tag)
+	{
+		ListAddTags.Add(tag);
+		return ListAddTags;
+	}
+
+	public IEnumerable<ProductType> ProductTypesData { get; set; } = Enumerable.Empty<ProductType>();
+	public ProductType Type { get; set; } = new ProductType();
+	public async Task CreateTypeProduct()
+	{
+		Repository.CreateType(Type);
+		await UpdateData();
+	}
+
+	public void AddTypeProduct(ProductType type)
+	{
+		Product.ProductTypeId = type.ID;
+	}
+}

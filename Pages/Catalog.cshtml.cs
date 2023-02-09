@@ -28,16 +28,16 @@ namespace LampStore.Pages
 		public string? SortedName { get; set; }
 
 		public List<Product> DisplayedProducts { get; private set; } = new();
-		public List<string> DisplayedTags { get; private set; } = new();
+		public List<Tag> DisplayedTags { get; private set; } = new();
 		public List<Category> DisplayedCategories { get; private set; } = new();
 		public SelectList? Category { get; set; }
 		public List<string> DisplayedColors { get; private set; } = new();
-		public List<string> DisplayedTypes { get; private set; } = new();
+		public List<ProductType> DisplayedTypes { get; private set; } = new();
 		public List<string> DisplayedMaterials { get; private set; } = new();
 
 		public SortViewModel? SortViewModel { get; private set; }
 
-		public int PageSize = 9; //количество товаров на странице
+		public int PageSize = 40; //количество товаров на странице
 		public PagingInfo PagingInfo { get; private set; } = new(); //для вывода информации пагинации для страниц
 
 		CatalogServices catalogServices = new CatalogServices(); //ссылка на сервисы каталога
@@ -49,12 +49,11 @@ namespace LampStore.Pages
 			Tags = tags;
 			SortedCatalog = sortOrder.GetHashCode();
 			SortedName = EnumExtensions.GetDisplayName(sortOrder);
-			string strTags = string.Join(",", repository.Products.Select(c => c.Tags).Distinct().OrderBy(p => p)).ToString();
-			DisplayedTags = ParametersExtensions.GetDisplayParameters(strTags);
+			DisplayedTags = await repository.Tags.Select(t => t).Distinct().ToListAsync();
 			DisplayedCategories = await repository.Categorys.Select(c => c).Distinct().ToListAsync(); //получение категорий
 			Category = new SelectList(await repository.Categorys.Select(c => c.CategoryName).Distinct().ToListAsync(), CategoryName); //получение списка категорий товара
 			DisplayedColors = await repository.Products.Select(p => p.Color).Distinct().ToListAsync(); //получаем цвета
-			DisplayedTypes = await repository.Products.Select(p => p.Type).Distinct().ToListAsync(); //получаем типы
+			DisplayedTypes = await repository.Types.Select(p => p).Distinct().ToListAsync(); //получаем типы
 			string strMaterials = string.Join(",", repository.Products.Select(c => c.Material).Distinct().OrderBy(p => p)).ToString(); //получаем строку материалов
 			DisplayedMaterials = ParametersExtensions.GetDisplayParameters(strMaterials);
 
@@ -80,7 +79,7 @@ namespace LampStore.Pages
 						DisplayedProducts = DisplayedProducts.OrderByDescending(s => s.Availability).ToList();
 						break;
 					case SortCatalog.Novelties:
-						DisplayedProducts = DisplayedProducts.OrderByDescending(t => t.Tags.Contains("Новинки")).ToList();
+						DisplayedProducts = DisplayedProducts.OrderByDescending(k => k.ProductTags == DisplayedTags.Where(p => p.Value == "Новинки")).ToList();
 						break;
 					default:
 						DisplayedProducts = DisplayedProducts.OrderBy(s => s.ProductID).ToList();
@@ -158,14 +157,11 @@ namespace LampStore.Pages
 			}
 		}
 
-		public List<Product> DPs { get; private set; } = new();
 		public async Task<IActionResult> OnGetProductsAsync(string name, string category, string maxPrice, string minPrice, string[] tags, string[] materials, string[] color, string[] types, SortCatalog sortOrder, int productPage = 1)
 		{
-			var dp = await repository.Products.Select(p => p).ToListAsync();
+			var DPs = await repository.Products.Select(p => p).ToListAsync();
 
-			DPs.AddRange(dp);
 			DisplayedCategories = await repository.Categorys.Select(c => c).Distinct().ToListAsync(); //получение категорий
-
 			try
 			{
 				switch (sortOrder) //сортировка
@@ -186,7 +182,7 @@ namespace LampStore.Pages
 						DPs = DPs.OrderByDescending(s => s.Availability).ToList();
 						break;
 					case SortCatalog.Novelties:
-						DPs = DPs.OrderByDescending(t => t.Tags.Contains("Новинки")).ToList();
+						DPs = DPs.OrderByDescending(k => k.ProductTags == DisplayedTags.Where(p => p.Value == "Новинки")).ToList();
 						break;
 					default:
 						DPs = DPs.OrderBy(s => s.ProductID).ToList();
@@ -211,7 +207,9 @@ namespace LampStore.Pages
 				}
 				if (types.Count() > 0)
 				{
+					Console.WriteLine("Count type" + types.Count());
 					DPs = catalogServices.ProductsByTypes(DPs, types);
+					Console.WriteLine("Count A met" + DPs.Count());
 				}
 				if (materials.Count() > 0)
 				{

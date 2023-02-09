@@ -4,7 +4,8 @@
 @{
 	ViewData["Title"] = "Каталог освещения";
 }
-@await Component.InvokeAsync("BreadcrumbSummary", new [] { (url: "/", page: "Главная"), (url: "/catalog", page: "Каталог") })
+@await Component.InvokeAsync("BreadcrumbSummary", new [] { (url: "/", page: "Главная"), (url: "/catalog", page:
+"Каталог") })
 
 <div class="">
 	<div class="catalog__h">
@@ -91,13 +92,13 @@
 								<div id="input3" class="search-input__inline" style="display: none;">
 									<div id="types" class="">
 										<ul class="">
-											@foreach (string types in Model.DisplayedTypes ??
-													Enumerable.Empty<string>())
+											@foreach (ProductType types in Model.DisplayedTypes ??
+													Enumerable.Empty<ProductType>())
 											{
 												<li class="checkbox">
-													<input type="checkbox" name="types" value="@types" id="@types"
-														data-check="@types" class="types" />
-													<label for="@types" class="control-label">@types</label>
+													<input type="checkbox" name="types" value="@types.Name" id="@types.Name"
+														data-check="@types.Name" class="types" />
+													<label for="@types.Name" class="control-label">@types.Name</label>
 												</li>
 											}
 										</ul>
@@ -141,12 +142,12 @@
 								<div id="input5" class="search-input__inline" style="display: none;">
 									<div id="tags" class="">
 										<ul class="">
-											@foreach (string tags in Model.DisplayedTags ?? Enumerable.Empty<string>())
+											@foreach (Tag tags in Model.DisplayedTags ?? Enumerable.Empty<Tag>())
 											{
 												<li class="checkbox">
-													<input type="checkbox" name="tags" value="@tags" id="@tags"
-														data-check="@tags" class="" />
-													<label for="@tags" class="control-label">@tags</label>
+													<input type="checkbox" name="tags" value="@tags.Value" id="@tags.Value"
+														data-check="@tags.Value" class="" />
+													<label for="@tags.Value" class="control-label">@tags.Value</label>
 												</li>
 											}
 										</ul>
@@ -164,7 +165,7 @@
 				<div class="catalog-sort__wrapper catalogForm-sub mb-per-4">
 					<select name="sortOrder" form="catalogForm" asp-items="Html.GetEnumSelectList<SortCatalog>()"
 	  SelectedValue="@Model.SortedCatalog" class="form-catalog__select">
-						<option value="@Model.SortedCatalog">
+						<option class="sortOrderValue" value="@Model.SortedCatalog">
 							@Model.SortedName
 						</option>
 					</select>
@@ -193,16 +194,8 @@
 									<div class="footer-card__wrapper">
 										<p class="footer-card__text">@pr.Name</p>
 										<p class="footer-card__price">@pr.Price.ToString("C")</p>
-										@* @if (@pr.Discount != null && @pr.OldPrice != null)
-								{
-								<p class="footer-card__text">-@pr.Discount%</p>
-								<p class="footer-card__text"><s>@pr.OldPrice?.ToString()</s></p>
-								} *@
 									</div>
 								</a>
-								@* <a asp-page="CardProduct" asp-route-CategoryName="@pr.Category!.CategoryName"
-						asp-route-ProductID="@pr.ProductID" asp-route-Name="@pr.Name">Подробнее</a> *@
-
 								<form id="ProductID=@pr.ProductID" class="addToCart" asp-page="/Cart" method="post">
 									<input type="hidden" name="ProductID" asp-for="@pr.ProductID" />
 									<input type="hidden" name="returnUrl"

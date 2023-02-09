@@ -13,13 +13,13 @@
 			@foreach (var line in Model?.Cart?.Lines ?? Enumerable.Empty<CartLine>())
 			{
 				<div class="product-cart__wrapper">
-					<a class="product-cart-img__wrapper" asp-page="CardProduct" asp-route-CategoryName="@line.Product.Type"
-				asp-route-ProductID="@line.Product.ProductID" asp-route-Name="@line.Product.Name">
+					<a class="product-cart-img__wrapper" asp-page="CardProduct"
+				asp-route-CategoryName="@line.Product.Artikul" asp-route-ProductID="@line.Product.ProductID" asp-route-Name="@line.Product.Name">
 						<img class="product-cart-img" src="@line.Product.MainPhoto">
 					</a>
 					<div class="product-cart-decript__wrapper">
 						<p class="product-card__description-p">@line.Product.Name</p>
-						<p class="footer-card__text">@line.Product.Type</p>
+						<p class="footer-card__text">Артикул: @line.Product.Artikul</p>
 						<p class="footer-card__price" id="product-price" price-value="@line.Product.Price.ToString()">
 							@line.Product.Price.ToString("c")</p>
 					</div>

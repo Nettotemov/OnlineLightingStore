@@ -7,6 +7,8 @@ namespace LampStore.Models
 		public StoreDbContext(DbContextOptions<StoreDbContext> options) : base(options) { }
 
 		public DbSet<Product> Products => Set<Product>();
+		public DbSet<Tag> Tags => Set<Tag>();
+		public DbSet<ProductType> TypeProducts => Set<ProductType>();
 		
 		public DbSet<Category> Categorys => Set<Category>();
 

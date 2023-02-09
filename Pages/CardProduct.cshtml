@@ -6,7 +6,8 @@
 	Layout = "_Layout";
 }
 
-@await Component.InvokeAsync("BreadcrumbSummary", new [] { (url: "/", page: "Главная"), (url: "/catalog", page: "Каталог"),
+@await Component.InvokeAsync("BreadcrumbSummary", new [] { (url: "/", page: "Главная"), (url: "/catalog", page:
+"Каталог"),
 (url: "/category/" + @Model.productCard?.Category?.ID.ToString(), page: @Model.productCard?.Category?.CategoryName),
 (url: "/catalog/{CategoryName}/{Name}/{ProductID}", page: @Model.productCard?.Name) })
 
@@ -75,7 +76,7 @@
 			</div>
 			<div class="product-card__tl">
 				<p class="product-card__characteristic">Тип</p>
-				<p class="product-card__characteristic">@Model.productCard?.Type</p>
+				<p class="product-card__characteristic">@Model.productCard?.ProductType?.Name</p>
 			</div>
 			<div class="product-card__tl">
 				<p class="product-card__characteristic">Материал</p>
@@ -113,8 +114,14 @@
 				<p class="product-card__characteristic">@Model.productCard?.PowerW</p>
 			</div>
 			<div class="product-card__tl">
-				<p class="product-card__characteristic">Теги</p>
-				<p class="product-card__characteristic">@Model.productCard?.Tags</p>
+				@if (@Model.productCard?.ProductTags.Count() > 0)
+				{
+					<p class="product-card__characteristic">Теги</p>
+					@foreach (var item in @Model.productCard.ProductTags)
+					{
+						<p class="product-card__characteristic">@item.Value</p>
+					}
+				}
 			</div>
 			<div class="product-card__tl">
 				<p class="product-card__characteristic">Наличие</p>
@@ -135,7 +142,7 @@
 </section>
 
 @{
-	var SimilarProduct = @Model.DisplayedProducts.Where(p => p.Type == @Model.productCard?.Type && p.Material ==
+	var SimilarProduct = @Model.DisplayedProducts.Where(p => p.ProductType == @Model.productCard?.ProductType && p.Material ==
 	@Model.productCard.Material && p.ProductID != @Model.productCard.ProductID);
 }
 

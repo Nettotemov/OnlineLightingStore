@@ -78,7 +78,7 @@ const createURL = () => {
 	if (minPrice > 0) urlSearch.set("minPrice", minPrice.join("&minPrice="))
 	if (maxPrice > 0) urlSearch.set("maxPrice", maxPrice.join("&maxPrice="))
 	const srch = '?' + urlSearch.toString();
-	console.log(srch);
+	// console.log(srch);
 	window.history.pushState({}, '', srch.replace(/%26/g, "&").replace(/%3D/g, "="));
 };
 $(function () {
@@ -107,7 +107,7 @@ $(document).on("click", ".pagination-btn", function (ev) {
 	$('#spinner-border').show();
 	let path = ev.target.baseURI.split("?"); // забираем путь
 	let page = ev.target.value;
-	console.log(ev);
+	// console.log(ev);
 	var token = GetAntiForgeryToken();
 	let prodview = document.getElementById('prod-view');
 	if (typeof page !== 'undefined') {
@@ -224,8 +224,7 @@ $('.catalogForm-sub').on('click', '.form__clear', function (ev) {
 // }
 // autoCheckPagination();
 
-$('.catalogForm-sub').on('change click', '.autocomplete__results-item, .form__clear, .autocomplete__clear, input[type=checkbox], [name=category], [name=sortOrder], [name=minPrice], [name=maxPrice]', '', function (ev) {
-	$('#spinner-border').show();
+$('.catalogForm-sub').on('change click', '.autocomplete__results-item, .autocomplete__clear', function (event) {
 	let searchName = document.querySelector(".searchByName");
 	let name = $(this).attr('data-value') ?? "";
 	searchName.value = name;
@@ -240,6 +239,19 @@ $('.catalogForm-sub').on('change click', '.autocomplete__results-item, .form__cl
 		autocompleteClear.hidden = true;
 	}
 	createURL();
+	loadProductView(event);
+})
+
+$('.catalogForm-sub').on('click', '.form__clear', '', function (ev) {
+	loadProductView(ev);
+});
+
+$('.catalogForm-sub').on('change', 'input[type=checkbox], [name=category], .form-catalog__select, [name=minPrice], [name=maxPrice]', '', function (ev) {
+	loadProductView(ev);
+});
+
+function loadProductView(ev) {
+	$('#spinner-border').show();
 	let path = ev.target.baseURI.split("?"); // забираем путь
 	let getUrl = '/catalog/' + 1 + "?" + path[1];
 	let url = getUrl + "&handler=Products";
@@ -249,7 +261,7 @@ $('.catalogForm-sub').on('change click', '.autocomplete__results-item, .form__cl
 		.then((response) => response.json())
 		.then(data => {
 			let pagingJson = JSON.parse(data.pagingInfoJson)
-			window.history.pushState({}, '', getUrl); // устанавливаем URL в строку браузера
+			// window.history.pushState({}, '', getUrl); // устанавливаем URL в строку браузера
 			let paging = document.getElementById('pagingbuttons');
 			const page = document.location.pathname.slice(-1);
 			$('#pagingbuttons').empty();
@@ -289,6 +301,7 @@ $('.catalogForm-sub').on('change click', '.autocomplete__results-item, .form__cl
 			placeholderMaxPrice.placeholder = pagingJson.PlaceholderMaxPrice;
 
 			let productJson = JSON.parse(data.json);
+			// console.log(productJson);
 			let postWrp;
 			if (productJson.length == 0) {
 				$('#prod-view').empty();
@@ -330,7 +343,7 @@ $('.catalogForm-sub').on('change click', '.autocomplete__results-item, .form__cl
 				}
 			}
 		})
-});
+}
 
 
 $('.searchByName').on('input', function (ev) {
@@ -641,7 +654,7 @@ $(document).ready(function () {
 				url: "contacts", //Change
 				data: th.serialize()
 			}).done(function () {
-				console.log("Ok");
+				// console.log("Ok");
 				// $(".modal-wr2").addClass("active");
 				// setTimeout(function () {
 				// 	// Done Functions

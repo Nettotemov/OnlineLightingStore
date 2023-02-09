@@ -61,7 +61,7 @@
 					<td class="text-center">@o.Zip</td>
 					<td class="text-center">@o.City</td>
 					<td class="text-center">@EnumExtensions.GetDisplayName(@o.StatusOrders)</td>
-					<td class="text-center">@o.Lines.Select(p => p.Product).Sum(e => e.Price).ToString("C")</td>
+					<td class="text-center">@o.Lines.Select(p => p).Sum(e => (e.Product.Price * e.Quantity)).ToString("C")</td>
 					<th class="text-center">Продукты</th>
 					<th class="text-center">Количество</th>
 					<th class="text-center">Цена товара</th>
