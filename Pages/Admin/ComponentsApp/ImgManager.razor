@@ -1,4 +1,10 @@
 @inject ILogger<FileUpload> Logger
+@using SixLabors.ImageSharp
+@using SixLabors.ImageSharp.Processing
+@inject IPopupNotification popupNotification
+
+
+
 
 @if (displayImgManager)
 {
@@ -10,12 +16,24 @@
 				<button type="button" class="btn-close" data-bs-dismiss="modal" @onclick="OnCancel"
 					aria-label="Close"></button>
 			</div>
-			<button type="button" class="btn btn-primary" @onclick="ShowFiles">Выбрать изображение(я)</button>
+			<button type="button" class="btn btn-primary"
+				@onclick="@(e => ShowFiles(@PathFolder + @FolderName + "/"))">Выбрать изображение(я)</button>
 			<div class="files-manager__wrapper">
-				@if (pathFiles.Count() > 0)
+				@if (pathDirectory.Count() > 0)
 					{
-						@foreach (var file in pathFiles)
+						foreach (var dir in pathDirectory)
 						{
+							<div class="card">
+								<img class="" src="/imegs/system-img/folder.svg" />
+								<p>wwwroot/@PathFolder@FolderName/@dir.Name</p>
+							</div>
+						}
+					}
+					@if (pathFiles.Count() > 0)
+					{
+						@foreach (FileInfo file in pathFiles)
+						{
+
 							<div class="card">
 								<img class="" src="@fullPathFile/@file.Name" />
 								<p>wwwroot/@PathFolder@FolderName/@file.Name</p>
@@ -23,8 +41,11 @@
 						@onclick="@(e => AddPhoto('/' + @PathFolder + @FolderName + '/' + @file.Name))">
 									Добавить</button>
 								<button type="button" class="btn btn-danger"
-						@onclick="@(e => DeleteFile("wwwroot/" + @PathFolder + @FolderName + '/' + @file.Name))">
+						@onclick="@(e => DeleteFile("wwwroot/" + @PathFolder + @FolderName + '/', @file))">
 									Удалить на всегда</button>
+								@* <button type="button" class="btn btn-success"
+					@onclick="@(e => ResizePhoto("wwwroot/" + @PathFolder + @FolderName + '/', @file.Name))">
+					Ресайз</button> *@
 							</div>
 						}
 					}
@@ -60,17 +81,24 @@
 
 	private string fullPathFile = string.Empty;
 	private List<FileInfo> pathFiles = new();
-	private async Task ShowFiles()
+	private List<DirectoryInfo> pathDirectory = new();
+
+	private async Task ShowFiles(string path)
 	{
-		fullPathFile = PathFolder + FolderName;
-		await Task.Run(() => pathFiles = GetFiles());
+		fullPathFile = path;
+		var directory = new DirectoryInfo("wwwroot/" + path);
+
+		await Task.Run(() => pathFiles = GetFiles(directory));
+		await Task.Run(() => pathDirectory = GetDirectories(directory));
 	}
 
-	private List<FileInfo> GetFiles()
+	private List<FileInfo> GetFiles(DirectoryInfo dir)
 	{
-		var directory = new DirectoryInfo("wwwroot/" + PathFolder + FolderName);
-
-		return directory.GetFiles().ToList();
+		return dir.GetFiles().ToList();
+	}
+	private List<DirectoryInfo> GetDirectories(DirectoryInfo dir)
+	{
+		return dir.GetDirectories().ToList();
 	}
 
 	public Task AddPhoto(string url)
@@ -93,19 +121,29 @@
 	}
 
 	private string fileNameError = string.Empty;
-	private async Task DeleteFile(string urlPath)
+	private async Task DeleteFile(string urlPath, FileInfo file)
 	{
-		if (File.Exists(urlPath))
+		if (File.Exists(urlPath + file.Name))
 		{
 			try
 			{
-				File.Delete(urlPath);
-				await ShowFiles();
+				var photoName = Path.GetFileNameWithoutExtension(file.Name);
+				string[] arrDeleteFiles = { urlPath + file.Name, urlPath + "small/" + file.Name, urlPath + "small/webp/" + photoName +
+".webp", urlPath + "average/" + file.Name, urlPath + "average/webp/" + photoName + ".webp"};
+
+				foreach (string path in arrDeleteFiles)
+				{
+					File.Delete(path);
+				}
+				var directory = new DirectoryInfo(urlPath);
+				await Task.Run(() => pathFiles = GetFiles(directory));
+				await Task.Run(() => pathDirectory = GetDirectories(directory));
 			}
 			catch (Exception ex)
 			{
 				Logger.LogError("File: {Filename} Error: {Error}",
 				urlPath, ex.Message);
+				System.Console.WriteLine("удаление фото " + ex.Message);
 			}
 		}
 		else

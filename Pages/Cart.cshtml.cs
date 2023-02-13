@@ -8,8 +8,8 @@ namespace LampStore.Pages
 {
 	public class CartModel : PageModel
 	{
-		private IStoreRepository repository;
-		public CartModel(IStoreRepository repo, Cart cartService)
+		private ICatalogRepository repository;
+		public CartModel(ICatalogRepository repo, Cart cartService)
 		{
 			repository = repo;
 			Cart = cartService;

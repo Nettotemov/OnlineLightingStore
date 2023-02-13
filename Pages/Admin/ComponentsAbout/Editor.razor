@@ -124,12 +124,12 @@
 	}
 
 	private string urlPath = "imegs/img-about/";
-	public void SaveAboutPage()
+	public async Task SaveAboutPage()
 	{
 		if (Id == 0)
 		{
 			Repository.CreateAboutPage(AboutPage);
-			folderManager.CeateDirectory(urlPath, Convert.ToInt64(AboutPage.ID));
+			await folderManager.CeateDirectoryAsync(urlPath, Convert.ToInt64(AboutPage.ID));
 			if (AboutPage.ID != 0)
 			{
 				TabIsActive = true;

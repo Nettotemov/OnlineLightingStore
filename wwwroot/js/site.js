@@ -322,7 +322,7 @@ function loadProductView(ev) {
 					postWrp.innerHTML = `<a class="search-card__info" href="/catalog/${productJson[i].Category.CategoryName}/${productJson[i].Name}/${productJson[i].ProductID}">
 						<div id="img-container">
     						<div class="search-card__image-wrapper">
-    							<img class="search-card__image" src="${productJson[i].MainPhoto}">
+    							<img class="search-card__image" src="${converterPhoto(productJson[i].MainPhoto)}">
  							</div>
   						</div>
   						<div class="footer-card__wrapper">
@@ -344,6 +344,35 @@ function loadProductView(ev) {
 			}
 		})
 }
+
+$(document).ready(function () {
+	const windowWidth = window.innerWidth;
+	console.log(windowWidth);
+	// converterPhoto("photo")
+});
+
+function converterPhoto(photo){
+	let detect = new MobileDetect(window.navigator.userAgent)
+	let arrStr = photo.split("/");
+	arrStr[3] += "/small"
+	let photoName = arrStr[4].split('.')
+	arrStr[4] = photoName[0];
+	let str = "";
+
+	if (detect.phone()) {
+		arrStr[4] += ".webp"
+		str = arrStr.join("/");
+		console.log(str);
+		return str;
+	}
+	else {
+		arrStr[4] += ".jpg"
+		str = arrStr.join("/");
+		return str;
+	}
+};
+
+
 
 
 $('.searchByName').on('input', function (ev) {

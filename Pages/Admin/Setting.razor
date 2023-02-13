@@ -16,7 +16,14 @@
 	<Popup ListNotifications="ListNotifications" />
 </div>
 
-<table class="table table-sm table-striped table-bordered">
+
+@if (loading)
+{
+	<p>Loading...</p>
+}
+else
+{
+	<table class="table table-sm table-striped table-bordered">
 	<thead>
 		<tr>
 			<th>ID</th>
@@ -29,34 +36,35 @@
 	</thead>
 	<tbody>
 		@if (SettingsData.Count() > 0)
-		{
-			@foreach (Settings s in SettingsData)
+			{
+				@foreach (Settings s in SettingsData)
+				{
+					<tr>
+						<td>@s.ID</td>
+						<td>@EnumExtensions.GetDisplayName(@s.Setting)</td>
+						<td>@s.NameSettings</td>
+						<td>@s.Value</td>
+						<td>@s.IsVisible</td>
+						<td class="text-center">
+							<button class="btn btn-info btn-sm" @onclick="@(e => ChangeSetting(s))">
+								Изменить
+							</button>
+							<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteSetting(s))">
+								Удалить
+							</button>
+						</td>
+					</tr>
+				}
+			}
+			else
 			{
 				<tr>
-					<td>@s.ID</td>
-					<td>@EnumExtensions.GetDisplayName(@s.Setting)</td>
-					<td>@s.NameSettings</td>
-					<td>@s.Value</td>
-					<td>@s.IsVisible</td>
-					<td class="text-center">
-						<button class="btn btn-info btn-sm" @onclick="@(e => ChangeSetting(s))">
-							Изменить
-						</button>
-						<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteSetting(s))">
-							Удалить
-						</button>
-					</td>
+					<td colspan="5" class="text-center">Настройки, не найдены.</td>
 				</tr>
 			}
-		}
-		else
-		{
-			<tr>
-				<td colspan="5" class="text-center">Настройки, не найдены.</td>
-			</tr>
-		}
-	</tbody>
-</table>
+		</tbody>
+	</table>
+}
 <EditForm Model="NewSetting" OnValidSubmit="CreateNewSetting">
 	<DataAnnotationsValidator />
 	@if (NewSetting.ID != 0)
@@ -104,6 +112,7 @@
 
 	public string? value;
 	private List<Notification> ListNotifications { get; set; } = new();
+	private bool loading = false;
 
 	protected async override Task OnParametersSetAsync()
 	{
@@ -112,8 +121,9 @@
 	}
 	public async Task UpdateData()
 	{
+		loading = true;
 		SettingsData = await Repository.Settings.ToListAsync();
-		StateHasChanged();
+		loading = false;
 		await InvokeAsync(StateHasChanged);
 	}
 

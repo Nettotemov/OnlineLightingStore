@@ -10,9 +10,9 @@ namespace LampStore.Pages
 {
 	public class CategoryPage : PageModel
 	{
-		private ICatalogRepository repository;
+		private IStoreRepository repository;
 
-		public CategoryPage(ICatalogRepository repo)
+		public CategoryPage(IStoreRepository repo)
 		{
 			repository = repo;
 		}
@@ -29,7 +29,7 @@ namespace LampStore.Pages
 			{
 				DisplayedProducts = await repository.Products.Where(p => p.Category!.ID == categoryID).ToListAsync();
 				DisplayedTypes = await repository.Types.Select(p => p).Distinct().ToListAsync();
-				List<Category> listCategories = await repository.Categorys.Select(c => c).OrderBy(c => c.ID).ToListAsync();
+				List<Category> listCategories = await repository.Category.Select(c => c).OrderBy(c => c.ID).ToListAsync();
 
 				foreach (var category in listCategories)
 				{

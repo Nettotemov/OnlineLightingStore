@@ -147,12 +147,12 @@
 	public string GetEditUrl(long id) => $"/admin/categories/edit/{id}";
 
 	private string urlPath = "imegs/img-category/";
-	public void SaveCategory()
+	public async Task SaveCategory()
 	{
 		if (Id == 0)
 		{
 			Repository.CreateCategory(Category);
-			folderManager.CeateDirectory(urlPath, Convert.ToInt64(Category.ID));
+			await folderManager.CeateDirectoryAsync(urlPath, Convert.ToInt64(Category.ID));
 			if (Category.ID != 0)
 			{
 				TabIsActive = true;

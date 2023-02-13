@@ -186,8 +186,15 @@
 								<a class="search-card__info" asp-page="CardProduct"
 							asp-route-CategoryName="@pr.Category!.CategoryName" asp-route-ProductID="@pr.ProductID"
 							asp-route-Name="@pr.Name">
+									@{
+										Model.ChecUrlPhoto = @pr.MainPhoto;
+										Model.CheckDeviceWidth();
+										System.Console.WriteLine(Model.ChecUrlPhoto);
+									}
 									<div id="img-container">
 										<div class="search-card__image-wrapper">
+											<img class="search-card__image" src="@ViewData["ImageUrl"]"
+												width="@ViewData["ImageWidth"]" />
 											<img class="search-card__image" src="@pr.MainPhoto">
 										</div>
 									</div>

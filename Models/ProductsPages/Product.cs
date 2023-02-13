@@ -56,7 +56,7 @@ namespace LampStore.Models
 		public ICollection<Tag> ProductTags { get; set; } = new List<Tag>();
 
 		[Required(ErrorMessage = "Пожалуйста, укажите тип продукта")]
-		public int ProductTypeId { get; set; }
+		public int? ProductTypeId { get; set; }
 		public ProductType? ProductType { get; set; }
 
 

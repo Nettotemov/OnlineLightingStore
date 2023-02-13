@@ -13,6 +13,7 @@ builder.Services.AddDbContext<StoreDbContext>(opts =>
 {
 	opts.UseSqlServer(builder.Configuration["ConnectionStrings:LampStoreConnection"]);
 });
+
 builder.Services.AddScoped<IAboutPageRepository, EFAboutPageRepository>();
 builder.Services.AddScoped<IStoreRepository, EFStoreRepository>();
 builder.Services.AddScoped<ICatalogRepository, EFCatalogRepository>();
@@ -33,6 +34,7 @@ builder.Services.AddHttpClient(); //отправка файлов на серв�
 
 builder.Services.AddSingleton<IPopupNotification, PopupNotification>(); //регистриуем сервис уведомлений 
 builder.Services.AddScoped<IFolderManager, FolderManager>(); //регистриуем сервис для создания/удаления папок
+
 var app = builder.Build();
 
 

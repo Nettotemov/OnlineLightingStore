@@ -237,7 +237,7 @@
 		{
 			await textEditor!.SaveContent();
 			Repository.CreateInfo(FaqPage);
-			folderManager.CeateDirectory(urlPath, Convert.ToInt64(FaqPage.ID));
+			await folderManager.CeateDirectoryAsync(urlPath, Convert.ToInt64(FaqPage.ID));
 			if (FaqPage.ID != 0)
 			{
 				TabIsActive = true;

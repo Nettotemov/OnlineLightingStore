@@ -78,18 +78,14 @@
 			<div class="form-group mb-4">
 				<label>Тип</label>
 				<ValidationMessage For="@(() => Product.ProductTypeId)" />
-				@foreach (var type in ProductTypesData)
-				{
-					<option value="@type.ID">@type.Name</option>
-					<a class="btn btn-secondary" @onclick="@(e => AddTypeProduct(type))">Выбрать</a>
-
-				}
+				<InputSelect @bind-Value="Product.ProductTypeId" class="form-select">
+					<option value="">Выберите тип продукта</option>
+					@foreach (var type in ProductTypesData)
+					{
+						<option value="@type.ID">@type.Name</option>
+					}
+				</InputSelect>
 			</div>
-			@* <div class="form-group mb-4">
-			<label>Теги</label>
-			<ValidationMessage For="@(() => Product.Tags)" />
-			<InputText class="form-control" @bind-Value="Product.Tags" />
-			</div> *@
 			<div class="form-group mb-4">
 				<label>Размер</label>
 				<ValidationMessage For="@(() => Product.Size)" />
@@ -135,26 +131,11 @@
 			</div>
 			<div class="form-group mb-4">
 				<label>Теги</label>
-				<p></p>
-				@* <InputText class="" @bind-Value="Product.ProductTags.Add" /> *@
-
-				<InputSelect @bind-Value="Product.ProductTags" class="form-select">
-					<option value="">Выберите категорию</option>
-					@foreach (var item in TagsData)
-					{
-						<option value="@item">@item.Value</option>
-					}
-				</InputSelect>
-				@foreach (var item in TagsData)
+				@foreach (var (tag, check) in listIsChecked)
 				{
-					<option value="@item">@item.Value</option>
-					<a class="btn btn-secondary" @onclick="@(e => AddTagsforProduct(item))">Добавить</a>
-
-				}
-
-				@foreach (var item in ListAddTags)
-				{
-					<option value="@item">@item.Value</option>
+					<input type="checkbox" checked="@check" class="btn-check" id="@tag.Value" autocomplete="@check"
+					@onclick="@(e => AddTagsforProduct(tag, check))">
+					<label class="btn btn-outline-primary" for="@tag.Value">@tag.Value</label>
 				}
 			</div>
 		</EditForm>
@@ -174,22 +155,22 @@
 			</div>
 		</EditForm>
 	</TabPage>
-	<TabPage Text="Tab 3" IsActive="true">
+	<TabPage Text="Добавление значений" IsActive="true">
 		<EditForm Model="NewTag" OnValidSubmit="CreateNewTag" id="сreateNewTag">
 			<DataAnnotationsValidator />
 			<div class="row row-cols-2">
 				<div class="col">
 					<div class="form-group mb-4">
-						<label>ID tyg</label>
+						<label>ID тега</label>
 						<input class="form-control" disabled value="@NewTag.ID" />
 					</div>
 					<div class="form-group mb-4">
-						<label>Название поля</label>
+						<label>Знаечние тега</label>
 						<ValidationMessage For="@(() => NewTag.Value)" />
 						<InputText class="form-control" @bind-Value="NewTag.Value" />
 					</div>
 					<div class="mt-2">
-						<button form="сreateNewTag" type="submit" class="btn btn-warning">Сохранить</button>
+						<button form="сreateNewTag" type="submit" class="btn btn-warning">Добавить тег</button>
 						@* <a class="btn btn-secondary" @onclick="@(e => CancellationNewSetting())">Отмена</a> *@
 					</div>
 				</div>
@@ -209,7 +190,7 @@
 						<InputText class="form-control" @bind-Value="Type.Name" />
 					</div>
 					<div class="mt-2">
-						<button form="createTypeProduct" type="submit" class="btn btn-warning">Сохранить</button>
+						<button form="createTypeProduct" type="submit" class="btn btn-warning">Добавить тип</button>
 						@* <a class="btn btn-secondary" @onclick="@(e => CancellationNewSetting())">Отмена</a> *@
 					</div>
 				</div>
@@ -240,26 +221,27 @@
 		if (Id != 0)
 		{
 			TabIsActive = true;
+			Product = await Repository.Products.FirstOrDefaultAsync(p => p.ProductID == Id) ?? new();
 		}
 		DisplayedCategories = await Repository.Category.Select(c => c).Distinct().ToListAsync(); //получение категорий
 		await UpdateData();
 	}
 
-	protected override void OnParametersSet()
+	protected override async Task OnParametersSetAsync()
 	{
 		if (Id != 0)
 		{
-			Product = Repository.Products.FirstOrDefault(p => p.ProductID == Id) ?? new();
+			Product = await Repository.Products.FirstOrDefaultAsync(p => p.ProductID == Id) ?? new();
 		}
 	}
 
 	private string urlPath = "imegs/img-products/";
-	public void SaveProduct()
+	public async Task SaveProduct()
 	{
 		if (Id == 0)
 		{
 			Repository.CreateProduct(Product);
-			folderManager.CeateDirectory(urlPath, Convert.ToInt64(Product.ProductID));
+			await folderManager.CeateDirectoryAsync(urlPath, Convert.ToInt64(Product.ProductID));
 			if (Product.ProductID != 0)
 			{
 				TabIsActive = true;
@@ -272,7 +254,7 @@
 		}
 		else
 		{
-			Repository.SaveProduct(Product, ListAddTags);
+			Repository.SaveProduct(Product);
 			Notification notification = new Notification(1, "Изменения сохранены", "Запись отредактирована", Id.ToString());
 			popupNotification.AddItem(notification);
 			NavManager?.NavigateTo("/admin/products");
@@ -298,11 +280,13 @@
 	public IEnumerable<Tag> TagsData { get; set; } = Enumerable.Empty<Tag>();
 
 	public List<Tag> ListAddTags { get; set; } = new();
+	public List<Tag> DisplayProductTags { get; set; } = new();
 
 	public async Task UpdateData()
 	{
 		TagsData = await Repository.Tags.ToListAsync();
 		ProductTypesData = await Repository.Types.ToListAsync();
+		CheckTags(Product.ProductTags.ToList());
 		await InvokeAsync(StateHasChanged);
 	}
 
@@ -336,10 +320,26 @@ confirmationTitle = "Удаление дополнительного поля";
 confirmation?.Show();
 } *@
 
-	public List<Tag> AddTagsforProduct(Tag tag)
+	private List<(Tag tag, bool isChecked)> listIsChecked = new();
+	private void CheckTags(List<Tag> tags)
 	{
-		ListAddTags.Add(tag);
-		return ListAddTags;
+		foreach (var tag in TagsData)
+		{
+			if (tags.Where(t => t == tag).Any())
+			{
+				listIsChecked.Add((tag, true));
+			}
+			else { listIsChecked.Add((tag, false)); }
+		}
+	}
+	public void AddTagsforProduct(Tag tag, bool isChecked)
+	{
+
+		if (!isChecked)
+		{
+			Product.ProductTags.Add(tag);
+		}
+		else { Product.ProductTags.Remove(tag); }
 	}
 
 	public IEnumerable<ProductType> ProductTypesData { get; set; } = Enumerable.Empty<ProductType>();
@@ -348,10 +348,5 @@ confirmation?.Show();
 	{
 		Repository.CreateType(Type);
 		await UpdateData();
-	}
-
-	public void AddTypeProduct(ProductType type)
-	{
-		Product.ProductTypeId = type.ID;
 	}
 }

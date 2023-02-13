@@ -98,7 +98,7 @@
 		{
 			await textEditor!.SaveContent();
 			Repository.CreateCooperations(CooperationPage);
-			folderManager.CeateDirectory(urlPath, Convert.ToInt64(CooperationPage.ID));
+			await folderManager.CeateDirectoryAsync(urlPath, Convert.ToInt64(CooperationPage.ID));
 			if (CooperationPage.ID != 0)
 			{
 				TabIsActive = true;

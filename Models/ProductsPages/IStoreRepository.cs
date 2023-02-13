@@ -7,7 +7,7 @@ namespace LampStore.Models
 		IQueryable<Tag> Tags { get; }
 		IQueryable<ProductType> Types { get; }
 
-		void SaveProduct(Product p, List<Tag> tags);
+		void SaveProduct(Product p);
 		void CreateProduct(Product p);
 		void DeleteProduct(Product p);
 

@@ -14,8 +14,8 @@ namespace LampStore.Pages
 {
 	public class CatalogModel : PageModel
 	{
-		private ICatalogRepository repository;
-		public CatalogModel(ICatalogRepository repo)
+		private IStoreRepository repository;
+		public CatalogModel(IStoreRepository repo)
 		{
 			repository = repo;
 		}
@@ -42,22 +42,27 @@ namespace LampStore.Pages
 
 		CatalogServices catalogServices = new CatalogServices(); //ссылка на сервисы каталога
 
+		private int deviceWidth;
+		private string format = string.Empty;
 		public async Task OnGetAsync(string name, string category, string maxPrice, string minPrice, string[] tags, string[] color, string[] materials, string[] types, SortCatalog sortOrder, int productPage = 1)
 		{
+			deviceWidth = Request.Headers["User-Agent"].ToString().Contains("Mobile") ? 720 : 1920;
+			format = deviceWidth >= 1920 ? "jpg" : "webp";
+
 			Name = name;
 			CategoryName = category;
 			Tags = tags;
 			SortedCatalog = sortOrder.GetHashCode();
 			SortedName = EnumExtensions.GetDisplayName(sortOrder);
-			DisplayedTags = await repository.Tags.Select(t => t).Distinct().ToListAsync();
-			DisplayedCategories = await repository.Categorys.Select(c => c).Distinct().ToListAsync(); //получение категорий
-			Category = new SelectList(await repository.Categorys.Select(c => c.CategoryName).Distinct().ToListAsync(), CategoryName); //получение списка категорий товара
+			DisplayedCategories = await repository.Category.Select(c => c).Distinct().ToListAsync(); //получение категорий
+			Category = new SelectList(await repository.Category.Select(c => c.CategoryName).Distinct().ToListAsync(), CategoryName); //получение списка категорий товара
 			DisplayedColors = await repository.Products.Select(p => p.Color).Distinct().ToListAsync(); //получаем цвета
 			DisplayedTypes = await repository.Types.Select(p => p).Distinct().ToListAsync(); //получаем типы
 			string strMaterials = string.Join(",", repository.Products.Select(c => c.Material).Distinct().OrderBy(p => p)).ToString(); //получаем строку материалов
 			DisplayedMaterials = ParametersExtensions.GetDisplayParameters(strMaterials);
 
 			DisplayedProducts = await repository.Products.Select(p => p).ToListAsync(); //получаем все товары для фильтрации
+			DisplayedTags = await repository.Products.SelectMany(t => t.ProductTags).Distinct().ToListAsync(); //получаем теги
 
 			try
 			{
@@ -161,7 +166,7 @@ namespace LampStore.Pages
 		{
 			var DPs = await repository.Products.Select(p => p).ToListAsync();
 
-			DisplayedCategories = await repository.Categorys.Select(c => c).Distinct().ToListAsync(); //получение категорий
+			DisplayedCategories = await repository.Category.Select(c => c).Distinct().ToListAsync(); //получение категорий
 			try
 			{
 				switch (sortOrder) //сортировка
@@ -272,5 +277,19 @@ namespace LampStore.Pages
 
 			return new JsonResult(new { json });
 		}
+
+		public string? ChecUrlPhoto { get; set; }
+		public void CheckDeviceWidth()
+		{
+
+			var namePhoto = Path.GetFileNameWithoutExtension(ChecUrlPhoto);
+			var pathPhoto = Path.GetDirectoryName(ChecUrlPhoto);
+			// System.Console.WriteLine(pathPhoto);
+			ViewData["ImageUrl"] = $"{pathPhoto}/small/{namePhoto}.{format}";
+			ViewData["ImageWidth"] = deviceWidth;
+		}
+
+
+
 	}
 }

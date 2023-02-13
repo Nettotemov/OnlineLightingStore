@@ -7,7 +7,7 @@ namespace LampStore.Pages.Admin.Services
 		private string? ErrorMassage { get; set; }
 		private string? NameDirectory { get; set; }
 
-		void IFolderManager.CeateDirectory(string directoryPath, long id)
+		async Task IFolderManager.CeateDirectoryAsync(string directoryPath, long id)
 		{
 			try
 			{
@@ -17,14 +17,37 @@ namespace LampStore.Pages.Admin.Services
 					ErrorMassage = "Такая папка существует";
 					return;
 				}
-
-				DirectoryInfo di = Directory.CreateDirectory(NameDirectory);
+				await Task.Run(() => Directory.CreateDirectory(NameDirectory));
 				ErrorMassage = $"Каталог был успешно создан в {NameDirectory}. {Directory.GetCreationTime(NameDirectory)}";
+
+				await CeateSubdirectoryAsync(NameDirectory);
 
 			}
 			catch (Exception e)
 			{
 				ErrorMassage = $"The process failed: {e.ToString()}";
+			}
+		}
+
+		private async Task CeateSubdirectoryAsync(string path)
+		{
+			string[] subFolders = { "average", "small" };
+
+			foreach (var folder in subFolders)
+			{
+				string subFolderPath = Path.Combine(path, folder);
+				if (!Directory.Exists(subFolderPath))
+				{
+					await Task.Run(() => Directory.CreateDirectory(subFolderPath));
+					ErrorMassage = subFolderPath + "Созадана";
+
+					string subWebpPath = Path.Combine(subFolderPath, "webp");
+					if (!Directory.Exists(subWebpPath))
+					{
+						await Task.Run(() => Directory.CreateDirectory(subWebpPath));
+						ErrorMassage = $"{subWebpPath} в {subFolderPath} Созадана";
+					}
+				}
 			}
 		}
 

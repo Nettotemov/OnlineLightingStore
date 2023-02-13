@@ -7,6 +7,8 @@
 @inject IWebHostEnvironment Environment
 @using Microsoft.JSInterop
 @inject IJSRuntime JS
+@using SixLabors.ImageSharp
+@using SixLabors.ImageSharp.Processing
 
 <h1>Upload Files</h1>
 
@@ -43,34 +45,14 @@ else
 		{
 			<li>
 				<ul>
+					<li>Загрузка завершена</li>
 					<li>Name: @file.Name</li>
-					<li>Last modified: @file.LastModified.ToString()</li>
 					<li>Size (bytes): @file.Size</li>
-					<li>Content type: @file.ContentType</li>
-					<img class="col-3" src="@UrlPath/@file.Name" />
 				</ul>
 			</li>
 		}
 	</ul>
 
-}
-<p>@UrlPath@FolderName</p>
-
-
-@if (pathFiles.Count() > 0)
-{
-	@foreach (var file in pathFiles)
-	{
-		<div class="card col-3">
-	<p>@file.FullName</p>
-	<img class="" src="@UrlPath/@FolderName/@file.Name" />
-	<p>wwwroot/@UrlPath@file.Name</p>
-	<button class="btn btn-success" @onclick="@(e => AddPhoto('/' + @UrlPath + @FolderName + '/' + @file.Name))">
-		Добавить</button>
-	<button @onclick="@(e => DeleteFile("wwwroot/" + @UrlPath + @FolderName + '/' + @file.Name))">
-		Удалить</button>
-</div>
-	}
 }
 
 
@@ -140,50 +122,32 @@ else
 		}
 
 		isLoading = false;
-	}
 
-	private async Task ShowFiles()
-	{
-		await Task.Run(() => pathFiles = GetFiles());
-	}
-
-	private List<FileInfo> GetFiles()
-	{
-		var directory = new DirectoryInfo("wwwroot/" + UrlPath + FolderName);
-
-		//pathFiles = directory.GetFiles().ToList();
-
-		//pathFiles = files.ToList();
-
-		return directory.GetFiles().ToList();
-	}
-
-	private async Task DeleteFile(string urlPath)
-	{
-		if (File.Exists(urlPath))
+		if (!isLoading)
 		{
-			try
+			foreach (var file in loadedFiles)
 			{
-				File.Delete(urlPath);
-				await ShowFiles();
-			}
-			catch (Exception ex)
-			{
-				Logger.LogError("File: {Filename} Error: {Error}",
-				urlPath, ex.Message);
+				await ResizePhotoAsync("wwwroot/" + UrlPath + FolderName + "/", file);
 			}
 		}
-		else
+	}
+
+	private async Task ResizePhotoAsync(string path, IBrowserFile file)
+	{
+		using (Image image = Image.Load(path + file.Name))
 		{
-			fileNameError = "Specified file doesn't exist";
+			image.Mutate(x => x.Resize(image.Width / 2, image.Height / 2));
+			var fileName = Path.GetFileNameWithoutExtension(file.Name);
+			await image.SaveAsWebpAsync(path + "average/webp/" + fileName + ".webp");
+			await image.SaveAsync(path + "average/" + file.Name);
+		}
+		using (Image image = Image.Load(path + file.Name))
+		{
+			image.Mutate(x => x.Resize(image.Width / 3, image.Height / 3));
+			var fileName = Path.GetFileNameWithoutExtension(file.Name);
+			await image.SaveAsWebpAsync(path + "small/webp/" + fileName + ".webp");
+			await image.SaveAsync(path + "small/" + file.Name);
 		}
 	}
 
-	[Parameter]
-	public EventCallback<string> OnClickAddPhoto { get; set; }
-
-	private Task AddPhoto(string url)
-	{
-		return OnClickAddPhoto.InvokeAsync(url);
-	}
 }

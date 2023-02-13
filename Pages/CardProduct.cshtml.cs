@@ -10,8 +10,8 @@ namespace LampStore.Pages
 {
 	public class CardProduct : PageModel
 	{
-		private ICatalogRepository repository;
-		public CardProduct(ICatalogRepository repo)
+		private IStoreRepository repository;
+		public CardProduct(IStoreRepository repo)
 		{
 			repository = repo;
 		}
@@ -27,7 +27,7 @@ namespace LampStore.Pages
 
 		public async Task<IActionResult> OnGetAsync(long productId) //инициализация карточки товара
 		{
-			DisplayedCategories = await repository.Categorys.Select(c => c).Distinct().ToListAsync();
+			DisplayedCategories = await repository.Category.Select(c => c).Distinct().ToListAsync();
 			DisplayedProducts = await repository.Products.Select(p => p).ToListAsync();
 			DisplayedType = await repository.Types.Select(c => c).Distinct().ToListAsync();
 
