@@ -171,7 +171,7 @@ $(document).on("click", ".pagination-btn", function (ev) {
 						let oldPrice = productJson[i].OldPrice;
 						postWrp = document.createElement("div");
 						postWrp.classList.add("search-card__wrapper");
-						postWrp.innerHTML = `<a class="search-card__info" href="/catalog/${productJson[i].Category.CategoryName}/${productJson[i].Name}/${productJson[i].ProductID}">
+						postWrp.innerHTML = `<a class="search-card__info" href="/catalog/${productJson[i].Name}/${productJson[i].ProductID}">
 							<div id="img-container">
     							<div class="search-card__image-wrapper">
     								<img class="search-card__image" src="${productJson[i].MainPhoto}">
@@ -319,10 +319,10 @@ function loadProductView(ev) {
 					let oldPrice = productJson[i].OldPrice;
 					postWrp = document.createElement("div");
 					postWrp.classList.add("search-card__wrapper");
-					postWrp.innerHTML = `<a class="search-card__info" href="/catalog/${productJson[i].Category.CategoryName}/${productJson[i].Name}/${productJson[i].ProductID}">
+					postWrp.innerHTML = `<a class="search-card__info" href="/catalog/${productJson[i].Name}/${productJson[i].ProductID}">
 						<div id="img-container">
     						<div class="search-card__image-wrapper">
-    							<img class="search-card__image" src="${converterPhoto(productJson[i].MainPhoto)}">
+    							<img class="search-card__image" src="${productJson[i].MainPhoto}">
  							</div>
   						</div>
   						<div class="footer-card__wrapper">
@@ -351,26 +351,26 @@ $(document).ready(function () {
 	// converterPhoto("photo")
 });
 
-function converterPhoto(photo){
-	let detect = new MobileDetect(window.navigator.userAgent)
-	let arrStr = photo.split("/");
-	arrStr[3] += "/small"
-	let photoName = arrStr[4].split('.')
-	arrStr[4] = photoName[0];
-	let str = "";
+// function converterPhoto(photo){
+// 	let detect = new MobileDetect(window.navigator.userAgent)
+// 	let arrStr = photo.split("/");
+// 	arrStr[3] += "/small"
+// 	let photoName = arrStr[4].split('.')
+// 	arrStr[4] = photoName[0];
+// 	let str = "";
 
-	if (detect.phone()) {
-		arrStr[4] += ".webp"
-		str = arrStr.join("/");
-		console.log(str);
-		return str;
-	}
-	else {
-		arrStr[4] += ".jpg"
-		str = arrStr.join("/");
-		return str;
-	}
-};
+// 	if (detect.phone()) {
+// 		arrStr[4] += ".webp"
+// 		str = arrStr.join("/");
+// 		console.log(str);
+// 		return str;
+// 	}
+// 	else {
+// 		arrStr[4] += ".jpg"
+// 		str = arrStr.join("/");
+// 		return str;
+// 	}
+// };
 
 
 
@@ -619,26 +619,58 @@ $(document).ready(function () {
 		let targetBtn = $(this).find(".a-btn__header");
 		let targetBtnAfter = CSSRulePlugin.getRule(".a-btn__header:after");
 		let targetCart = $(this).find(".cart-btn");
+		let breadcrumb = $(this).find(".breadcrumb__wrapper");
 		var tl = new TimelineMax();
 		tl.to(target, 1, { height: 75, backgroundColor: "#000000" });
-		tl.to(targetLogo, 0.5, { color: "#ffffff", fontSize: "1.5rem" });
-		tl.to(targetCart, 0.5, { color: "#ffffff", fill: "#ffffff" });
-		tl.to(targetBurger, 0.5, { backgroundColor: "#ffffff" });
-		tl.to(targetBtn, 0.5, { color: "#ffffff", fontSize: "0.75rem" });
-		tl.to(targetBtnAfter, 0.5, { background: "#ffffff" });
+		new ScrollMagic.Scene({
+			triggerElement: this,
+			duration: "20%", //40
+			triggerHook: 0 //0.85
+		})
+			.setTween(tl)
+			.addTo(ctrl)
+			// .addIndicators({
+			// 	colorTrigger: "black",
+			// 	colorStart: "black",
+			// 	colorEnd: "black",
+			// 	indent: 40
+			// });
+		
+		var tlChildren = new TimelineMax();
+		tlChildren.to(targetLogo, 0.5, { color: "#ffffff", fontSize: "1.5rem" });
+		tlChildren.to(targetCart, 0.5, { color: "#ffffff", fill: "#ffffff" });
+		tlChildren.to(targetBurger, 0.5, { backgroundColor: "#ffffff" });
+		tlChildren.to(targetBtn, 0.5, { color: "#ffffff", fontSize: "0.75rem" });
+		tlChildren.to(targetBtnAfter, 0.5, { background: "#ffffff" });
 		new ScrollMagic.Scene({
 			triggerElement: this,
 			duration: "30%", //40
 			triggerHook: 0 //0.85
 		})
-			.setTween(tl)
+			.setTween(tlChildren)
 			.addTo(ctrl)
-		// .addIndicators({
-		// 	colorTrigger: "black",
-		// 	colorStart: "black",
-		// 	colorEnd: "black",
-		// 	indent: 40
-		// });
+			// .addIndicators({
+			// 	colorTrigger: "yellow",
+			// 	colorStart: "yellow",
+			// 	colorEnd: "yellow",
+			// 	indent: 40
+			// });
+
+		var tlBreadcrumb = new TimelineMax();
+		tlBreadcrumb.to(breadcrumb, 1, { top: "75px", borderBottom: "1px solid #000" });
+		new ScrollMagic.Scene({
+			triggerElement: this,
+			duration: "30%", //40
+			triggerHook: 0 //0.85
+		})
+			.setTween(tlBreadcrumb)
+			.addTo(ctrl)
+			// .addIndicators({
+			// 	colorTrigger: "blue",
+			// 	colorStart: "blue",
+			// 	colorEnd: "blue",
+			// 	indent: 40
+			// });
 	});
 });
 

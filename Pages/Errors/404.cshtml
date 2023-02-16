@@ -1,13 +1,20 @@
 @page
 @model _404
 @{
-	ViewData["title"] = "Page does not exists";
+	ViewData["title"] = "404 - Страница не найдена";
+	ViewData["Breadcrumb"] = await Component.InvokeAsync("BreadcrumbSummary", new[] { (url: "/", page: "Главная"),
+(url: "/errors/404", page: "404") });
 }
 
 
-<div class="container" style="text-align: center;  color: #888;">
-	<h1 style="font-size: 150px; color: #888; margin-bottom: 0px;">404</h1>
-	<p style="font-size: 50px; ">Page not found</p>
-	<p>The page you are looking for doesn't exists or another issue occurred.</p>
-	<p>Please navigate back to zetbit.tech</p>
+
+
+<div class="_404__wrapper">
+	<div class="_404__container" style="text-align: center;  color: #000000;">
+		<h1 style="font-size: 150px; color: #000000; margin-bottom: 0px;">404</h1>
+		<p class="_404__caption">Страница не найдена</p>
+		<p>Страница, которую вы ищете, не существует или возникла другая проблема.</p>
+		<p>Пожалуйста, вернитесь на главную.</p>
+		<a class="btn__general mt-2" asp-area="" asp-page="/Index">На главную</a>
+	</div>
 </div>

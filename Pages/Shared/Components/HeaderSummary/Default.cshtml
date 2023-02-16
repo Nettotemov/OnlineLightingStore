@@ -20,10 +20,11 @@
 							<a class="nav-link a-btn__header" asp-page="/faq" asp-area="">Информация</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link a-btn__header" asp-page="/about" asp-route-ID="1">Компания</a>
+							<a class="nav-link a-btn__header" asp-page="/about" >Компания</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link a-btn__header" asp-area="" asp-page="/cooperationpages">Сотрудничество</a>
+							<a class="nav-link a-btn__header" asp-area=""
+								asp-page="/cooperationpages">Сотрудничество</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link a-btn__header" asp-page="/catalog" asp-route-productPage="1"
@@ -36,8 +37,8 @@
 				</nav>
 			</div>
 		</div>
-
 	</header>
+	@ViewData["Breadcrumb"]
 </div>
 <div class="menu">
 	<div class="container">
@@ -49,7 +50,7 @@
 			</div>
 			<hr class="footer-line__wrapper">
 			<div class="menu-wrapper__items">
-				<a asp-page="/about" asp-route-ID="1" class="menu__h3">Компания</a>
+				<a asp-page="/about" class="menu__h3">Компания</a>
 				<a asp-page="/faq" asp-area="" class="menu__h3">Информация</a>
 				<a asp-area="" asp-page="/cooperationpages" class="menu__h3">Сотрудничество</a>
 				<a asp-area="" asp-page="/contacts" class="menu__h3">Контакты</a>

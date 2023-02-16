@@ -1,16 +1,20 @@
-<ol class="breadcrumb">
-	@for (int i = 0; i < Model.Length; i++)
-	{
-		<li class="breadcrumb-item @(i == Model.Length - 1 ? "active" : "")">
+<div class="breadcrumb__wrapper">
+	<div class="container">
+		<ol class="breadcrumb">
+			@for (int i = 0; i < Model.Length; i++)
+			{
+				<li class="breadcrumb-item @(i == Model.Length - 1 ? "active" : "")">
 
-			@if (i != Model.Length - 1)
-			{
-				<a href="@Model[i].Item1.ToLower()">@Model[i].Item2</a>
+					@if (i != Model.Length - 1)
+					{
+						<a href="@Model[i].Item1.ToLower()">@Model[i].Item2</a>
+					}
+					else
+					{
+						@Model[i].Item2
+					}
+				</li>
 			}
-			else
-			{
-				@Model[i].Item2
-			}
-		</li>
-	}
-</ol>
+		</ol>
+	</div>
+</div>

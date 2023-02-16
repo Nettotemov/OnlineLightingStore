@@ -1,15 +1,17 @@
-@page "/catalog/{CategoryName}/{Name}/{ProductID}"
+@page "/catalog/{Name}/{ProductID}"
 @model CardProduct
+@using LampStore.Services
 
 @{
 	ViewData["Title"] = "Светильник " + @Model.productCard?.Name + " купить";
 	Layout = "_Layout";
+	ViewData["Breadcrumb"] = await Component.InvokeAsync("BreadcrumbSummary", new[] { (url: "/", page: "Главная"), (url:
+"/catalog", page: "Каталог"), (url: "/category/" +
+@Transliteration.Front(@Model.productCard!.Category!.CategoryName.ToLower()), page:
+@Model.productCard?.Category?.CategoryName), (url: "/catalog/{CategoryName}/{Name}/{ProductID}", page:
+@Model.productCard?.Name) });
 }
 
-@await Component.InvokeAsync("BreadcrumbSummary", new [] { (url: "/", page: "Главная"), (url: "/catalog", page:
-"Каталог"),
-(url: "/category/" + @Model.productCard?.Category?.ID.ToString(), page: @Model.productCard?.Category?.CategoryName),
-(url: "/catalog/{CategoryName}/{Name}/{ProductID}", page: @Model.productCard?.Name) })
 
 <section class="product-card-slider__wrapper pt-per-5">
 	<div class="variable-width">
@@ -142,8 +144,8 @@
 </section>
 
 @{
-	var SimilarProduct = @Model.DisplayedProducts.Where(p => p.ProductType == @Model.productCard?.ProductType && p.Material ==
-	@Model.productCard.Material && p.ProductID != @Model.productCard.ProductID);
+	var SimilarProduct = @Model.DisplayedProducts.Where(p => p.ProductType == @Model.productCard?.ProductType && p.Material
+	== @Model.productCard.Material && p.ProductID != @Model.productCard.ProductID);
 }
 
 @if (@SimilarProduct.Count() > 0)
@@ -153,8 +155,8 @@
 	<div class="similar-product">
 		@foreach (var product in @SimilarProduct)
 			{
-				<a class="product__wrapper" asp-page="CardProduct" asp-route-CategoryName="@product.Category!.CategoryName"
-			asp-route-ProductID="@product.ProductID" asp-route-Name="@product.Name">
+				<a class="product__wrapper" asp-page="CardProduct" asp-route-ProductID="@product.ProductID"
+			asp-route-Name="@product.Name">
 					<div class="product-img__wrapper">
 						<img class="img-center" src="@product.MainPhoto">
 					</div>

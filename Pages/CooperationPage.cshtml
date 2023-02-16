@@ -4,10 +4,10 @@
 @{
 	Layout = "_Layout";
 	ViewData["Title"] = @Model.cooperationPage!.NameCooperation;
-}
-@await Component.InvokeAsync("BreadcrumbSummary", new [] { (url: "/", page: "Главная"),
+	ViewData["Breadcrumb"] = await Component.InvokeAsync("BreadcrumbSummary", new[] { (url: "/", page: "Главная"),
 (url: "/cooperation", page: "Сотрудничество"), (url: @Model.cooperationPage.ID.ToString(), page:
-@Model.cooperationPage.NameCooperation) })
+@Model.cooperationPage.NameCooperation) });
+}
 
 <div class="info-page__wrapper row mt-5">
 	<div class="col-12 col-xl-6">

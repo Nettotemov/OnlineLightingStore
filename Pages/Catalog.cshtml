@@ -1,11 +1,13 @@
 @page "/catalog/{productPage?}"
 @model CatalogModel
+@using LampStore.Services
 
 @{
 	ViewData["Title"] = "Каталог освещения";
+	ViewData["Breadcrumb"] = await Component.InvokeAsync("BreadcrumbSummary", new[] { (url: "/", page: "Главная"), (url:
+"/catalog", page: "Каталог") });
 }
-@await Component.InvokeAsync("BreadcrumbSummary", new [] { (url: "/", page: "Главная"), (url: "/catalog", page:
-"Каталог") })
+
 
 <div class="">
 	<div class="catalog__h">
@@ -72,11 +74,14 @@
 											@foreach (string color in Model.DisplayedColors ??
 													Enumerable.Empty<string>())
 											{
-												<li class="checkbox">
-													<input type="checkbox" name="color" value="@color" id="@color"
-														data-check="@color" class="" />
-													<label for="@color" class="control-label">@color</label>
-												</li>
+												@if (!string.IsNullOrEmpty(color))
+												{
+													<li class="checkbox">
+														<input type="checkbox" name="color" value="@color" id="@color"
+															data-check="@color" class="" />
+														<label for="@color" class="control-label">@color</label>
+													</li>
+												}
 											}
 										</ul>
 									</div>
@@ -118,7 +123,7 @@
 											@foreach (string material in Model.DisplayedMaterials ??
 													Enumerable.Empty<string>())
 											{
-												@if (material != string.Empty)
+												@if (!string.IsNullOrEmpty(material))
 												{
 													<li class="checkbox">
 														<input type="checkbox" name="materials" value="@material" id="@material"
@@ -183,19 +188,12 @@
 						@foreach (Product pr in @Model!.DisplayedProducts)
 						{
 							<div class="search-card__wrapper">
-								<a class="search-card__info" asp-page="CardProduct"
-							asp-route-CategoryName="@pr.Category!.CategoryName" asp-route-ProductID="@pr.ProductID"
-							asp-route-Name="@pr.Name">
-									@{
-										Model.ChecUrlPhoto = @pr.MainPhoto;
-										Model.CheckDeviceWidth();
-										System.Console.WriteLine(Model.ChecUrlPhoto);
-									}
+								<a class="search-card__info" asp-page="CardProduct" asp-route-ProductID="@pr.ProductID"
+							asp-route-Name="@pr.Name.ToLower()">
 									<div id="img-container">
 										<div class="search-card__image-wrapper">
-											<img class="search-card__image" src="@ViewData["ImageUrl"]"
-												width="@ViewData["ImageWidth"]" />
-											<img class="search-card__image" src="@pr.MainPhoto">
+											<img class="search-card__image" src="@pr.MainPhoto" alt="Купить светильник @pr.Name"
+												title="Светильник @pr.Name">
 										</div>
 									</div>
 									<div class="footer-card__wrapper">

@@ -3,10 +3,10 @@
 @{
 	Layout = "_Layout";
 	ViewData["Title"] = "Сотрудничество";
+	ViewData["Breadcrumb"] = await Component.InvokeAsync("BreadcrumbSummary", new [] { (url: "/", page: "Главная"),
+(url: "/cooperation", page: "Сотрудничество") });
 }
 
-@await Component.InvokeAsync("BreadcrumbSummary", new [] { (url: "/", page: "Главная"),
-(url: "/cooperation", page: "Сотрудничество") })
 
 <div class="col-12 mb-per-15 pt-per-5" data-color-section="dark">
 	@if (@Model.DisplayCooperationPages.Count() > 0)

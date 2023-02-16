@@ -6,6 +6,8 @@ using System.Linq;
 using LampStore.Services;
 using Microsoft.EntityFrameworkCore;
 
+
+
 namespace LampStore.Pages
 {
 	public class CategoryPage : PageModel
@@ -18,23 +20,21 @@ namespace LampStore.Pages
 		}
 
 		public Category? categoryCard;
-		public long CategoryID { get; private set; }
-
 		public List<Product> DisplayedProducts { get; private set; } = new();
 		public List<ProductType> DisplayedTypes { get; private set; } = new();
 
-		public async Task<IActionResult> OnGetAsync(long categoryID) //инициализация категории
+		public async Task<IActionResult> OnGetAsync(string categoryName) //инициализация категории
 		{
 			try
 			{
-				DisplayedProducts = await repository.Products.Where(p => p.Category!.ID == categoryID).ToListAsync();
 				DisplayedTypes = await repository.Types.Select(p => p).Distinct().ToListAsync();
 				List<Category> listCategories = await repository.Category.Select(c => c).OrderBy(c => c.ID).ToListAsync();
 
 				foreach (var category in listCategories)
 				{
-					if (category.ID == categoryID)
+					if (categoryName == Transliteration.Front(category.CategoryName.ToLower()))
 					{
+						DisplayedProducts = await repository.Products.Where(p => p.Category!.ID == category.ID).ToListAsync();
 						categoryCard = new Category()
 						{
 							CategoryName = category.CategoryName,
@@ -49,6 +49,7 @@ namespace LampStore.Pages
 							DisplaySlider = category.DisplaySlider,
 							Slider = category.Slider
 						};
+
 						return Page();
 					}
 				}

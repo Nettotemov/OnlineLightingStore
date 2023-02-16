@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using LampStore.Pages.Admin.Services.Interface;
 using LampStore.Pages.Admin.Services;
+using SimpleMvcSitemap;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,7 @@ builder.Services.AddSession(); //добавление сохранения се�
 builder.Services.AddScoped<Cart>(sp => SessionCart.GetCart(sp)); //указывает, что один и тот же объект должен использоваться для удовлетворения связанных запросов для экземпляров Корзины
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); //указывает, что всегда должен использоваться один и тот же объект
 builder.Services.AddServerSideBlazor(); //создает службы, которые использует Blazor
+builder.Services.AddSingleton<ISitemapProvider, SitemapProvider>(); //карта сайта
 
 builder.Services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlServer(builder.Configuration["ConnectionStrings:IdentityConnection"])); //подключение к БД для админа
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppIdentityDbContext>(); //добавление идентифкации для админа

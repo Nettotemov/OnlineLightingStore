@@ -26,7 +26,7 @@ namespace LampStore.Pages
 				List<AboutPage> aboutPageList = await repository.AboutPages.Select(p => p).OrderBy(p => p.ID).ToListAsync();
 				foreach (var page in aboutPageList)
 				{
-					if (page.ID == ID)
+					if (page.DisplayHomePage == true)
 					{
 						aboutPage = new AboutPage()
 						{

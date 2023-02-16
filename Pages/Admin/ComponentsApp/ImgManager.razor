@@ -38,7 +38,7 @@
 								<img class="" src="@fullPathFile/@file.Name" />
 								<p>wwwroot/@PathFolder@FolderName/@file.Name</p>
 								<button type="button" class="btn btn-success"
-						@onclick="@(e => AddPhoto('/' + @PathFolder + @FolderName + '/' + @file.Name))">
+						@onclick="@(e => AddPhoto('/' + @PathFolder + @FolderName + "/webp/" + @Path.GetFileNameWithoutExtension(file.Name) + ".webp"))">
 									Добавить</button>
 								<button type="button" class="btn btn-danger"
 						@onclick="@(e => DeleteFile("wwwroot/" + @PathFolder + @FolderName + '/', @file))">
@@ -128,8 +128,8 @@
 			try
 			{
 				var photoName = Path.GetFileNameWithoutExtension(file.Name);
-				string[] arrDeleteFiles = { urlPath + file.Name, urlPath + "small/" + file.Name, urlPath + "small/webp/" + photoName +
-".webp", urlPath + "average/" + file.Name, urlPath + "average/webp/" + photoName + ".webp"};
+				string[] arrDeleteFiles = { urlPath + file.Name, urlPath + "webp/" + photoName + ".webp", urlPath + "average/" + file.Name, 
+					urlPath + "average/webp/" + photoName + ".webp"};
 
 				foreach (string path in arrDeleteFiles)
 				{

@@ -1,5 +1,7 @@
 ﻿@page
 @model IndexModel
+@using LampStore.Services
+
 @{
 	ViewData["Title"] = "Магазин освещения";
 }
@@ -20,7 +22,7 @@
 				</div>
 				<div class="col-12 col-xl-5 col-xs-12 hook">
 					<h1 class="p__caption mb-per-5">@aboutPage.HeadingOneNode</h1>
-					<a asp-page="About" asp-route-ID="@aboutPage.ID" class="a-btn-link">Узнать больше</a>
+					<a asp-page="About" class="a-btn-link">Узнать больше</a>
 				</div>
 			</div>
 		}
@@ -39,7 +41,8 @@
 					<div class="col-12 col-xl-5 col-xs-12 order-block-2 hook">
 						<h1 class="h1__caption mb-per-5">@category.CategoryName</h1>
 						<p class="p__caption mb-per-5">@category.Description</p>
-						<a asp-page="CategoryPage" asp-route-CategoryID="@category.ID" class="a-btn-link">Узнать больше</a>
+						<a asp-page="CategoryPage" asp-route-CategoryName="@Transliteration.Front(@category.CategoryName.ToLower())"
+							class="a-btn-link">Узнать больше</a>
 					</div>
 					<div class="col-12 col-xl-6 order-block-1">
 						<div class="img-center__wrapper">
@@ -60,7 +63,8 @@
 					<div class="col-12 col-xl-5 col-xs-12 order-block-2 hook">
 						<h1 class="h1__caption mb-per-5">@category.CategoryName</h1>
 						<p class="p__caption mb-per-5">@category.Description</p>
-						<a asp-page="CategoryPage" asp-route-CategoryID="@category.ID" class="a-btn-link">Узнать больше</a>
+						<a asp-page="CategoryPage" asp-route-CategoryName="@Transliteration.Front(@category.CategoryName.ToLower())"
+							class="a-btn-link">Узнать больше</a>
 					</div>
 				</div>
 				categoryNum++;

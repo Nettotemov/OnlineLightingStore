@@ -4,9 +4,11 @@
 @{
 	Layout = "_Layout";
 	ViewData["Title"] = @Model.infoPage!.NameInfo;
+	ViewData["Breadcrumb"] = await Component.InvokeAsync("BreadcrumbSummary", new[] { (url: "/", page: "Главная"),
+(url: "/faq", page: "Информация"), (url: @Model.infoPage.ID.ToString(), page: @Model.infoPage.NameInfo) });
+
 }
-@await Component.InvokeAsync("BreadcrumbSummary", new [] { (url: "/", page: "Главная"),
-(url: "/faq", page: "Информация"), (url: @Model.infoPage.ID.ToString(), page: @Model.infoPage.NameInfo) })
+
 
 <div class="info-page__wrapper row-cols-2 mt-5">
 	<div class="info-page__h-wrapper col-2">

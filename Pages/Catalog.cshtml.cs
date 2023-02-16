@@ -8,7 +8,7 @@ using LampStore.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
+using System.Net;
 
 namespace LampStore.Pages
 {
@@ -46,8 +46,8 @@ namespace LampStore.Pages
 		private string format = string.Empty;
 		public async Task OnGetAsync(string name, string category, string maxPrice, string minPrice, string[] tags, string[] color, string[] materials, string[] types, SortCatalog sortOrder, int productPage = 1)
 		{
-			deviceWidth = Request.Headers["User-Agent"].ToString().Contains("Mobile") ? 720 : 1920;
-			format = deviceWidth >= 1920 ? "jpg" : "webp";
+			// deviceWidth = Request.Headers["User-Agent"].ToString().Contains("Mobile") ? 720 : 1920;
+			// format = deviceWidth >= 1920 ? "jpg" : "webp";
 
 			Name = name;
 			CategoryName = category;
@@ -278,18 +278,33 @@ namespace LampStore.Pages
 			return new JsonResult(new { json });
 		}
 
-		public string? ChecUrlPhoto { get; set; }
-		public void CheckDeviceWidth()
-		{
+		// public string? ChecUrlPhoto { get; set; }
+		// public void CheckDeviceWidth(long? id)
+		// {
 
-			var namePhoto = Path.GetFileNameWithoutExtension(ChecUrlPhoto);
-			var pathPhoto = Path.GetDirectoryName(ChecUrlPhoto);
-			// System.Console.WriteLine(pathPhoto);
-			ViewData["ImageUrl"] = $"{pathPhoto}/small/{namePhoto}.{format}";
-			ViewData["ImageWidth"] = deviceWidth;
-		}
+		// 	var namePhoto = Path.GetFileNameWithoutExtension(ChecUrlPhoto);
+		// 	var pathPhoto = Path.GetDirectoryName(ChecUrlPhoto);
 
+		// 	// System.Console.WriteLine(System.IO.File.Exists($"/wwwroot{pathPhoto}/small/{namePhoto}.{format}"));
+		// 	// System.Console.WriteLine($"{pathPhoto}/small/{namePhoto}.{format}");
+		// 	string fullFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", $"imegs/img-products/{id}/small/{namePhoto}.{format}");
+		// 	System.Console.WriteLine(fullFilePath);
 
+		// 	if (System.IO.File.Exists(fullFilePath))
+		// 	{
+		// 		ViewData["ImageUrl"] = $"{pathPhoto}/small/{namePhoto}.{format}";
+		// 		ViewData["ImageWidth"] = deviceWidth;
+		// 		System.Console.WriteLine("good");
+		// 	}
+		// 	else 
+		// 	{
+		// 		ViewData["ImageUrl"] = ChecUrlPhoto;
+		// 		System.Console.WriteLine(false);
+		// 	}
+			
+		// 	// ViewData["ImageUrl"] = $"{pathPhoto}/small/{namePhoto}.{format}";
+		// 	// ViewData["ImageWidth"] = deviceWidth;
 
+		// }
 	}
 }

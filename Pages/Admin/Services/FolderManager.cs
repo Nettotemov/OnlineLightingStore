@@ -31,7 +31,7 @@ namespace LampStore.Pages.Admin.Services
 
 		private async Task CeateSubdirectoryAsync(string path)
 		{
-			string[] subFolders = { "average", "small" };
+			string[] subFolders = { "average", "webp" };
 
 			foreach (var folder in subFolders)
 			{
@@ -42,7 +42,7 @@ namespace LampStore.Pages.Admin.Services
 					ErrorMassage = subFolderPath + "Созадана";
 
 					string subWebpPath = Path.Combine(subFolderPath, "webp");
-					if (!Directory.Exists(subWebpPath))
+					if (!Directory.Exists(subWebpPath) && folder == "average")
 					{
 						await Task.Run(() => Directory.CreateDirectory(subWebpPath));
 						ErrorMassage = $"{subWebpPath} в {subFolderPath} Созадана";
