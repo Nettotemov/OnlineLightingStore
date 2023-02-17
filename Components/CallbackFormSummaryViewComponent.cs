@@ -6,16 +6,16 @@ using System.Net.Mail;
 namespace LampStore.Components
 {
 	public class CallbackFormSummaryViewComponent : ViewComponent
-	{	
+	{
 		public bool SendMail(string name, string phone, string email, string message1)
 		{
 			MailMessage message = new MailMessage();
 			SmtpClient smtpClient = new SmtpClient();
 			message.From = new MailAddress("info@lights4apart.site");
 			message.To.Add("info@lights4apart.site");
-			message.Subject = "Test email";
+			message.Subject = "Обратная связь";
 			message.IsBodyHtml = true;
-			message.Body = "<p>Name: " + name + "</p>" + "<p>Phone: " + phone + "</p>" + "<p>Email: " + email + "</p>" + "<p>Message: " + message1 + "</p>";
+			message.Body = "<p>Имя: " + name + "</p>" + "<p>Телефон: " + phone + "</p>" + "<p>Email: " + email + "</p>" + "<p>Сообщение: " + message1 + "</p>";
 
 			smtpClient.Port = 587;
 			smtpClient.Host = "lights4apart.site";

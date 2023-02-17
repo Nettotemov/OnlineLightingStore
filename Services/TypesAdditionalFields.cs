@@ -20,6 +20,9 @@ namespace LampStore.Services
 		HTML = 4,
 
 		[Display(Name = "Поумолчание")]
-		Default = 5
+		Default = 5,
+
+		[Display(Name = "Заголовок")]
+		Caption = 6
 	}
 }

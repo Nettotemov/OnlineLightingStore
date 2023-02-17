@@ -380,7 +380,7 @@ html {
 
 .img-responsive {
 	width: 100%;
-	height: 500px;
+	height: 480px;
 	object-fit: cover;
 }
 
@@ -419,13 +419,13 @@ html {
 }
 
 .product-price__wrapper {
-	width: 40%;
+	width: 60%;
 	display: flex;
 	justify-content: flex-end;
 }
 
 .product-price {
-	margin-left: 15%;
+	margin-left: 5%;
 }
 
 .catalog__wrapper {
@@ -1243,6 +1243,8 @@ section.wrapper__everything {
 .info-page__wrapper {
 	display: flex;
 	min-height: 100vh;
+	align-items: flex-start;
+	flex-wrap: wrap;
 }
 
 .info-page__caption {
@@ -1459,6 +1461,11 @@ section.wrapper__everything {
 		font-size: 16px;
 	}
 
+	.header {
+		position: fixed;
+		top: -1px;
+	}
+
 	.burger {
 		display: flex;
 		width: 32px;
@@ -1638,11 +1645,6 @@ section.wrapper__everything {
 	}
 		
 	/* menu */
-		
-	.header {
-		position: sticky;
-		top: -1px;
-	}
 		
 	.nav {
 		display: none;
@@ -1994,8 +1996,8 @@ section.wrapper__everything {
 	}
 
 	.p__caption {
-		font-size: 2rem;
-		line-height: 2.5rem;
+		font-size: 1.75rem;
+		line-height: 2rem;
 	}
 
 	.h1__caption {
@@ -2138,5 +2140,16 @@ section.wrapper__everything {
 
 	.img-center {
 		height: 250px;
+	}
+
+	.black-img-faq-h {
+		font-size: 1.9em;
+	}
+
+	.img-cooperation__wrapper {
+		padding-right: 0;
+	}
+	.breadcrumb {
+		inline-size: max-content;
 	}
 }

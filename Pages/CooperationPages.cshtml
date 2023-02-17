@@ -8,7 +8,7 @@
 }
 
 
-<div class="col-12 mb-per-15 pt-per-5" data-color-section="dark">
+<div class="col-12 mb-per-15 mt-10 pt-per-5" data-color-section="dark">
 	@if (@Model.DisplayCooperationPages.Count() > 0)
 	{
 		@foreach (var cooperationPage in @Model.DisplayCooperationPages)
@@ -21,7 +21,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-12 col-xl-5 col-xs-12 hook">
+				<div class="col-12 col-xl-5 col-xs-12 mt-4 hook">
 					<h1 class="h3__caption fw-bold">@cooperationPage.NameCooperation</h1>
 					<p class="product-card__description-p">@cooperationPage.MinDescription</p>
 					<a asp-page="CooperationPage" asp-route-ID="@cooperationPage.ID" class="a-btn-link">Подробнее</a>

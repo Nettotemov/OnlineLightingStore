@@ -1,12 +1,11 @@
-@page "/category/{CategoryName}"
+@page "/{CategoryName}"
 @model CategoryPage
 
 @{
 	Layout = "_Layout";
 	ViewData["Title"] = @Model.categoryCard?.CategoryName + " купить";
 	ViewData["Breadcrumb"] = await Component.InvokeAsync("BreadcrumbSummary", new[] { (url: "/", page: "Главная"), (url:
-"/catalog", page:"Каталог"), (url: "/category/" + @Model.categoryCard!.ID.ToString(), page:
-@Model.categoryCard?.CategoryName) });
+"/category/" + @Model.categoryCard!.ID.ToString(), page:@Model.categoryCard?.CategoryName) });
 }
 
 
@@ -18,7 +17,7 @@
 					<img class="img-responsive" src="@Model.categoryCard?.CategoryImg">
 				</div>
 			</div>
-			<div class="col-md-5 col-xs-12 active">
+			<div class="col-md-12 col-xl-5 active">
 				<h1 class="h1__caption mb-per-5">@Model.categoryCard?.CategoryName</h1>
 				<p class="p__caption mb-per-5">@Model.categoryCard?.Description</p>
 			</div>
@@ -34,7 +33,7 @@
 						<img class="img-responsive" src="@Model.categoryCard?.ImgTwoUrl">
 					</div>
 				</div>
-				<div class="col-md-5 col-xs-12 active">
+				<div class="col-md-12 col-xl-5 active">
 					<h1 class="h1__caption mb-per-5">@Model.categoryCard?.HeadingTwo</h1>
 					<p class="p__caption mb-per-5">@Model.categoryCard?.DescriptionTwo</p>
 				</div>
@@ -101,7 +100,7 @@
 						</div>
 					</div>
 				}
-				<div class="col-md-5 col-xs-12 active">
+				<div class="col-md-12 col-xl-5 active">
 					<h1 class="h1__caption mb-per-5">@Model.categoryCard?.HeadingThree</h1>
 					<p class="p__caption mb-per-5">@Model.categoryCard?.DescriptionThree</p>
 				</div>
@@ -120,8 +119,8 @@
 		<div class="catalog-list__wrapper mb-per-2">
 			@foreach (var pr in type)
 			{
-				<a asp-page="CardProduct" class="product__wrapper"
-			asp-route-ProductID="@pr.ProductID" asp-route-Name="@pr.Name">
+				<a asp-page="CardProduct" class="product__wrapper" asp-route-ProductID="@pr.ProductID"
+			asp-route-Name="@pr.Name">
 					<div class="">
 						<div class="product-img__wrapper">
 							<img class="img-center" src="@pr.MainPhoto">

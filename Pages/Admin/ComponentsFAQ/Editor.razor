@@ -17,7 +17,7 @@
 		}
 		else 
 		{
-			<EditForm Model="AdditionalField" OnValidSubmit="CreateNewAdditionalField" id="сreateNewAdditionalField">
+			<EditForm Model="AdditionalField" OnValidSubmit="CreateNewAdditionalField" id="editAdditionalField">
 			<DataAnnotationsValidator />
 				<div class="col">
 						@if (AdditionalField.ID != 0)
@@ -37,6 +37,10 @@
 						<InputText class="form-control" @bind-Value="AdditionalField.Name" />
 					</div>
 					<div class="form-group mb-4">
+						<label>ID записей для связи</label>
+						<InputText class="form-control" @bind-Value="AdditionalField.InfoPropLink" />
+					</div>
+					<div class="form-group mb-4">
 						<label>Содержимое</label>
 						<ValidationMessage For="@(() => AdditionalField.Value)" />
 						<InputTextArea class="form-control" @bind-Value="AdditionalField.Value" />
@@ -52,7 +56,7 @@
 							</InputSelect>
 						</div>
 						<div class="mt-2">
-							<button form="сreateNewAdditionalField" type="submit" class="btn btn-warning">Сохранить</button>
+							<button form="editAdditionalField" type="submit" class="btn btn-warning">Сохранить</button>
 							@* <a class="btn btn-secondary" @onclick="@(e => CancellationNewSetting())">Отмена</a> *@
 						</div>
 				</div>
@@ -94,14 +98,14 @@
 						@if (TabIsActive)
 						{
 							<img style="background: black" src="@FaqPage.SvgUrl">
-							<label>SVG для баннера</label>
+							<label>Картинка для баннера</label>
 							<ImgManagerControl @bind-ChildName="FaqPage.SvgUrl" PathFolder="@urlPath"
 								FolderName="@FaqPage.ID.ToString()" IsSlider="false" />
 						}
 						else
 						{
 							
-							<label>SVG для баннера можно загзуить после сохрания записи</label>
+							<label>Картинка для баннера можно загзуить после сохрания записи</label>
 						}
 					</div>
 					<div class="form-group mb-4">
@@ -168,6 +172,10 @@
 						<label>Название поля</label>
 						<ValidationMessage For="@(() => AdditionalField.Name)" />
 						<InputText class="form-control" @bind-Value="AdditionalField.Name" />
+					</div>
+					<div class="form-group mb-4">
+						<label>ID записей для связи</label>
+						<InputText class="form-control" @bind-Value="AdditionalField.InfoPropLink" />
 					</div>
 					<div class="form-group mb-4">
 						<label>Содержимое</label>

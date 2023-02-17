@@ -1,10 +1,22 @@
 @page "/admin/orders"
 @inherits OwningComponentBase<IOrderRepository>
-@inject NavigationManager NavigationManager
 
 @if (loading)
 {
-	<p>Loading...</p>
+	<div class="lds-spinner">
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+</div>
 }
 else
 {
@@ -35,8 +47,9 @@ else
 		catch (InvalidOperationException ex)
 		{
 			Console.WriteLine("Исключение InvalidOperationException Orders: " + ex.Message);
-			NavigationManager.NavigateTo("/admin/orders");
-
+			loading = true;
+			await UpdateData();
+			loading = false;
 		}
 
 	}

@@ -5,27 +5,27 @@
 @{
 	Layout = "_Layout";
 	ViewData["Title"] = "Контакты";
-	ViewData["Breadcrumb"] = await Component.InvokeAsync("BreadcrumbSummary", new [] { (url: "/", page: "Главная"),
+	ViewData["Breadcrumb"] = await Component.InvokeAsync("BreadcrumbSummary", new[] { (url: "/", page: "Главная"),
 (url: "/contacts", page: "Контакты") });
 }
 
 <div class="contacts__wrapper mt-10">
 	<div class="row">
-		<div class="col-6">
-			<h1 class="h1__caption mb-4">Наши контакты</h1>
+		<h1 class="h1__caption mt-4 mb-4">Наши контакты</h1>
+		<div class="col-12 col-xl-6">
 			@foreach (var text in @Model.SettingsList.Where(s => s.Setting == TypeSettings.TextFooter))
 			{
 				<p class="info-page__p mb-4">@text.Value</p>
 			}
 			<div class="row">
-				<div class="col-6 mb-per-5">
+				<div class="col-12 col-xl-6 mb-per-5">
 					<p class="info-page__p"><b>Телефон</b></p>
 					@foreach (var phone in @Model.SettingsList.Where(s => s.Setting == TypeSettings.PhoneNumber))
 					{
 						<a href="tel:@phone.Value" class="a-btn-link a-btn-link__contacts">@phone.Value</a>
 					}
 				</div>
-				<div class="col-6 mb-per-5">
+				<div class="col-12 col-xl-6 mb-per-5">
 					<p class="info-page__p"><b>Email</b></p>
 					@foreach (var email in @Model.SettingsList.Where(s => s.Setting == TypeSettings.Email))
 					{
@@ -55,7 +55,8 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-6">
+		<div class="col-12 col-xl-6">
+			<p class="info-page__caption"><b>Задать вопрос</b></p>
 			<vc:callback-form-summary />
 		</div>
 	</div>

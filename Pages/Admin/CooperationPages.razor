@@ -17,7 +17,26 @@
 	<Popup ListNotifications="ListNotifications" />
 </div>
 
-<table class="table table-sm table-striped table-bordered">
+@if (loading)
+{
+	<div class="lds-spinner">
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+</div>
+}
+else
+{
+	<table class="table table-sm table-striped table-bordered">
 	<thead>
 		<tr>
 			<th>ID</th>
@@ -30,49 +49,56 @@
 	</thead>
 	<tbody>
 		@if (CooperationData?.Count() > 0)
-		{
-			@foreach (Cooperation c in CooperationData)
+			{
+				@foreach (Cooperation c in CooperationData)
+				{
+					<tr>
+						<td>@c.ID</td>
+						<td>@c.NameCooperation</td>
+						<td><img class="img-fluid" style="height: 80px;" src="@c.CooperationImg"></td>
+						<td>@c.MinDescription</td>
+						<td>@c.IsVisible</td>
+						<td class="text-center">
+							<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(c.ID)">
+								Изменить
+							</NavLink>
+							<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteAboutPage(c))">
+								Удалить
+							</button>
+						</td>
+					</tr>
+				}
+			}
+			else
 			{
 				<tr>
-					<td>@c.ID</td>
-					<td>@c.NameCooperation</td>
-					<td><img class="img-fluid" style="height: 80px;" src="@c.CooperationImg"></td>
-					<td>@c.MinDescription</td>
-					<td>@c.IsVisible</td>
-					<td class="text-center">
-						<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(c.ID)">
-							Изменить
-						</NavLink>
-						<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteAboutPage(c))">
-							Удалить
-						</button>
-					</td>
+					<td colspan="5" class="text-center">Записи, не найдены.</td>
 				</tr>
 			}
-		}
-		else
-		{
-			<tr>
-				<td colspan="5" class="text-center">Записи, не найдены.</td>
-			</tr>
-		}
-	</tbody>
-</table>
+		</tbody>
+	</table>
+}
 <NavLink class="btn btn-primary" href="/admin/cooperation/create">Добавить</NavLink>
 
 @code {
 	public ICooperationRepository Repository => Service;
 	public IEnumerable<Cooperation> CooperationData { get; set; } = Enumerable.Empty<Cooperation>();
+	private bool loading = false;
 
 	protected async override Task OnInitializedAsync()
 	{
 		try
 		{
+			loading = true;
 			await UpdateData();
+			loading = false;
 		}
 		catch (InvalidOperationException ex)
 		{
 			Console.WriteLine("Исключение InvalidOperationException About: " + ex.Message);
+			loading = true;
+			await UpdateData();
+			loading = false;
 		}
 	}
 

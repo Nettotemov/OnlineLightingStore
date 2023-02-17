@@ -13,7 +13,26 @@
 	<Popup ListNotifications="ListNotifications" />
 </div>
 
-<table class="table table-sm table-striped table-bordered">
+@if (loading)
+{
+	<div class="lds-spinner">
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+</div>
+}
+else
+{
+	<table class="table table-sm table-striped table-bordered">
 	<thead>
 		<tr>
 			<th>ID</th>
@@ -25,41 +44,56 @@
 	</thead>
 	<tbody>
 		@if (FaqData?.Count() > 0)
-		{
-			@foreach (Info i in FaqData)
+			{
+				@foreach (Info i in FaqData)
+				{
+					<tr>
+						<td>@i.ID</td>
+						<td>@i.NameInfo</td>
+						<td>@i.Description</td>
+						<td>@i.IsAvailable</td>
+						<td class="text-center">
+							<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(i.ID)">
+								Изменить
+							</NavLink>
+							<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteFaqPage(i))">
+								Удалить
+							</button>
+						</td>
+					</tr>
+				}
+			}
+			else
 			{
 				<tr>
-					<td>@i.ID</td>
-					<td>@i.NameInfo</td>
-					<td>@i.Description</td>
-					<td>@i.IsAvailable</td>
-					<td class="text-center">
-						<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(i.ID)">
-							Изменить
-						</NavLink>
-						<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteFaqPage(i))">
-							Удалить
-						</button>
-					</td>
+					<td colspan="5" class="text-center">Записи, не найдены.</td>
 				</tr>
 			}
-		}
-		else
-		{
-			<tr>
-				<td colspan="5" class="text-center">Записи, не найдены.</td>
-			</tr>
-		}
-	</tbody>
-</table>
+		</tbody>
+	</table>
+}
 <NavLink class="btn btn-primary" href="/admin/faq/create">Добавить</NavLink>
 
 @code {
 	public IInfoRepository Repository => Service;
 	public IEnumerable<Info> FaqData { get; set; } = Enumerable.Empty<Info>();
+	private bool loading = false;
+
 	protected async override Task OnInitializedAsync()
 	{
-		await UpdateData();
+		try
+		{
+			loading = true;
+			await UpdateData();
+			loading = false;
+		}
+		catch (InvalidOperationException ex)
+		{
+			Console.WriteLine("Исключение InvalidOperationException Orders: " + ex.Message);
+			loading = true;
+			await UpdateData();
+			loading = false;
+		}
 	}
 
 	public async Task UpdateData()

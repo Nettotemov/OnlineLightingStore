@@ -2,6 +2,7 @@ using LampStore.Models;
 using Microsoft.AspNetCore.Mvc;
 using SimpleMvcSitemap;
 using Microsoft.EntityFrameworkCore;
+using LampStore.Services;
 
 namespace LampStore.Controllers
 {
@@ -13,6 +14,7 @@ namespace LampStore.Controllers
 			repository = repo;
 		}
 
+		[Route("sitemap")]
 		public async Task<IActionResult> Index()
 		{
 			var products = await GetProductsAsync();
@@ -20,16 +22,16 @@ namespace LampStore.Controllers
 
 			List<SitemapNode> nodes = new List<SitemapNode>
 			{
-			new SitemapNode(Url.Action("Index","Home")),
+			new SitemapNode(Url.Action("Index", "Home")),
 			new SitemapNode(Url.Action("Index", "about")),
 			new SitemapNode(Url.Action("Index", "catalog")),
-			new SitemapNode(Url.Action("category", "catalog")),
-			new SitemapNode(Url.Action("product", "category")),
-			//other nodes
+			new SitemapNode(Url.Action("Index", "info")),
+			new SitemapNode(Url.Action("Index", "cooperation")),
+			new SitemapNode(Url.Action("Index", "contacts"))
 			};
 			foreach (var product in products)
 			{
-				nodes.Add(new SitemapNode(Url.Action("category", "catalog", new { id = product.ProductID }))
+				nodes.Add(new SitemapNode(Url.Action(product.Name.ToLower(), "catalog", new { id = product.ProductID }))
 				{
 					ChangeFrequency = ChangeFrequency.Monthly,
 					Priority = 0.5M
@@ -38,7 +40,7 @@ namespace LampStore.Controllers
 
 			foreach (var category in categorys)
 			{
-				nodes.Add(new SitemapNode(Url.Action("Index", "catalog", new { category.CategoryName }))
+				nodes.Add(new SitemapNode(Url.Action("Index", Transliteration.Front(category.CategoryName.ToLower())))
 				{
 					ChangeFrequency = ChangeFrequency.Monthly,
 					Priority = 0.5M

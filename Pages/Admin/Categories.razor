@@ -13,6 +13,26 @@
 	<Popup ListNotifications="ListNotifications" />
 </div>
 
+@if (loading)
+{
+	<div class="lds-spinner">
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+</div>
+}
+else
+{
+
 <table class="table table-sm table-striped table-bordered">
 	<thead>
 		<tr>
@@ -58,6 +78,7 @@
 		}
 	</tbody>
 </table>
+}
 <NavLink class="btn btn-primary" href="/admin/categories/create">Добавить</NavLink>
 
 @code {
@@ -66,14 +87,28 @@
 
 	public List<Product> Products { get; set; } = new();
 
+	private bool loading = false;
+
 	protected async override Task OnInitializedAsync()
 	{	
-		Products = await Repository.Products.Select(p => p).ToListAsync();
-		await UpdateData();
+		try
+		{
+			loading = true;
+			await UpdateData();
+			loading = false;
+		}
+		catch (InvalidOperationException ex)
+		{
+			Console.WriteLine("Исключение InvalidOperationException Orders: " + ex.Message);
+			loading = true;
+			await UpdateData();
+			loading = false;
+		}
 	}
 
 	public async Task UpdateData()
 	{
+		Products = await Repository.Products.Select(p => p).ToListAsync();
 		CategoryData = await Repository.Categorys.ToListAsync();
 	}
 

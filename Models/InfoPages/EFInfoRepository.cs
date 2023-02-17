@@ -36,11 +36,11 @@ namespace LampStore.Models
 		}
 		public void SaveAdditionalField(InfoProp i)
 		{
-			context.Remove(i);
 			context.SaveChanges();
 		}
 		public void DeleteAdditionalField(InfoProp i)
 		{
+			context.Remove(i);
 			context.SaveChanges();
 		}
 	}

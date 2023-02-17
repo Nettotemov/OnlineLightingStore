@@ -6,19 +6,16 @@
 	ViewData["Title"] = "Светильник " + @Model.productCard?.Name + " купить";
 	Layout = "_Layout";
 	ViewData["Breadcrumb"] = await Component.InvokeAsync("BreadcrumbSummary", new[] { (url: "/", page: "Главная"), (url:
-"/catalog", page: "Каталог"), (url: "/category/" +
-@Transliteration.Front(@Model.productCard!.Category!.CategoryName.ToLower()), page:
-@Model.productCard?.Category?.CategoryName), (url: "/catalog/{CategoryName}/{Name}/{ProductID}", page:
-@Model.productCard?.Name) });
+"/catalog", page: "Каталог"), (url: "/catalog/{CategoryName}/{Name}/{ProductID}", page:@Model.productCard?.Name) });
 }
 
 
-<section class="product-card-slider__wrapper pt-per-5">
+<section class="product-card-slider__wrapper mt-10 pt-per-5">
 	<div class="variable-width">
 		@foreach (var img in @Model.DisplayedPhotos)
 		{
 			<div class="">
-				<img class="slick-slider-card-img" src="@img">
+				<img class="slick-slider-card-img" src="@img" title="Светильник @Model.productCard?.Name" alt="Купить светильник @Model.productCard?.Name">
 			</div>
 		}
 	</div>
@@ -158,7 +155,7 @@
 				<a class="product__wrapper" asp-page="CardProduct" asp-route-ProductID="@product.ProductID"
 			asp-route-Name="@product.Name">
 					<div class="product-img__wrapper">
-						<img class="img-center" src="@product.MainPhoto">
+						<img class="img-center" src="@product.MainPhoto" title="Светильник @product.Name" alt="Купить светильник @product.Name">
 					</div>
 					<div class="product-desc__wrapper">
 						<p class="title-wrp">@product.Name</p>

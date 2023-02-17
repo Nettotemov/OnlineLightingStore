@@ -1,4 +1,4 @@
-@page "/faq"
+@page "/info"
 @model FaqModel
 @{
 	Layout = "_Layout";
@@ -7,7 +7,7 @@
 (url: "/faq", page: "Информация") });
 }
 
-<div class="col-12 mb-per-15 pt-per-5" data-color-section="dark">
+<div class="col-12 mb-per-15 mt-10 pt-per-5" data-color-section="dark">
 	@if (@Model.DisplayInfoPages.Count() > 0)
 	{
 		@foreach (var infoPage in @Model.DisplayInfoPages.Where(i => i.IsAvailable == true))

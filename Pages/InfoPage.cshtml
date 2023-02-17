@@ -1,27 +1,47 @@
 @page "/faq/{ID}"
 @model InfoPage
+@using LampStore.Services
 
 @{
 	Layout = "_Layout";
 	ViewData["Title"] = @Model.infoPage!.NameInfo;
 	ViewData["Breadcrumb"] = await Component.InvokeAsync("BreadcrumbSummary", new[] { (url: "/", page: "Главная"),
-(url: "/faq", page: "Информация"), (url: @Model.infoPage.ID.ToString(), page: @Model.infoPage.NameInfo) });
+(url: "/info", page: "Информация"), (url: @Model.infoPage.ID.ToString(), page: @Model.infoPage.NameInfo) });
 
 }
 
-
-<div class="info-page__wrapper row-cols-2 mt-5">
-	<div class="info-page__h-wrapper col-2">
+<div class="info-page__wrapper pt-3 mt-10">
+	<div class="info-page__h-wrapper col-12 col-xl-2">
 		<h1 class="info-page__caption fw-bold">@Model.infoPage!.NameInfo</h1>
 	</div>
-	<div class="info-page__txt-wrapper col">
+	<div class="info-page__txt-wrapper col-12 col-xl-6 pb-4">
 		@Html.Raw(Model.infoPage.Value)
-		@if (@Model.infoPage.InfoProp.Count > 0)
-		{
-			@foreach (var item in @Model.infoPage.InfoProp)
-			{
-				<p class="info-page__p"><b>@item.Value</b></p>
-			}
-		}
 	</div>
+	<div class="col-xl-4"></div>
+
+	@if (@Model.infoPage.InfoProp.Count > 0)
+	{
+		int i = 0;
+		@foreach (var item in @Model.infoPage.InfoProp)
+		{
+			@if (item.InfoPropLink == "2")
+			{
+				@if (item.TypesAddintionalFields == TypesAdditionalFields.Caption)
+				{
+					<div class="info-page__h-wrapper col-12 col-xl-2">
+						<h1 class="info-page__caption fw-bold">@item.Value</h1>
+					</div>
+				}
+				@if (item.TypesAddintionalFields == TypesAdditionalFields.Text)
+				{
+					<div class="info-page__txt-wrapper col-12 col-xl-6">
+						@Html.Raw(@item.Value)
+					</div>
+					<div class="col-xl-4"></div>
+				}
+			}
+			i++;
+		}
+	}
+
 </div>

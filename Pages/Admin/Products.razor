@@ -17,7 +17,27 @@
 	<Popup ListNotifications="ListNotifications" />
 </div>
 
-<table class="table table-sm table-striped table-bordered">
+
+@if (loading)
+{
+	<div class="lds-spinner">
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+</div>
+}
+else
+{
+	<table class="table table-sm table-striped table-bordered">
 	<thead>
 		<tr>
 			<th>ID</th>
@@ -33,40 +53,42 @@
 	</thead>
 	<tbody>
 		@if (ProductData?.Count() > 0)
-		{
-			@foreach (Product p in ProductData)
+			{
+				@foreach (Product p in ProductData)
+				{
+					<tr>
+						<td>@p.ProductID</td>
+						<td><img class="img-fluid" style="height: 80px;" src=@p.MainPhoto></td>
+						<td>@p.Name</td>
+						<td>@p.Artikul</td>
+						<td>@p.Category?.CategoryName</td>
+						<td>@p.Price.ToString("c")</td>
+						<td>@p.Discount</td>
+						<td>@p.OldPrice?.ToString("C")</td>
+						<td class="text-center">
+							<NavLink class="btn btn-info btn-sm" href="@GetDetailsUrl(p.ProductID ?? 0)">
+								Подробнее
+							</NavLink>
+							<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(p.ProductID ?? 0)">
+								Изменить
+							</NavLink>
+							<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteProduct(p))">
+								Удалить
+							</button>
+						</td>
+					</tr>
+				}
+			}
+			else
 			{
 				<tr>
-					<td>@p.ProductID</td>
-					<td><img class="img-fluid" style="height: 80px;" src=@p.MainPhoto></td>
-					<td>@p.Name</td>
-					<td>@p.Artikul</td>
-					<td>@p.Category?.CategoryName</td>
-					<td>@p.Price.ToString("c")</td>
-					<td>@p.Discount</td>
-					<td>@p.OldPrice?.ToString("C")</td>
-					<td class="text-center">
-						<NavLink class="btn btn-info btn-sm" href="@GetDetailsUrl(p.ProductID ?? 0)">
-							Подробнее
-						</NavLink>
-						<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(p.ProductID ?? 0)">
-							Изменить
-						</NavLink>
-						<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteProduct(p))">
-							Удалить
-						</button>
-					</td>
+					<td colspan="5" class="text-center">Товары, не найдены.</td>
 				</tr>
 			}
-		}
-		else
-		{
-			<tr>
-				<td colspan="5" class="text-center">Товары, не найдены.</td>
-			</tr>
-		}
-	</tbody>
-</table>
+		</tbody>
+	</table>
+}
+
 <NavLink class="btn btn-primary" href="/admin/products/create">Добавить</NavLink>
 
 @code {
@@ -75,22 +97,29 @@
 
 	public List<Category>? DisplayedCategories { get; set; }
 
+	private bool loading = false;
+
 
 	protected async override Task OnInitializedAsync()
 	{
 		try
 		{
-			DisplayedCategories = await Repository.Category.Select(c => c).Distinct().ToListAsync(); //получение категорий
+			loading = true;
 			await UpdateData();
+			loading = false;
 		}
 		catch (InvalidOperationException ex)
 		{
 			Console.WriteLine("Исключение InvalidOperationException Products: " + ex.Message);
+			loading = true;
+			await UpdateData();
+			loading = false;
 		}
 	}
 
 	public async Task UpdateData()
 	{
+		DisplayedCategories = await Repository.Category.Select(c => c).Distinct().ToListAsync(); //получение категорий
 		ProductData = await Repository.Products.ToListAsync();
 	}
 
