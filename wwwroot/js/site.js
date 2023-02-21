@@ -629,13 +629,13 @@ $(document).ready(function () {
 		})
 			.setTween(tl)
 			.addTo(ctrl)
-			// .addIndicators({
-			// 	colorTrigger: "black",
-			// 	colorStart: "black",
-			// 	colorEnd: "black",
-			// 	indent: 40
-			// });
-		
+		// .addIndicators({
+		// 	colorTrigger: "black",
+		// 	colorStart: "black",
+		// 	colorEnd: "black",
+		// 	indent: 40
+		// });
+
 		var tlChildren = new TimelineMax();
 		tlChildren.to(targetLogo, 0.5, { color: "#ffffff", fontSize: "1.5rem" });
 		tlChildren.to(targetCart, 0.5, { color: "#ffffff", fill: "#ffffff" });
@@ -649,15 +649,15 @@ $(document).ready(function () {
 		})
 			.setTween(tlChildren)
 			.addTo(ctrl)
-			// .addIndicators({
-			// 	colorTrigger: "yellow",
-			// 	colorStart: "yellow",
-			// 	colorEnd: "yellow",
-			// 	indent: 40
-			// });
+		// .addIndicators({
+		// 	colorTrigger: "yellow",
+		// 	colorStart: "yellow",
+		// 	colorEnd: "yellow",
+		// 	indent: 40
+		// });
 
 		var tlBreadcrumb = new TimelineMax();
-		tlBreadcrumb.to(breadcrumb, 1, { top: "75px", borderBottom: "1px solid #000" });
+		tlBreadcrumb.to(breadcrumb, 1, { top: "73px", borderBottom: "1px solid #000" });
 		new ScrollMagic.Scene({
 			triggerElement: this,
 			duration: "30%", //40
@@ -665,12 +665,12 @@ $(document).ready(function () {
 		})
 			.setTween(tlBreadcrumb)
 			.addTo(ctrl)
-			// .addIndicators({
-			// 	colorTrigger: "blue",
-			// 	colorStart: "blue",
-			// 	colorEnd: "blue",
-			// 	indent: 40
-			// });
+		// .addIndicators({
+		// 	colorTrigger: "blue",
+		// 	colorStart: "blue",
+		// 	colorEnd: "blue",
+		// 	indent: 40
+		// });
 	});
 });
 
@@ -688,26 +688,29 @@ $(document).ready(function () {
 		$(".text-danger").remove();
 
 		if (name.length < 1) {
-			$('#name').after('<span class="text-danger">This field is required</span>');
+			$('#name').after('<span class="text-danger">Это поле обязательно к заполнению.</span>');
 			error = true;
 		}
 		if (phone.length < 1) {
-			$('#phone').after('<span class="text-danger">This field is required</span>');
+			$('#phone').after('<span class="text-danger">Это поле обязательно к заполнению.</span>');
 			error = true;
 		}
 		if (email.length < 6) {
-			$('#email').after('<span class="text-danger">This field is required</span>');
+			$('#email').after('<span class="text-danger">Это поле обязательно к заполнению.</span>');
 			error = true;
 		}
 		if (message.length < 10) {
-			$('#message').after('<span class="text-danger">This field is required</span>');
+			$('#message').after('<span class="text-danger">Это поле обязательно к заполнению.</span>');
 			error = true;
 		}
 		if (giftWrap == false) {
-			$('#gift').after('<span class="text-danger">This field is required</span>');
+			$('#giftError').after('<p class="text-danger">Это поле обязательно к заполнению.</p>');
 			error = true;
 		}
 
+		var myModal = new bootstrap.Modal(document.getElementById('myModal'), {
+			backdrop: 'static'
+		});
 		if (error == false) {
 			var th = $(this);
 			$.ajax({
@@ -715,16 +718,9 @@ $(document).ready(function () {
 				url: "contacts", //Change
 				data: th.serialize()
 			}).done(function () {
-				// console.log("Ok");
-				// $(".modal-wr2").addClass("active");
-				// setTimeout(function () {
-				// 	// Done Functions
-				// 	$(".modal-wr2").removeClass("active");
-				// 	th.trigger("reset");
-				// }, 3000);
+				myModal.show();
 			});
 		}
-
 	});
 
 	// $("#callback-form").submit(function () { //Change

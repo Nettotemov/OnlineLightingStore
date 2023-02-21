@@ -13,7 +13,7 @@
 	{
 		@foreach (var cooperationPage in @Model.DisplayCooperationPages)
 		{
-			<div class="scroll-m row align-items-xl-center border-b">
+			<a asp-page="CooperationPage" asp-route-ID="@cooperationPage.ID" class="scroll-m row align-items-xl-center border-b">
 				<div class="col-12 col-xl-6">
 					<div class="img-cooperation__wrapper">
 						<div class="img-center__wrapper">
@@ -22,11 +22,11 @@
 					</div>
 				</div>
 				<div class="col-12 col-xl-5 col-xs-12 mt-4 hook">
-					<h1 class="h3__caption fw-bold">@cooperationPage.NameCooperation</h1>
+					<h1 class="h1__caption mb-per-5 fw-bold">@cooperationPage.NameCooperation</h1>
 					<p class="product-card__description-p">@cooperationPage.MinDescription</p>
-					<a asp-page="CooperationPage" asp-route-ID="@cooperationPage.ID" class="a-btn-link">Подробнее</a>
+					<button asp-page="CooperationPage" asp-route-ID="@cooperationPage.ID" class="a-btn-link">Подробнее</button>
 				</div>
-			</div>
+			</a>
 		}
 	}
 </div>

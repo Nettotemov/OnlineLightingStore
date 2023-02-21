@@ -1,4 +1,4 @@
-@page "/faq/{ID}"
+@page "/info/{ID}"
 @model InfoPage
 @using LampStore.Services
 
@@ -11,24 +11,24 @@
 }
 
 <div class="info-page__wrapper pt-3 mt-10">
-	<div class="info-page__h-wrapper col-12 col-xl-2">
+	<div class="info-page__h-wrapper col-12 col-xl-3 col-xxl-2">
 		<h1 class="info-page__caption fw-bold">@Model.infoPage!.NameInfo</h1>
 	</div>
 	<div class="info-page__txt-wrapper col-12 col-xl-6 pb-4">
 		@Html.Raw(Model.infoPage.Value)
 	</div>
-	<div class="col-xl-4"></div>
+	<div class="col-xl-3 col-xxl-4"></div>
 
 	@if (@Model.infoPage.InfoProp.Count > 0)
 	{
-		int i = 0;
+		int i = 1;
 		@foreach (var item in @Model.infoPage.InfoProp)
 		{
-			@if (item.InfoPropLink == "2")
+			@if (Convert.ToInt32(item.InfoPropLink) == i && !string.IsNullOrEmpty(item.InfoPropLink))
 			{
 				@if (item.TypesAddintionalFields == TypesAdditionalFields.Caption)
 				{
-					<div class="info-page__h-wrapper col-12 col-xl-2">
+					<div class="info-page__h-wrapper col-12 col-xl-3 col-xxl-2">
 						<h1 class="info-page__caption fw-bold">@item.Value</h1>
 					</div>
 				}
@@ -37,10 +37,10 @@
 					<div class="info-page__txt-wrapper col-12 col-xl-6">
 						@Html.Raw(@item.Value)
 					</div>
-					<div class="col-xl-4"></div>
+					<div class="col-xl-3 col-xxl-4"></div>
+					i++;
 				}
 			}
-			i++;
 		}
 	}
 

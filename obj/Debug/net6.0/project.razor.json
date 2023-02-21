@@ -1268,65 +1268,6 @@
         }
       },
       {
-        "HashCode": 1272852558,
-        "Kind": "Components.Component",
-        "Name": "LampStore.Pages.Admin.ComponentsOrders.Details",
-        "AssemblyName": "LampStore",
-        "CaseSensitive": true,
-        "TagMatchingRules": [
-          {
-            "TagName": "Details"
-          }
-        ],
-        "BoundAttributes": [
-          {
-            "Kind": "Components.Component",
-            "Name": "Id",
-            "TypeName": "System.Int64",
-            "Metadata": {
-              "Common.PropertyName": "Id",
-              "Common.GloballyQualifiedTypeName": "global::System.Int64"
-            }
-          }
-        ],
-        "Metadata": {
-          "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "LampStore.Pages.Admin.ComponentsOrders.Details",
-          "Common.TypeNamespace": "LampStore.Pages.Admin.ComponentsOrders",
-          "Common.TypeNameIdentifier": "Details"
-        }
-      },
-      {
-        "HashCode": 1842332036,
-        "Kind": "Components.Component",
-        "Name": "LampStore.Pages.Admin.ComponentsOrders.Details",
-        "AssemblyName": "LampStore",
-        "CaseSensitive": true,
-        "TagMatchingRules": [
-          {
-            "TagName": "LampStore.Pages.Admin.ComponentsOrders.Details"
-          }
-        ],
-        "BoundAttributes": [
-          {
-            "Kind": "Components.Component",
-            "Name": "Id",
-            "TypeName": "System.Int64",
-            "Metadata": {
-              "Common.PropertyName": "Id",
-              "Common.GloballyQualifiedTypeName": "global::System.Int64"
-            }
-          }
-        ],
-        "Metadata": {
-          "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "LampStore.Pages.Admin.ComponentsOrders.Details",
-          "Common.TypeNamespace": "LampStore.Pages.Admin.ComponentsOrders",
-          "Common.TypeNameIdentifier": "Details",
-          "Components.NameMatch": "Components.FullyQualifiedNameMatch"
-        }
-      },
-      {
         "HashCode": -1529168549,
         "Kind": "Components.Component",
         "Name": "LampStore.Pages.Admin.ComponentsOrders.Editor",
@@ -1386,9 +1327,9 @@
         }
       },
       {
-        "HashCode": 1047256123,
+        "HashCode": 1272852558,
         "Kind": "Components.Component",
-        "Name": "LampStore.Pages.Admin.ComponentsProducts.Details",
+        "Name": "LampStore.Pages.Admin.ComponentsOrders.Details",
         "AssemblyName": "LampStore",
         "CaseSensitive": true,
         "TagMatchingRules": [
@@ -1409,20 +1350,20 @@
         ],
         "Metadata": {
           "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "LampStore.Pages.Admin.ComponentsProducts.Details",
-          "Common.TypeNamespace": "LampStore.Pages.Admin.ComponentsProducts",
+          "Common.TypeName": "LampStore.Pages.Admin.ComponentsOrders.Details",
+          "Common.TypeNamespace": "LampStore.Pages.Admin.ComponentsOrders",
           "Common.TypeNameIdentifier": "Details"
         }
       },
       {
-        "HashCode": -1790564419,
+        "HashCode": 1842332036,
         "Kind": "Components.Component",
-        "Name": "LampStore.Pages.Admin.ComponentsProducts.Details",
+        "Name": "LampStore.Pages.Admin.ComponentsOrders.Details",
         "AssemblyName": "LampStore",
         "CaseSensitive": true,
         "TagMatchingRules": [
           {
-            "TagName": "LampStore.Pages.Admin.ComponentsProducts.Details"
+            "TagName": "LampStore.Pages.Admin.ComponentsOrders.Details"
           }
         ],
         "BoundAttributes": [
@@ -1438,68 +1379,9 @@
         ],
         "Metadata": {
           "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "LampStore.Pages.Admin.ComponentsProducts.Details",
-          "Common.TypeNamespace": "LampStore.Pages.Admin.ComponentsProducts",
+          "Common.TypeName": "LampStore.Pages.Admin.ComponentsOrders.Details",
+          "Common.TypeNamespace": "LampStore.Pages.Admin.ComponentsOrders",
           "Common.TypeNameIdentifier": "Details",
-          "Components.NameMatch": "Components.FullyQualifiedNameMatch"
-        }
-      },
-      {
-        "HashCode": -725418659,
-        "Kind": "Components.Component",
-        "Name": "LampStore.Pages.Admin.ComponentsProducts.Editor",
-        "AssemblyName": "LampStore",
-        "CaseSensitive": true,
-        "TagMatchingRules": [
-          {
-            "TagName": "Editor"
-          }
-        ],
-        "BoundAttributes": [
-          {
-            "Kind": "Components.Component",
-            "Name": "Id",
-            "TypeName": "System.Int64",
-            "Metadata": {
-              "Common.PropertyName": "Id",
-              "Common.GloballyQualifiedTypeName": "global::System.Int64"
-            }
-          }
-        ],
-        "Metadata": {
-          "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "LampStore.Pages.Admin.ComponentsProducts.Editor",
-          "Common.TypeNamespace": "LampStore.Pages.Admin.ComponentsProducts",
-          "Common.TypeNameIdentifier": "Editor"
-        }
-      },
-      {
-        "HashCode": -736920711,
-        "Kind": "Components.Component",
-        "Name": "LampStore.Pages.Admin.ComponentsProducts.Editor",
-        "AssemblyName": "LampStore",
-        "CaseSensitive": true,
-        "TagMatchingRules": [
-          {
-            "TagName": "LampStore.Pages.Admin.ComponentsProducts.Editor"
-          }
-        ],
-        "BoundAttributes": [
-          {
-            "Kind": "Components.Component",
-            "Name": "Id",
-            "TypeName": "System.Int64",
-            "Metadata": {
-              "Common.PropertyName": "Id",
-              "Common.GloballyQualifiedTypeName": "global::System.Int64"
-            }
-          }
-        ],
-        "Metadata": {
-          "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "LampStore.Pages.Admin.ComponentsProducts.Editor",
-          "Common.TypeNamespace": "LampStore.Pages.Admin.ComponentsProducts",
-          "Common.TypeNameIdentifier": "Editor",
           "Components.NameMatch": "Components.FullyQualifiedNameMatch"
         }
       },
@@ -1618,39 +1500,290 @@
         }
       },
       {
-        "HashCode": 828006120,
+        "HashCode": 554239032,
         "Kind": "Components.Component",
-        "Name": "LampStore.Pages.Admin.Orders",
+        "Name": "LampStore.Pages.Admin.Routed",
         "AssemblyName": "LampStore",
         "CaseSensitive": true,
         "TagMatchingRules": [
           {
-            "TagName": "Orders"
+            "TagName": "Routed"
           }
         ],
         "Metadata": {
           "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "LampStore.Pages.Admin.Orders",
+          "Common.TypeName": "LampStore.Pages.Admin.Routed",
           "Common.TypeNamespace": "LampStore.Pages.Admin",
-          "Common.TypeNameIdentifier": "Orders"
+          "Common.TypeNameIdentifier": "Routed"
         }
       },
       {
-        "HashCode": -822610597,
+        "HashCode": -1532953196,
         "Kind": "Components.Component",
-        "Name": "LampStore.Pages.Admin.Orders",
+        "Name": "LampStore.Pages.Admin.Routed",
         "AssemblyName": "LampStore",
         "CaseSensitive": true,
         "TagMatchingRules": [
           {
-            "TagName": "LampStore.Pages.Admin.Orders"
+            "TagName": "LampStore.Pages.Admin.Routed"
           }
         ],
         "Metadata": {
           "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "LampStore.Pages.Admin.Orders",
+          "Common.TypeName": "LampStore.Pages.Admin.Routed",
           "Common.TypeNamespace": "LampStore.Pages.Admin",
-          "Common.TypeNameIdentifier": "Orders",
+          "Common.TypeNameIdentifier": "Routed",
+          "Components.NameMatch": "Components.FullyQualifiedNameMatch"
+        }
+      },
+      {
+        "HashCode": -2066794684,
+        "Kind": "Components.Component",
+        "Name": "LampStore.Pages.Admin.Setting",
+        "AssemblyName": "LampStore",
+        "CaseSensitive": true,
+        "TagMatchingRules": [
+          {
+            "TagName": "Setting"
+          }
+        ],
+        "Metadata": {
+          "Runtime.Name": "Components.IComponent",
+          "Common.TypeName": "LampStore.Pages.Admin.Setting",
+          "Common.TypeNamespace": "LampStore.Pages.Admin",
+          "Common.TypeNameIdentifier": "Setting"
+        }
+      },
+      {
+        "HashCode": 326303342,
+        "Kind": "Components.Component",
+        "Name": "LampStore.Pages.Admin.Setting",
+        "AssemblyName": "LampStore",
+        "CaseSensitive": true,
+        "TagMatchingRules": [
+          {
+            "TagName": "LampStore.Pages.Admin.Setting"
+          }
+        ],
+        "Metadata": {
+          "Runtime.Name": "Components.IComponent",
+          "Common.TypeName": "LampStore.Pages.Admin.Setting",
+          "Common.TypeNamespace": "LampStore.Pages.Admin",
+          "Common.TypeNameIdentifier": "Setting",
+          "Components.NameMatch": "Components.FullyQualifiedNameMatch"
+        }
+      },
+      {
+        "HashCode": 2136812171,
+        "Kind": "Components.Component",
+        "Name": "LampStore.Pages.Admin.FAQ",
+        "AssemblyName": "LampStore",
+        "CaseSensitive": true,
+        "TagMatchingRules": [
+          {
+            "TagName": "FAQ"
+          }
+        ],
+        "Metadata": {
+          "Runtime.Name": "Components.IComponent",
+          "Common.TypeName": "LampStore.Pages.Admin.FAQ",
+          "Common.TypeNamespace": "LampStore.Pages.Admin",
+          "Common.TypeNameIdentifier": "FAQ"
+        }
+      },
+      {
+        "HashCode": 1045459965,
+        "Kind": "Components.Component",
+        "Name": "LampStore.Pages.Admin.FAQ",
+        "AssemblyName": "LampStore",
+        "CaseSensitive": true,
+        "TagMatchingRules": [
+          {
+            "TagName": "LampStore.Pages.Admin.FAQ"
+          }
+        ],
+        "Metadata": {
+          "Runtime.Name": "Components.IComponent",
+          "Common.TypeName": "LampStore.Pages.Admin.FAQ",
+          "Common.TypeNamespace": "LampStore.Pages.Admin",
+          "Common.TypeNameIdentifier": "FAQ",
+          "Components.NameMatch": "Components.FullyQualifiedNameMatch"
+        }
+      },
+      {
+        "HashCode": 8982602,
+        "Kind": "Components.Component",
+        "Name": "LampStore.Pages.Admin.ComponentsFAQ.Editor",
+        "AssemblyName": "LampStore",
+        "CaseSensitive": true,
+        "TagMatchingRules": [
+          {
+            "TagName": "Editor"
+          }
+        ],
+        "BoundAttributes": [
+          {
+            "Kind": "Components.Component",
+            "Name": "Id",
+            "TypeName": "System.Int64",
+            "Metadata": {
+              "Common.PropertyName": "Id",
+              "Common.GloballyQualifiedTypeName": "global::System.Int64"
+            }
+          }
+        ],
+        "Metadata": {
+          "Runtime.Name": "Components.IComponent",
+          "Common.TypeName": "LampStore.Pages.Admin.ComponentsFAQ.Editor",
+          "Common.TypeNamespace": "LampStore.Pages.Admin.ComponentsFAQ",
+          "Common.TypeNameIdentifier": "Editor"
+        }
+      },
+      {
+        "HashCode": 1843214180,
+        "Kind": "Components.Component",
+        "Name": "LampStore.Pages.Admin.ComponentsFAQ.Editor",
+        "AssemblyName": "LampStore",
+        "CaseSensitive": true,
+        "TagMatchingRules": [
+          {
+            "TagName": "LampStore.Pages.Admin.ComponentsFAQ.Editor"
+          }
+        ],
+        "BoundAttributes": [
+          {
+            "Kind": "Components.Component",
+            "Name": "Id",
+            "TypeName": "System.Int64",
+            "Metadata": {
+              "Common.PropertyName": "Id",
+              "Common.GloballyQualifiedTypeName": "global::System.Int64"
+            }
+          }
+        ],
+        "Metadata": {
+          "Runtime.Name": "Components.IComponent",
+          "Common.TypeName": "LampStore.Pages.Admin.ComponentsFAQ.Editor",
+          "Common.TypeNamespace": "LampStore.Pages.Admin.ComponentsFAQ",
+          "Common.TypeNameIdentifier": "Editor",
+          "Components.NameMatch": "Components.FullyQualifiedNameMatch"
+        }
+      },
+      {
+        "HashCode": -725418659,
+        "Kind": "Components.Component",
+        "Name": "LampStore.Pages.Admin.ComponentsProducts.Editor",
+        "AssemblyName": "LampStore",
+        "CaseSensitive": true,
+        "TagMatchingRules": [
+          {
+            "TagName": "Editor"
+          }
+        ],
+        "BoundAttributes": [
+          {
+            "Kind": "Components.Component",
+            "Name": "Id",
+            "TypeName": "System.Int64",
+            "Metadata": {
+              "Common.PropertyName": "Id",
+              "Common.GloballyQualifiedTypeName": "global::System.Int64"
+            }
+          }
+        ],
+        "Metadata": {
+          "Runtime.Name": "Components.IComponent",
+          "Common.TypeName": "LampStore.Pages.Admin.ComponentsProducts.Editor",
+          "Common.TypeNamespace": "LampStore.Pages.Admin.ComponentsProducts",
+          "Common.TypeNameIdentifier": "Editor"
+        }
+      },
+      {
+        "HashCode": -736920711,
+        "Kind": "Components.Component",
+        "Name": "LampStore.Pages.Admin.ComponentsProducts.Editor",
+        "AssemblyName": "LampStore",
+        "CaseSensitive": true,
+        "TagMatchingRules": [
+          {
+            "TagName": "LampStore.Pages.Admin.ComponentsProducts.Editor"
+          }
+        ],
+        "BoundAttributes": [
+          {
+            "Kind": "Components.Component",
+            "Name": "Id",
+            "TypeName": "System.Int64",
+            "Metadata": {
+              "Common.PropertyName": "Id",
+              "Common.GloballyQualifiedTypeName": "global::System.Int64"
+            }
+          }
+        ],
+        "Metadata": {
+          "Runtime.Name": "Components.IComponent",
+          "Common.TypeName": "LampStore.Pages.Admin.ComponentsProducts.Editor",
+          "Common.TypeNamespace": "LampStore.Pages.Admin.ComponentsProducts",
+          "Common.TypeNameIdentifier": "Editor",
+          "Components.NameMatch": "Components.FullyQualifiedNameMatch"
+        }
+      },
+      {
+        "HashCode": 1047256123,
+        "Kind": "Components.Component",
+        "Name": "LampStore.Pages.Admin.ComponentsProducts.Details",
+        "AssemblyName": "LampStore",
+        "CaseSensitive": true,
+        "TagMatchingRules": [
+          {
+            "TagName": "Details"
+          }
+        ],
+        "BoundAttributes": [
+          {
+            "Kind": "Components.Component",
+            "Name": "Id",
+            "TypeName": "System.Int64",
+            "Metadata": {
+              "Common.PropertyName": "Id",
+              "Common.GloballyQualifiedTypeName": "global::System.Int64"
+            }
+          }
+        ],
+        "Metadata": {
+          "Runtime.Name": "Components.IComponent",
+          "Common.TypeName": "LampStore.Pages.Admin.ComponentsProducts.Details",
+          "Common.TypeNamespace": "LampStore.Pages.Admin.ComponentsProducts",
+          "Common.TypeNameIdentifier": "Details"
+        }
+      },
+      {
+        "HashCode": -1790564419,
+        "Kind": "Components.Component",
+        "Name": "LampStore.Pages.Admin.ComponentsProducts.Details",
+        "AssemblyName": "LampStore",
+        "CaseSensitive": true,
+        "TagMatchingRules": [
+          {
+            "TagName": "LampStore.Pages.Admin.ComponentsProducts.Details"
+          }
+        ],
+        "BoundAttributes": [
+          {
+            "Kind": "Components.Component",
+            "Name": "Id",
+            "TypeName": "System.Int64",
+            "Metadata": {
+              "Common.PropertyName": "Id",
+              "Common.GloballyQualifiedTypeName": "global::System.Int64"
+            }
+          }
+        ],
+        "Metadata": {
+          "Runtime.Name": "Components.IComponent",
+          "Common.TypeName": "LampStore.Pages.Admin.ComponentsProducts.Details",
+          "Common.TypeNamespace": "LampStore.Pages.Admin.ComponentsProducts",
+          "Common.TypeNameIdentifier": "Details",
           "Components.NameMatch": "Components.FullyQualifiedNameMatch"
         }
       },
@@ -1843,172 +1976,39 @@
         }
       },
       {
-        "HashCode": 554239032,
+        "HashCode": 828006120,
         "Kind": "Components.Component",
-        "Name": "LampStore.Pages.Admin.Routed",
+        "Name": "LampStore.Pages.Admin.Orders",
         "AssemblyName": "LampStore",
         "CaseSensitive": true,
         "TagMatchingRules": [
           {
-            "TagName": "Routed"
+            "TagName": "Orders"
           }
         ],
         "Metadata": {
           "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "LampStore.Pages.Admin.Routed",
+          "Common.TypeName": "LampStore.Pages.Admin.Orders",
           "Common.TypeNamespace": "LampStore.Pages.Admin",
-          "Common.TypeNameIdentifier": "Routed"
+          "Common.TypeNameIdentifier": "Orders"
         }
       },
       {
-        "HashCode": -1532953196,
+        "HashCode": -822610597,
         "Kind": "Components.Component",
-        "Name": "LampStore.Pages.Admin.Routed",
+        "Name": "LampStore.Pages.Admin.Orders",
         "AssemblyName": "LampStore",
         "CaseSensitive": true,
         "TagMatchingRules": [
           {
-            "TagName": "LampStore.Pages.Admin.Routed"
+            "TagName": "LampStore.Pages.Admin.Orders"
           }
         ],
         "Metadata": {
           "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "LampStore.Pages.Admin.Routed",
+          "Common.TypeName": "LampStore.Pages.Admin.Orders",
           "Common.TypeNamespace": "LampStore.Pages.Admin",
-          "Common.TypeNameIdentifier": "Routed",
-          "Components.NameMatch": "Components.FullyQualifiedNameMatch"
-        }
-      },
-      {
-        "HashCode": -2066794684,
-        "Kind": "Components.Component",
-        "Name": "LampStore.Pages.Admin.Setting",
-        "AssemblyName": "LampStore",
-        "CaseSensitive": true,
-        "TagMatchingRules": [
-          {
-            "TagName": "Setting"
-          }
-        ],
-        "Metadata": {
-          "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "LampStore.Pages.Admin.Setting",
-          "Common.TypeNamespace": "LampStore.Pages.Admin",
-          "Common.TypeNameIdentifier": "Setting"
-        }
-      },
-      {
-        "HashCode": 326303342,
-        "Kind": "Components.Component",
-        "Name": "LampStore.Pages.Admin.Setting",
-        "AssemblyName": "LampStore",
-        "CaseSensitive": true,
-        "TagMatchingRules": [
-          {
-            "TagName": "LampStore.Pages.Admin.Setting"
-          }
-        ],
-        "Metadata": {
-          "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "LampStore.Pages.Admin.Setting",
-          "Common.TypeNamespace": "LampStore.Pages.Admin",
-          "Common.TypeNameIdentifier": "Setting",
-          "Components.NameMatch": "Components.FullyQualifiedNameMatch"
-        }
-      },
-      {
-        "HashCode": 2136812171,
-        "Kind": "Components.Component",
-        "Name": "LampStore.Pages.Admin.FAQ",
-        "AssemblyName": "LampStore",
-        "CaseSensitive": true,
-        "TagMatchingRules": [
-          {
-            "TagName": "FAQ"
-          }
-        ],
-        "Metadata": {
-          "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "LampStore.Pages.Admin.FAQ",
-          "Common.TypeNamespace": "LampStore.Pages.Admin",
-          "Common.TypeNameIdentifier": "FAQ"
-        }
-      },
-      {
-        "HashCode": 1045459965,
-        "Kind": "Components.Component",
-        "Name": "LampStore.Pages.Admin.FAQ",
-        "AssemblyName": "LampStore",
-        "CaseSensitive": true,
-        "TagMatchingRules": [
-          {
-            "TagName": "LampStore.Pages.Admin.FAQ"
-          }
-        ],
-        "Metadata": {
-          "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "LampStore.Pages.Admin.FAQ",
-          "Common.TypeNamespace": "LampStore.Pages.Admin",
-          "Common.TypeNameIdentifier": "FAQ",
-          "Components.NameMatch": "Components.FullyQualifiedNameMatch"
-        }
-      },
-      {
-        "HashCode": 8982602,
-        "Kind": "Components.Component",
-        "Name": "LampStore.Pages.Admin.ComponentsFAQ.Editor",
-        "AssemblyName": "LampStore",
-        "CaseSensitive": true,
-        "TagMatchingRules": [
-          {
-            "TagName": "Editor"
-          }
-        ],
-        "BoundAttributes": [
-          {
-            "Kind": "Components.Component",
-            "Name": "Id",
-            "TypeName": "System.Int64",
-            "Metadata": {
-              "Common.PropertyName": "Id",
-              "Common.GloballyQualifiedTypeName": "global::System.Int64"
-            }
-          }
-        ],
-        "Metadata": {
-          "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "LampStore.Pages.Admin.ComponentsFAQ.Editor",
-          "Common.TypeNamespace": "LampStore.Pages.Admin.ComponentsFAQ",
-          "Common.TypeNameIdentifier": "Editor"
-        }
-      },
-      {
-        "HashCode": 1843214180,
-        "Kind": "Components.Component",
-        "Name": "LampStore.Pages.Admin.ComponentsFAQ.Editor",
-        "AssemblyName": "LampStore",
-        "CaseSensitive": true,
-        "TagMatchingRules": [
-          {
-            "TagName": "LampStore.Pages.Admin.ComponentsFAQ.Editor"
-          }
-        ],
-        "BoundAttributes": [
-          {
-            "Kind": "Components.Component",
-            "Name": "Id",
-            "TypeName": "System.Int64",
-            "Metadata": {
-              "Common.PropertyName": "Id",
-              "Common.GloballyQualifiedTypeName": "global::System.Int64"
-            }
-          }
-        ],
-        "Metadata": {
-          "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "LampStore.Pages.Admin.ComponentsFAQ.Editor",
-          "Common.TypeNamespace": "LampStore.Pages.Admin.ComponentsFAQ",
-          "Common.TypeNameIdentifier": "Editor",
+          "Common.TypeNameIdentifier": "Orders",
           "Components.NameMatch": "Components.FullyQualifiedNameMatch"
         }
       },

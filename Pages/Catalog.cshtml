@@ -1,6 +1,7 @@
 @page "/catalog/{productPage?}"
 @model CatalogModel
 @using LampStore.Services
+@using System.Globalization
 
 @{
 	ViewData["Title"] = "Каталог освещения";
@@ -13,7 +14,7 @@
 	<div class="catalog__h">
 		<h1>Каталог</h1>
 	</div>
-	<div class="catalog__wrapper">
+	<div class="catalog__wrapper mt-5">
 		<div class="search-form__wrapper">
 			<div class="search-left-panel__wrapper">
 				<form id="catalogForm" method="get" asp-page="/catalog" asp-page-handler="Products"
@@ -198,7 +199,7 @@
 									</div>
 									<div class="footer-card__wrapper">
 										<p class="footer-card__text">@pr.Name</p>
-										<p class="footer-card__price">@pr.Price.ToString("C")</p>
+										<p class="footer-card__price">@pr.Price.ToString("C", new CultureInfo("ru-RU"))</p>
 									</div>
 								</a>
 								<form id="ProductID=@pr.ProductID" class="addToCart" asp-page="/Cart" method="post">

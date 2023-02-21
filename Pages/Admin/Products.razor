@@ -3,6 +3,7 @@
 @inherits OwningComponentBase<IStoreRepository>
 @inject IPopupNotification popupNotification
 @inject IFolderManager folderManager
+@using System.Globalization
 
 <Confirmation @ref="confirmation" OnCancel="OnCancel" OnConfirm="OnConfirm" IsConfirm="true" Title="Удаление товара...">
 	<div class="toast-body">
@@ -62,9 +63,9 @@ else
 						<td>@p.Name</td>
 						<td>@p.Artikul</td>
 						<td>@p.Category?.CategoryName</td>
-						<td>@p.Price.ToString("c")</td>
+						<td>@p.Price.ToString("c", new CultureInfo("ru-RU"))</td>
 						<td>@p.Discount</td>
-						<td>@p.OldPrice?.ToString("C")</td>
+						<td>@p.OldPrice?.ToString("C", new CultureInfo("ru-RU"))</td>
 						<td class="text-center">
 							<NavLink class="btn btn-info btn-sm" href="@GetDetailsUrl(p.ProductID ?? 0)">
 								Подробнее

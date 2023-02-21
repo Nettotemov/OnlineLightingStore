@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "qy4nnw1pfJXsh8Jgf3oZL31Yz0o13sONgiin0e0rTuI=",
+  "Hash": "eetwcV7I5MGhhB4GVGRbkGMBgVKqp2joGj+QIiNdi8c=",
   "Source": "LampStore",
   "BasePath": "_content/LampStore",
   "Mode": "Default",
@@ -680,6 +680,23 @@
       "OriginalItemSpec": "wwwroot/imegs/img-products/1/small/webp/2PS2.webp"
     },
     {
+      "Identity": "/Users/konstantinermakov/Projects/LampStore/LampStore/wwwroot/imegs/img-products/10/.DS_Store",
+      "SourceId": "LampStore",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/konstantinermakov/Projects/LampStore/LampStore/wwwroot/",
+      "BasePath": "_content/LampStore",
+      "RelativePath": "imegs/img-products/10/.DS_Store",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/imegs/img-products/10/.DS_Store"
+    },
+    {
       "Identity": "/Users/konstantinermakov/Projects/LampStore/LampStore/wwwroot/imegs/img-products/10/1PS1 (2).jpg",
       "SourceId": "LampStore",
       "SourceType": "Discovered",
@@ -729,6 +746,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/imegs/img-products/10/3PS (2).jpg"
+    },
+    {
+      "Identity": "/Users/konstantinermakov/Projects/LampStore/LampStore/wwwroot/imegs/img-products/10/average/.DS_Store",
+      "SourceId": "LampStore",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/konstantinermakov/Projects/LampStore/LampStore/wwwroot/",
+      "BasePath": "_content/LampStore",
+      "RelativePath": "imegs/img-products/10/average/.DS_Store",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/imegs/img-products/10/average/.DS_Store"
     },
     {
       "Identity": "/Users/konstantinermakov/Projects/LampStore/LampStore/wwwroot/imegs/img-products/10/average/1PS1 (2).jpg",

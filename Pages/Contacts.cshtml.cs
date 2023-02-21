@@ -38,10 +38,7 @@ namespace LampStore.Pages
 			catch (Exception ex)
 			{
 				System.Console.WriteLine("Exception: " + ex.Message);
-				RedirectToPage("/contacts");
 			}
 		}
-
-
 	}
 }

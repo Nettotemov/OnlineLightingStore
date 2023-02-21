@@ -1,6 +1,7 @@
 @model Order
+@using System.Globalization
 
-<h1 class="h1__caption mt-per-5">Контактные данные</h1>
+<h1 class="h1__caption mt-per-8">Контактные данные</h1>
 <section class="container-cart__wrapper">
 	<div class="cart-left__wrapper">
 		@* <div asp-validation-summary="All" class="text-danger"></div> Проверка полей валидации *@
@@ -54,7 +55,7 @@
 						</div>
 						<div class="cart-chechout-name__wrapper">
 							<p class="product-cart-chechout__name">@line.Product.Name</p>
-							<p class="product-cart-chechout__price">@line.Product.Price.ToString("c")</p>
+							<p class="product-cart-chechout__price">@line.Product.Price.ToString("c", new CultureInfo("ru-RU"))</p>
 						</div>
 						<p class="product-cart-chechout__quantity">@line.Quantity шт.</p>
 					</div>
@@ -64,7 +65,7 @@
 				<p class="product-card__description-p">Количество товаров, @Model?.Lines.Select(q => q.Quantity).Sum() шт.
 				</p>
 				<p class="product-card__description-p">Общая стоимость корзины:</p>
-				<p class="cart__total-price">@Model?.Lines.Sum(e => e.Product.Price * e.Quantity).ToString("c")</p>
+				<p class="cart__total-price">@Model?.Lines.Sum(e => e.Product.Price * e.Quantity).ToString("c", new CultureInfo("ru-RU"))</p>
 			</div>
 			<div class="text-center">
 				<button form="checkout-form" class="form-catalog__text cart__btn-checkout" type="submit">Сделать

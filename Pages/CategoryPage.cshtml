@@ -1,5 +1,6 @@
 @page "/{CategoryName}"
 @model CategoryPage
+@using System.Globalization
 
 @{
 	Layout = "_Layout";
@@ -131,9 +132,9 @@
 								@if (@pr.Discount != null && @pr.OldPrice != null)
 								{
 									@* <p class="tags-wrp">-@pr.Discount%</p> *@
-									<p class="tags-wrp"><s>@pr.OldPrice?.ToString("C")</s></p>
+									<p class="tags-wrp"><s>@pr.OldPrice?.ToString("C", new CultureInfo("ru-RU"))</s></p>
 								}
-								<p class="product-price">@pr.Price.ToString("C")</p>
+								<p class="product-price">@pr.Price.ToString("C", new CultureInfo("ru-RU"))</p>
 							</div>
 						</div>
 					</div>

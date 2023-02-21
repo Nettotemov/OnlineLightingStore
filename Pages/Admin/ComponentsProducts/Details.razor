@@ -1,4 +1,5 @@
 @page "/admin/products/details/{id:long}"
+@using System.Globalization
 
 <h3 class="bg-info text-white text-center p-1">Details</h3>
 <table class="table table-sm table-bordered table-striped">
@@ -40,7 +41,7 @@
 		</tr>
 		<tr>
 			<th>Цена</th>
-			<td>@Product?.Price.ToString("C")</td>
+			<td>@Product?.Price.ToString("C", new CultureInfo("ru-RU"))</td>
 		</tr>
 		<tr>
 			<th>Скидка %</th>
@@ -48,7 +49,7 @@
 		</tr>
 		<tr>
 			<th>Старая цена</th>
-			<td>@Product?.OldPrice?.ToString("C")</td>
+			<td>@Product?.OldPrice?.ToString("C", new CultureInfo("ru-RU"))</td>
 		</tr>
 		<tr>
 			<th>Тип</th>

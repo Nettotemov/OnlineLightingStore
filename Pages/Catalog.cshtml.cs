@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net;
+using System.Globalization;
 
 namespace LampStore.Pages
 {
@@ -42,6 +43,7 @@ namespace LampStore.Pages
 
 		CatalogServices catalogServices = new CatalogServices(); //ссылка на сервисы каталога
 
+		public CultureInfo culture = new CultureInfo("ru-RU");
 		private int deviceWidth;
 		private string format = string.Empty;
 		public async Task OnGetAsync(string name, string category, string maxPrice, string minPrice, string[] tags, string[] color, string[] materials, string[] types, SortCatalog sortOrder, int productPage = 1)

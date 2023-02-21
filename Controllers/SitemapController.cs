@@ -9,9 +9,13 @@ namespace LampStore.Controllers
 	public class SitemapController : Controller
 	{
 		private ICatalogRepository repository;
-		public SitemapController(ICatalogRepository repo)
+		private IInfoRepository infoRepository;
+		private ICooperationRepository cooperationRepository;
+		public SitemapController(ICatalogRepository repo, IInfoRepository infoRepo, ICooperationRepository cooperationRepo)
 		{
 			repository = repo;
+			cooperationRepository = cooperationRepo;
+			infoRepository = infoRepo;
 		}
 
 		[Route("sitemap")]
@@ -19,6 +23,8 @@ namespace LampStore.Controllers
 		{
 			var products = await GetProductsAsync();
 			var categorys = await GetCategoryAsync();
+			var info = await GetInfoAsync();
+			var cooperation = await GetCooperationAsync();
 
 			List<SitemapNode> nodes = new List<SitemapNode>
 			{
@@ -47,6 +53,24 @@ namespace LampStore.Controllers
 				});
 			}
 
+			foreach (var i in info)
+			{
+				nodes.Add(new SitemapNode(Url.Action(i.ID.ToString(), "info"))
+				{
+					ChangeFrequency = ChangeFrequency.Monthly,
+					Priority = 0.5M
+				});
+			}
+
+			foreach (var c in cooperation)
+			{
+				nodes.Add(new SitemapNode(Url.Action(c.ID.ToString(), "cooperation"))
+				{
+					ChangeFrequency = ChangeFrequency.Monthly,
+					Priority = 0.5M
+				});
+			}
+
 			return new SitemapProvider().CreateSitemap(new SitemapModel(nodes));
 
 		}
@@ -58,6 +82,16 @@ namespace LampStore.Controllers
 		private async Task<List<Category>> GetCategoryAsync()
 		{
 			return await repository.Categorys.Where(c => c.DisplayHomePage == true).ToListAsync();
+		}
+
+		private async Task<List<Info>> GetInfoAsync()
+		{
+			return await infoRepository.Info.Where(c => c.IsAvailable == true).ToListAsync();
+		}
+
+		private async Task<List<Cooperation>> GetCooperationAsync()
+		{
+			return await cooperationRepository.Cooperations.Where(c => c.IsVisible == true).ToListAsync();
 		}
 
 	}

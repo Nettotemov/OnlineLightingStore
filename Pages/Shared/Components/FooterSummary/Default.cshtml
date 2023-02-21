@@ -7,7 +7,7 @@
 		<div class="footer-box">
 			@* &copy; 2022 - Lights 4 Apart - <a asp-area="" asp-page="/Privacy">Privacy</a> *@
 			<div class="footer-about__wrapper">
-				<h3 class="footer-caption">About Us</h3>
+				<h3 class="footer-caption">О нас</h3>
 				@foreach (var text in Model.Where(s => s.Setting == TypeSettings.TextFooter && s.IsVisible ==
 						true).ToList())
 				{
@@ -15,20 +15,20 @@
 				}
 			</div>
 			<div class="footer-contact__wrapper">
-				<h3 class="footer-caption">Contacts</h3>
+				<h3 class="footer-caption">Контакты</h3>
 				<p class="footer-text">Email:</p>
 				@foreach (var email in Model.Where(s => s.Setting == TypeSettings.Email && s.IsVisible ==
 						true).ToList())
 				{
 					<a href="mailto:@email.Value" class="footer-text footer-hov">@email.Value</a>
 				}
-				<p class="footer-text">Phone:</p>
+				<p class="footer-text">Телефон:</p>
 				@foreach (var phone in Model.Where(s => s.Setting == TypeSettings.PhoneNumber && s.IsVisible ==
 						true).ToList())
 				{
 					<a href="tel:@phone.Value" class="footer-text footer-hov">@phone.Value</a>
 				}
-				<p class="footer-text">Address:</p>
+				<p class="footer-text">Адрес:</p>
 				@foreach (var address in Model.Where(s => s.Setting == TypeSettings.Address && s.IsVisible ==
 						true).ToList())
 				{
@@ -36,7 +36,7 @@
 				}
 			</div>
 			<div class="footer-social__wrapper">
-				<h3 class="footer-caption">Social:</h3>
+				<h3 class="footer-caption">Социальные сети:</h3>
 				@foreach (var social in Model.Where(s => s.Setting == TypeSettings.Socials && s.IsVisible ==
 						true).ToList())
 				{
@@ -44,7 +44,7 @@
 				}
 			</div>
 			<div class="footer-corp__wrapper">
-				<h3 class="footer-caption">Project Developed:</h3>
+				<h3 class="footer-caption">Проект разработан:</h3>
 				<a href="mailto:eramakovbox@gmail.com" class="footer-text footer-hov">eramakovbox@gmail.com</a>
 				<a href="https://t.me/Ab_Konstantin" class="footer-text footer-hov">Telegram</a>
 			</div>
