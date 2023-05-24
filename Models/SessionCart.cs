@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using LampStore.Infrastructure;
+using LampStore.Models.ProductsPages;
 
 namespace LampStore.Models
 {

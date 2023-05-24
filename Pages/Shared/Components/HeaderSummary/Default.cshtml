@@ -20,11 +20,14 @@
 							<a class="nav-link a-btn__header" asp-page="/faq" asp-area="">Информация</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link a-btn__header" asp-page="/about" >Компания</a>
+							<a class="nav-link a-btn__header" asp-page="/about">Компания</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link a-btn__header" asp-area=""
 								asp-page="/cooperationpages">Сотрудничество</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link a-btn__header" asp-page="/collections">Коллекции</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link a-btn__header" asp-page="/catalog" asp-route-productPage="1"
@@ -40,13 +43,16 @@
 	</header>
 	@ViewData["Breadcrumb"]
 </div>
+
+
+
 <div class="menu">
 	<div class="container">
 		<div class="menu__wrapper">
 			@* <h2 class="menu__h2">LIGHTS 4 APART</h2> *@
 			<div class="menu-wrapper__items mt-per-10">
-				<a asp-page="/catalog" asp-route-productPage="1" asp-route-sortOrder="0" class="menu__h3">Каталог
-					света</a>
+				<a asp-page="/catalog" asp-route-productPage="1" asp-route-sortOrder="0" class="menu__h3">Каталог света</a>
+				<a asp-page="/collections" asp-area="" class="menu__h3">Коллекции</a>
 			</div>
 			<hr class="footer-line__wrapper">
 			<div class="menu-wrapper__items">

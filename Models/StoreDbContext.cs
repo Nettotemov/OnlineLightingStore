@@ -1,3 +1,6 @@
+using LampStore.Models.CollectionsLights;
+using LampStore.Models.LightsModels;
+using LampStore.Models.ProductsPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace LampStore.Models
@@ -9,7 +12,7 @@ namespace LampStore.Models
 		public DbSet<Product> Products => Set<Product>();
 		public DbSet<Tag> Tags => Set<Tag>();
 		public DbSet<ProductType> TypeProducts => Set<ProductType>();
-		
+
 		public DbSet<Category> Categorys => Set<Category>();
 
 		public DbSet<Order> Orders => Set<Order>();
@@ -22,5 +25,12 @@ namespace LampStore.Models
 		public DbSet<Cooperation> CooperationPages => Set<Cooperation>();
 
 		public DbSet<Settings> Settings => Set<Settings>();
+		public DbSet<ConfidentPolicy> ConfidentPolicyNodes => Set<ConfidentPolicy>();
+
+		public DbSet<CollectionLight> CollectionLights => Set<CollectionLight>();
+		public DbSet<AdditionalBlocksForCollection> AdditionalBlocksForCollection => Set<AdditionalBlocksForCollection>();
+
+		public DbSet<ModelLight> LightsModels => Set<ModelLight>();
+		public DbSet<AdditionalBlocksForModelLight> AdditionalBlocksForModelLight => Set<AdditionalBlocksForModelLight>();
 	}
 }

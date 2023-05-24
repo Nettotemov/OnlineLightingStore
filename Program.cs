@@ -1,4 +1,7 @@
 using LampStore.Models;
+using LampStore.Models.CollectionsLights;
+using LampStore.Models.LightsModels;
+using LampStore.Models.ProductsPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using LampStore.Pages.Admin.Services.Interface;
@@ -23,6 +26,9 @@ builder.Services.AddScoped<ICategoryRepository, EFCategoryRepository>();
 builder.Services.AddScoped<ISettingsRepository, EFSettingsRepository>();
 builder.Services.AddScoped<IInfoRepository, EFInfoRepository>();
 builder.Services.AddScoped<ICooperationRepository, EFCooperationRepository>();
+builder.Services.AddScoped<IConfidentPolicyRepository, EFConfidentPolicyRepository>();
+builder.Services.AddScoped<ICollectionLight, EFCollectionLight>();
+builder.Services.AddScoped<IModelLight, EFModelLight>();
 builder.Services.AddDistributedMemoryCache(); //добавляем кеш в приложение
 builder.Services.AddSession(); //добавление сохранения сессии пользователя
 builder.Services.AddScoped<Cart>(sp => SessionCart.GetCart(sp)); //указывает, что один и тот же объект должен использоваться для удовлетворения связанных запросов для экземпляров Корзины
@@ -64,6 +70,5 @@ app.MapBlazorHub();//регистрирует компоненты промеж�
 app.MapFallbackToPage("/admin/{*catchall}", "/Admin/Index"); //усовершенствовании системы маршрутизации, чтобы гарантировать бесперебойную работу Blazor с остальной частью приложения.
 
 IdentitySeedData.EnsurePopulated(app);
-
 
 app.Run();

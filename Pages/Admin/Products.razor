@@ -1,9 +1,10 @@
 @page "/admin/products"
 @page "/admin"
 @inherits OwningComponentBase<IStoreRepository>
-@inject IPopupNotification popupNotification
-@inject IFolderManager folderManager
+@inject IPopupNotification PopupNotification
+@inject IFolderManager FolderManager
 @using System.Globalization
+@using LampStore.Models.ProductsPages
 
 <Confirmation @ref="confirmation" OnCancel="OnCancel" OnConfirm="OnConfirm" IsConfirm="true" Title="Удаление товара...">
 	<div class="toast-body">
@@ -49,6 +50,7 @@ else
 			<th>Цена</th>
 			<th>Скидка %</th>
 			<th>Старая цена</th>
+			<th>Опубликован</th>
 			<td />
 		</tr>
 	</thead>
@@ -58,19 +60,23 @@ else
 				@foreach (Product p in ProductData)
 				{
 					<tr>
-						<td>@p.ProductID</td>
-						<td><img class="img-fluid" style="height: 80px;" src=@p.MainPhoto></td>
+						<td>@p.Id</td>
+						<td><img class="img-fluid" style="height: 80px;" src="@p.MainPhoto"></td>
 						<td>@p.Name</td>
 						<td>@p.Artikul</td>
 						<td>@p.Category?.CategoryName</td>
 						<td>@p.Price.ToString("c", new CultureInfo("ru-RU"))</td>
 						<td>@p.Discount</td>
 						<td>@p.OldPrice?.ToString("C", new CultureInfo("ru-RU"))</td>
+						@{
+							var isPublished = p.IsPublished ? "Да" : "Нет";
+						}
+						<td>@isPublished</td>
 						<td class="text-center">
-							<NavLink class="btn btn-info btn-sm" href="@GetDetailsUrl(p.ProductID ?? 0)">
+							<NavLink class="btn btn-info btn-sm" href="@GetDetailsUrl(p.Id)">
 								Подробнее
 							</NavLink>
-							<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(p.ProductID ?? 0)">
+							<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(p.Id)">
 								Изменить
 							</NavLink>
 							<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteProduct(p))">
@@ -101,7 +107,7 @@ else
 	private bool loading = false;
 
 
-	protected async override Task OnInitializedAsync()
+	protected override async Task OnInitializedAsync()
 	{
 		try
 		{
@@ -135,17 +141,18 @@ else
 
 	Confirmation? confirmation;
 	private Product? ProductToBeDelete { get; set; }
-
-	private string urlPath = "wwwroot/imegs/img-products/";
+	
+	private const string UrlPath = "wwwroot/imegs/img-products/";
+	
 	private async Task OnConfirm()
 	{
 		if (ProductToBeDelete != null)
 		{
-			folderManager.DeleteDirectory(urlPath + ProductToBeDelete.ProductID);
-			Repository.DeleteProduct(ProductToBeDelete);
+			FolderManager.DeleteDirectory(UrlPath + ProductToBeDelete.Id);
+			await Repository.DeleteProductAsync(ProductToBeDelete);
 			confirmation?.Hide();
 			Notification notification = new Notification(1, "Товар удалён", "Удалён товар", ProductToBeDelete!.Name);
-			popupNotification.AddItem(notification);
+			PopupNotification.AddItem(notification);
 			ProductToBeDelete = null;
 			await UpdateData();
 		}
@@ -155,7 +162,7 @@ else
 	{
 		confirmation?.Hide();
 		Notification notification = new Notification(1, "Отмена удаления", "Отменено удаление товара", ProductToBeDelete!.Name);
-		popupNotification.AddItem(notification);
+		PopupNotification.AddItem(notification);
 		ProductToBeDelete = null;
 	}
 
@@ -163,7 +170,7 @@ else
 
 	protected override async Task OnParametersSetAsync()
 	{
-		ListNotifications = await popupNotification.GetItems();
+		ListNotifications = await PopupNotification.GetItems();
 		StateHasChanged();
 	}
 }

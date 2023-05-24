@@ -1,4 +1,7 @@
-namespace LampStore.Models
+using LampStore.Models.CollectionsLights;
+using LampStore.Models.LightsModels;
+
+namespace LampStore.Models.ProductsPages
 {
 	public interface IStoreRepository
 	{
@@ -6,17 +9,19 @@ namespace LampStore.Models
 		IQueryable<Category> Category { get; }
 		IQueryable<Tag> Tags { get; }
 		IQueryable<ProductType> Types { get; }
+		IQueryable<CollectionLight> CollectionsModels { get; }
+		IQueryable<ModelLight> LightsModels { get; }
 
-		void SaveProduct(Product p);
-		void CreateProduct(Product p);
-		void DeleteProduct(Product p);
+		Task SaveProductAsync(Product p);
+		Task CreateProductAsync(Product p);
+		Task DeleteProductAsync(Product p);
 
-		void SaveTag(Tag t);
-		void CreateTag(Tag t);
-		void DeleteTag(Tag t);
+		Task SaveTagAsync(Tag t);
+		Task CreateTagAsync(Tag t);
+		Task DeleteTagAsync(Tag t);
 
-		void SaveType(ProductType type);
-		void CreateType(ProductType type);
-		void DeleteType(ProductType type);
+		Task SaveTypeAsync(ProductType type);
+		Task CreateTypeAsync(ProductType type);
+		Task DeleteTypeAsync(ProductType type);
 	}
 }

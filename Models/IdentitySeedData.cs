@@ -6,7 +6,7 @@ namespace LampStore.Models
 	public static class IdentitySeedData
 	{
 		private const string adminUser = "Admin";
-		private const string adminPassword = "FLOPMXEfbf123!";
+		private const string adminPassword = "Kx0aMmC1518!";
 
 		public static async void EnsurePopulated(IApplicationBuilder app)
 		{

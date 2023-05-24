@@ -63,7 +63,7 @@
 					<td class="text-center">@o.Zip</td>
 					<td class="text-center">@o.City</td>
 					<td class="text-center">@EnumExtensions.GetDisplayName(@o.StatusOrders)</td>
-					<td class="text-center">@o.Lines.Select(p => p).Sum(e => (e.Product.Price * e.Quantity)).ToString("C", new CultureInfo("ru-RU"))</td>
+					<td class="text-center">@o.Lines.Select(p => p).Sum(e => (e.Product.Price * e.Quantity)).ToString("C0", new CultureInfo("ru-RU"))</td>
 					<th class="text-center">Продукты</th>
 					<th class="text-center">Количество</th>
 					<th class="text-center">Цена товара</th>

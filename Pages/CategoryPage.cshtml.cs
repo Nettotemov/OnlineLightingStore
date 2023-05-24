@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using LampStore.Models.ProductsPages;
 using LampStore.Services;
 using Microsoft.EntityFrameworkCore;
 

@@ -14,14 +14,14 @@
 		@foreach (var cooperationPage in @Model.DisplayCooperationPages)
 		{
 			<a asp-page="CooperationPage" asp-route-ID="@cooperationPage.ID" class="scroll-m row align-items-xl-center border-b">
-				<div class="col-12 col-xl-6">
+				<div class="col-12 col-xl-5">
 					<div class="img-cooperation__wrapper">
 						<div class="img-center__wrapper">
 							<img class="img-responsive" src="@cooperationPage.CooperationImg">
 						</div>
 					</div>
 				</div>
-				<div class="col-12 col-xl-5 col-xs-12 mt-4 hook">
+				<div class="col-12 col-xl-6 col-xs-12 mt-4 hook">
 					<h1 class="h1__caption mb-per-5 fw-bold">@cooperationPage.NameCooperation</h1>
 					<p class="product-card__description-p">@cooperationPage.MinDescription</p>
 					<button asp-page="CooperationPage" asp-route-ID="@cooperationPage.ID" class="a-btn-link">Подробнее</button>

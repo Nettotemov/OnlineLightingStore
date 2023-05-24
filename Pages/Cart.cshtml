@@ -15,14 +15,14 @@
 			{
 				<div class="product-cart__wrapper">
 					<a class="product-cart-img__wrapper" asp-page="CardProduct"
-				asp-route-CategoryName="@line.Product.Artikul" asp-route-ProductID="@line.Product.ProductID" asp-route-Name="@line.Product.Name">
+				asp-route-CategoryName="@line.Product.Artikul" asp-route-ProductID="@line.Product.Id" asp-route-Name="@line.Product.Name">
 						<img class="product-cart-img" src="@line.Product.MainPhoto">
 					</a>
 					<div class="product-cart-decript__wrapper">
 						<p class="product-card__description-p">@line.Product.Name</p>
 						<p class="footer-card__text">Артикул: @line.Product.Artikul</p>
 						<p class="footer-card__price" id="product-price" price-value="@line.Product.Price.ToString()">
-							@line.Product.Price.ToString("c", new CultureInfo("ru-RU"))</p>
+							@line.Product.Price.ToString("C0", new CultureInfo("ru-RU"))</p>
 					</div>
 					<div class="product-cart__total-wrapper">
 						<form class="recalculation" asp-page-handler="Recalculation" method="post">
@@ -32,12 +32,12 @@
 							value="@line.Quantity" />
 								<span class="plus quantity-product-count">+</span>
 							</div>
-							<input type="hidden" name="productId" value="@line.Product.ProductID" />
+							<input type="hidden" name="productId" value="@line.Product.Id" />
 							<input type="hidden" name="returnUrl" value="@Model?.ReturnUrl" />
 						</form>
-						<p class="cart-total-price">@((line.Quantity * line.Product.Price).ToString("c", new CultureInfo("ru-RU")))</p>
+						<p class="cart-total-price">@((line.Quantity * line.Product.Price).ToString("C0", new CultureInfo("ru-RU")))</p>
 						<form asp-page-handler="Remove" method="post">
-							<input type="hidden" name="ProductID" value="@line.Product.ProductID" />
+							<input type="hidden" name="ProductID" value="@line.Product.Id" />
 							<input type="hidden" name="returnUrl" value="@Model?.ReturnUrl" />
 							<button type="submit" class="cart__btn-remove">
 								<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24">
@@ -92,7 +92,7 @@
 			<p class="product-card__description-p">Количество товаров, @Model?.Cart?.Lines.Select(q => q.Quantity).Sum()
 				шт.</p>
 			<p class="product-card__description-p">Общая стоимость корзины:</p>
-			<p class="cart__total-price">@Model?.Cart?.ComputeTotalValue().ToString("c", new CultureInfo("ru-RU"))</p>
+			<p class="cart__total-price">@Model?.Cart?.ComputeTotalValue().ToString("C0", new CultureInfo("ru-RU"))</p>
 			<div class="text-center">
 				<a class="form-catalog__text cart__btn-checkout" asp-action="Checkout" asp-controller="Order">Оформить
 					заказ</a>

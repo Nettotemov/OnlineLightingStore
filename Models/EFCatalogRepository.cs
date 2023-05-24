@@ -1,3 +1,4 @@
+using LampStore.Models.ProductsPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace LampStore.Models

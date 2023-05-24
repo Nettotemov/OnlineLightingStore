@@ -37,7 +37,8 @@
 			</div>
 			<div class="checkbox form-group-gift__wrapper">
 				<input type="checkbox" asp-for="GiftWrap" class="form-control" />
-				<label for="GiftWrap" class="control-label">Принимаю политику политику обработки заказов</label>
+				<label for="GiftWrap" class="control-label">Принимаю <a asp-area="" asp-page="/privacy"><b>политику
+							обработки заказов</b></a></label>
 				<span asp-validation-for="GiftWrap" class="text-danger"></span>
 			</div>
 		</form>
@@ -55,7 +56,8 @@
 						</div>
 						<div class="cart-chechout-name__wrapper">
 							<p class="product-cart-chechout__name">@line.Product.Name</p>
-							<p class="product-cart-chechout__price">@line.Product.Price.ToString("c", new CultureInfo("ru-RU"))</p>
+							<p class="product-cart-chechout__price">@line.Product.Price.ToString("C0", new CultureInfo("ru-RU"))
+							</p>
 						</div>
 						<p class="product-cart-chechout__quantity">@line.Quantity шт.</p>
 					</div>
@@ -65,7 +67,8 @@
 				<p class="product-card__description-p">Количество товаров, @Model?.Lines.Select(q => q.Quantity).Sum() шт.
 				</p>
 				<p class="product-card__description-p">Общая стоимость корзины:</p>
-				<p class="cart__total-price">@Model?.Lines.Sum(e => e.Product.Price * e.Quantity).ToString("c", new CultureInfo("ru-RU"))</p>
+					<p class="cart__total-price">@Model?.Lines.Sum(e => e.Product.Price * e.Quantity).ToString("C0", new
+				CultureInfo("ru-RU"))</p>
 			</div>
 			<div class="text-center">
 				<button form="checkout-form" class="form-catalog__text cart__btn-checkout" type="submit">Сделать
@@ -77,34 +80,35 @@
 		{
 			<div class="checkout-cart-empty__wrapper">
 				<svg class="cart-emty-svg" width="117px" height="94px" viewBox="0 0 117 94" version="1.1"
-				xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+					xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<title>ic-empty-basket</title>
 					<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
 						<g id="ic-empty-basket.b6855e4e" transform="translate(0.000000, 1.050000)">
 							<path
-							d="M19.9,78 L28,79 L35.3,83.9 L96.8,83.9 L98.1,78.1 C109.7,79.6 117,81.7 117,84 C117,88.4 90.8,92 58.5,92 C26.2,92 0,88.4 0,84 C0,81.6 7.7,79.5 19.9,78 L19.9,78 Z"
-							id="Path" fill="#B1B1B1" fill-rule="nonzero"></path>
+								d="M19.9,78 L28,79 L35.3,83.9 L96.8,83.9 L98.1,78.1 C109.7,79.6 117,81.7 117,84 C117,88.4 90.8,92 58.5,92 C26.2,92 0,88.4 0,84 C0,81.6 7.7,79.5 19.9,78 L19.9,78 Z"
+								id="Path" fill="#B1B1B1" fill-rule="nonzero"></path>
 							<circle id="Oval" fill="#B1B1B1" fill-rule="nonzero" cx="50" cy="63.95" r="4.3"></circle>
 							<circle id="Oval" fill="#B1B1B1" fill-rule="nonzero" cx="83" cy="63.95" r="4.3"></circle>
 							<circle id="Oval" fill="#000000" fill-rule="nonzero" cx="56" cy="55.95" r="2.2"></circle>
 							<circle id="Oval" fill="#000000" fill-rule="nonzero" cx="75" cy="55.95" r="2.2"></circle>
 							<g id="Group" stroke-linejoin="round" transform="translate(9.000000, 0.000000)" stroke="#000000"
-							stroke-width="1.5">
+								stroke-width="1.5">
 								<path
-								d="M65.093,68.5 C63.4712601,65.8513896 60.5985594,64.2260458 57.493,64.1999845 C54.481191,64.1944198 51.6662249,65.6957351 49.993,68.2"
-								id="Path" stroke-linejoin="bevel"></path>
+									d="M65.093,68.5 C63.4712601,65.8513896 60.5985594,64.2260458 57.493,64.1999845 C54.481191,64.1944198 51.6662249,65.6957351 49.993,68.2"
+									id="Path" stroke-linejoin="bevel"></path>
 								<path
-								d="M26.559,84.078 L19.059,79.078 L10.8,78 L0,24.6 L12,28 L14.956,30.925 M0,24.6 L84.011,24.611 L87.011,26.911 L99.831,30.638 M57.8,20.2 L57.8,17.8 C57.8,8 49.3,3.55271368e-15 39,3.55271368e-15 C28.5,3.55271368e-15 19.984,8 19.9999775,17.8 L20.011,24.496"
-								id="Shape"></path>
+									d="M26.559,84.078 L19.059,79.078 L10.8,78 L0,24.6 L12,28 L14.956,30.925 M0,24.6 L84.011,24.611 L87.011,26.911 L99.831,30.638 M57.8,20.2 L57.8,17.8 C57.8,8 49.3,3.55271368e-15 39,3.55271368e-15 C28.5,3.55271368e-15 19.984,8 19.9999775,17.8 L20.011,24.496"
+									id="Shape"></path>
 								<path
-								d="M76,30.5 L76,23.8 C76,14 67.5,6 57,6 C46.6,6 38.309,14 38.2,23.8 L38.128,30.305 M83.7,30.6 L99.7,30.6 L87.7,84 L26.4,84 L14.5,30.6 L61.8,30.6 L83.7,30.6 Z"
-								id="Shape"></path>
+									d="M76,30.5 L76,23.8 C76,14 67.5,6 57,6 C46.6,6 38.309,14 38.2,23.8 L38.128,30.305 M83.7,30.6 L99.7,30.6 L87.7,84 L26.4,84 L14.5,30.6 L61.8,30.6 L83.7,30.6 Z"
+									id="Shape"></path>
 							</g>
 						</g>
 					</g>
 				</svg>
 				<p class="product-card__description-p">В ВАШЕЙ КОРЗИНЕ ПУСТО</p>
-				<p class="product-cart-chechout__name">Начните создание стиля с освещения прямо сейчас. Перейдите в каталог и добавьте товар в корзину.</p>
+				<p class="product-cart-chechout__name">Начните создание стиля с освещения прямо сейчас. Перейдите в каталог
+					и добавьте товар в корзину.</p>
 			</div>
 			<div class="text-center">
 				<a href="/catalog/1?sortOrder=0" class="form-catalog__text cart__btn-checkout">В каталог</a>

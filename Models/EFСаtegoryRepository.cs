@@ -1,3 +1,5 @@
+using LampStore.Models.ProductsPages;
+
 namespace LampStore.Models
 {
 	public class EFCategoryRepository : ICategoryRepository

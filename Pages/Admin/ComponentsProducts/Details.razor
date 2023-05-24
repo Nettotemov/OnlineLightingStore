@@ -1,12 +1,15 @@
 @page "/admin/products/details/{id:long}"
 @using System.Globalization
+@using LampStore.Models.CollectionsLights
+@using LampStore.Models.LightsModels
+@using LampStore.Models.ProductsPages
 
 <h3 class="bg-info text-white text-center p-1">Details</h3>
 <table class="table table-sm table-bordered table-striped">
 	<tbody>
 		<tr>
 			<th>ID</th>
-			<td>@Product?.ProductID</td>
+			<td>@Product?.Id</td>
 		</tr>
 		<tr>
 			<th>Артикул</th>
@@ -18,14 +21,25 @@
 		</tr>
 		<tr>
 			<th>Галерея</th>
-			@foreach (var img in @Product?.Photos?.Split(',').ToArray())
+			@if (DisplayedGallery?.Count() > 0)
 			{
-				<img class="img-thumbnail col-2" src=@img>
+				@foreach (var img in @DisplayedGallery)
+				{
+					<img class="img-thumbnail col-2" src="@img">
+				}
 			}
 		</tr>
 		<tr>
 			<th>Название</th>
 			<td>@Product?.Name</td>
+		</tr>
+		<tr>
+			<th>Коллекция</th>
+			<td>@Product?.CollectionLight?.Name</td>
+		</tr>
+		<tr>
+			<th>Модeль</th>
+			<td>@Product?.ModelLight?.Name</td>
 		</tr>
 		<tr>
 			<th>Описание</th>
@@ -53,12 +67,8 @@
 		</tr>
 		<tr>
 			<th>Тип</th>
-			<td>@Product?.ProductType</td>
+			<td>@Product?.ProductType?.Name</td>
 		</tr>
-		@* <tr>
-			<th>Теги</th>
-			<td>@Product?.Tags</td>
-		</tr> *@
 		<tr>
 			<th>Цвет</th>
 			<td>@Product?.Color</td>
@@ -95,6 +105,18 @@
 			<th>Мощность</th>
 			<td>@Product?.PowerW</td>
 		</tr>
+		<tr>
+			<th>Управление</th>
+			<td>@Product?.AddControl</td>
+		</tr>
+		<tr>
+			<th>Опубликован</th>
+			<td>@Product?.IsPublished</td>
+		</tr>
+		@* <tr>
+		<th>Теги</th>
+		<td>@Product?.ProductTags</td>
+		</tr> *@
 	</tbody>
 </table>
 
@@ -107,18 +129,29 @@
 	public IStoreRepository? Repository { get; set; }
 
 	public List<Category>? DisplayedCategories { get; set; }
+	public List<ModelLight>? DisplayedModelsLights { get; set; }
+	public List<CollectionLight>? DisplayedCollectionsLights { get; set; }
 
 	[Parameter]
 	public long Id { get; set; }
 
+	public List<string>? DisplayedGallery { get; set; }
+
 	public Product? Product { get; set; }
-	public Category? Category { get; set; }
 
-
-	protected override void OnParametersSet()
+	protected override async Task OnInitializedAsync()
 	{
-		Product = Repository?.Products.FirstOrDefault(p => p.ProductID == Id);
-		DisplayedCategories = Repository?.Category.Select(c => c).Distinct().ToList(); //получение категорий
+		if (Repository != null)
+		{
+			Product = await Repository.Products.FirstOrDefaultAsync(p => p.Id == Id);
+			DisplayedCategories = await Repository.Category.Select(c => c).Distinct().ToListAsync(); //получение категорий
+			DisplayedModelsLights = await Repository.LightsModels.Select(m => m).Distinct().ToListAsync();
+			DisplayedCollectionsLights = await Repository.CollectionsModels.Select(m => m).Distinct().ToListAsync();
+		}
+		if (Product != null)
+		{
+			DisplayedGallery = Product.Photos.Split(", ").ToList();
+		}
 	}
-	public string EditUrl => $"/admin/products/edit/{Product?.ProductID}";
+	public string EditUrl => $"/admin/products/edit/{Product?.Id}";
 }

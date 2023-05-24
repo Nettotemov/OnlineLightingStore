@@ -47,14 +47,14 @@
 		</tr>
 		<tr>
 			<th>Сумма заказа</th>
-			<td>@Order?.Lines.Select(p => p.Product).Sum(e => e.Price).ToString("C", new CultureInfo("ru-RU"))</td>
+			<td>@Order?.Lines.Select(p => p).Sum(e => (e.Product.Price * e.Quantity)).ToString("C0", new CultureInfo("ru-RU"))</td>
 		</tr>
 		@foreach (CartLine line in Order!.Lines)
 		{
 			<tr>
 				<td class="text-center">@line.Product.Name</td>
 				<td class="text-center">@line.Quantity</td>
-				<td class="text-center">@line.Product.Price.ToString("C", new CultureInfo("ru-RU"))</td>
+				<td class="text-center">@line.Product.Price.ToString("C0", new CultureInfo("ru-RU"))</td>
 			</tr>
 		}
 	</tbody>

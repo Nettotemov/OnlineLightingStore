@@ -1,67 +1,77 @@
+using LampStore.Models.CollectionsLights;
+using LampStore.Models.LightsModels;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
-namespace LampStore.Models
+namespace LampStore.Models.ProductsPages
 {
 	public class EFStoreRepository : IStoreRepository
 	{
-		private StoreDbContext context;
+		private readonly StoreDbContext context;
 
 		public EFStoreRepository(StoreDbContext ctx)
 		{
 			this.context = ctx;
 		}
 
-		public IQueryable<Product> Products => context.Products.Include(p => p.ProductTags).Include(p => p.ProductType);
+		public IQueryable<Product> Products => context.Products
+			.Include(p => p.Category)
+			.Include(p => p.ProductTags)
+			.Include(p => p.ProductType);
 		public IQueryable<Category> Category => context.Categorys;
 		public IQueryable<Tag> Tags => context.Tags;
 		public IQueryable<ProductType> Types => context.TypeProducts;
+		public IQueryable<CollectionLight> CollectionsModels => context.CollectionLights;
+		public IQueryable<ModelLight> LightsModels => context.LightsModels;
 
-		public void CreateProduct(Product p)
+		public async Task CreateProductAsync(Product p)
 		{
 			context.Add(p);
-			context.SaveChanges();
+			await context.SaveChangesAsync();
 		}
-		public void DeleteProduct(Product p)
+		
+		public async Task DeleteProductAsync(Product p)
 		{
 			context.Remove(p);
-			context.SaveChanges();
+			await context.SaveChangesAsync();
 		}
-		public void SaveProduct(Product p)
+		
+		public async Task SaveProductAsync(Product p)
 		{
-			// ((List<Tag>)p.ProductTags).AddRange(tags.Distinct());
-			context.SaveChanges();
+			await context.SaveChangesAsync();
 		}
 
-
-		public void CreateTag(Tag t)
+		public async Task CreateTagAsync(Tag t)
 		{
 			context.Add(t);
-			context.SaveChanges();
+			await context.SaveChangesAsync();
 		}
-		public void DeleteTag(Tag t)
+		
+		public async Task DeleteTagAsync(Tag t)
 		{
 			context.Remove(t);
-			context.SaveChanges();
+			await context.SaveChangesAsync();
 		}
-		public void SaveTag(Tag t)
+		
+		public async Task SaveTagAsync(Tag t)
 		{
-			context.SaveChanges();
+			await context.SaveChangesAsync();
 		}
 
-		public void CreateType(ProductType type)
+		public async Task CreateTypeAsync(ProductType type)
 		{
 			context.Add(type);
-			context.SaveChanges();
+			await context.SaveChangesAsync();
 		}
-		public void DeleteType(ProductType type)
+		
+		public async Task DeleteTypeAsync(ProductType type)
 		{
 			context.Remove(type);
-			context.SaveChanges();
+			await context.SaveChangesAsync();
 		}
-		public void SaveType(ProductType type)
+		
+		public async Task SaveTypeAsync(ProductType type)
 		{
-			context.SaveChanges();
+			await context.SaveChangesAsync();
 		}
 	}
 }

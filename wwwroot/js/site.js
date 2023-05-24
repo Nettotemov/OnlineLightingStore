@@ -107,7 +107,6 @@ $(document).on("click", ".pagination-btn", function (ev) {
 	$('#spinner-border').show();
 	let path = ev.target.baseURI.split("?"); // забираем путь
 	let page = ev.target.value;
-	// console.log(ev);
 	var token = GetAntiForgeryToken();
 	let prodview = document.getElementById('prod-view');
 	if (typeof page !== 'undefined') {
@@ -171,7 +170,7 @@ $(document).on("click", ".pagination-btn", function (ev) {
 						let oldPrice = productJson[i].OldPrice;
 						postWrp = document.createElement("div");
 						postWrp.classList.add("search-card__wrapper");
-						postWrp.innerHTML = `<a class="search-card__info" href="/catalog/${productJson[i].Name}/${productJson[i].ProductID}">
+						postWrp.innerHTML = `<a class="search-card__info" href="/catalog/${productJson[i].Name}/${productJson[i].Id}">
 							<div id="img-container">
     							<div class="search-card__image-wrapper">
     								<img class="search-card__image" src="${productJson[i].MainPhoto}">
@@ -179,11 +178,11 @@ $(document).on("click", ".pagination-btn", function (ev) {
   							</div>
   							<div class="footer-card__wrapper">
 								<p class="footer-card__text">${productJson[i].Name}</p>
-								<p class="footer-card__price">${price.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' })}</p>
+								<p class="footer-card__price">${price.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 })}</p>
     						</div>
 						</a>
-						<form id="ProductID=${productJson[i].ProductID}" class="addToCart" method="post" action="/Cart" >
-							<input type="hidden" name="ProductID" id="pr_ProductID" value="${productJson[i].ProductID}" />
+						<form id="ProductID=${productJson[i].Id}" class="addToCart" method="post" action="/Cart" >
+							<input type="hidden" name="ProductID" id="pr_ProductID" value="${productJson[i].Id}" />
 							<input type="hidden" name="returnUrl" value="${document.location.href}" />
 							<button type="submit" class="btn-addToCart form-catalog__text" style="float:right">
 								Добавить в корзину
@@ -210,19 +209,6 @@ $('.catalogForm-sub').on('click', '.form__clear', function (ev) {
 
 	createURL();
 });
-// function autoCheckPagination() {
-// 	const path = document.location.pathname.slice(-1);
-// 	let paging = document.getElementById('pagingbuttons');
-// 	var btns = paging.getElementsByClassName("page-item");	
-
-// 	for (var i = 0; i < btns.length; i++) {
-// 		if (path == i + 1)
-// 		{
-// 			btns[i].classList.add("active");
-// 		}
-// 	}
-// }
-// autoCheckPagination();
 
 $('.catalogForm-sub').on('change click', '.autocomplete__results-item, .autocomplete__clear', function (event) {
 	let searchName = document.querySelector(".searchByName");
@@ -319,7 +305,7 @@ function loadProductView(ev) {
 					let oldPrice = productJson[i].OldPrice;
 					postWrp = document.createElement("div");
 					postWrp.classList.add("search-card__wrapper");
-					postWrp.innerHTML = `<a class="search-card__info" href="/catalog/${productJson[i].Name}/${productJson[i].ProductID}">
+					postWrp.innerHTML = `<a class="search-card__info" href="/catalog/${productJson[i].Name}/${productJson[i].Id}">
 						<div id="img-container">
     						<div class="search-card__image-wrapper">
     							<img class="search-card__image" src="${productJson[i].MainPhoto}">
@@ -327,11 +313,11 @@ function loadProductView(ev) {
   						</div>
   						<div class="footer-card__wrapper">
 							<p class="footer-card__text">${productJson[i].Name}</p>
-							<p class="footer-card__price">${price.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB' })}</p>
+							<p class="footer-card__price">${price.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 })}</p>
     					</div>
 					</a>
-					<form id="ProductID=${productJson[i].ProductID}" class="addToCart" method="post" action="/Cart" >
-						<input type="hidden" name="ProductID" id="pr_ProductID" value="${productJson[i].ProductID}" />
+					<form id="ProductID=${productJson[i].Id}" class="addToCart" method="post" action="/Cart" >
+						<input type="hidden" name="ProductID" id="pr_ProductID" value="${productJson[i].Id}" />
 						<input type="hidden" name="returnUrl" value="${document.location.href}" />
 						<button type="submit" class="btn-addToCart form-catalog__text" style="float:right">
 							Добавить в корзину
@@ -344,36 +330,6 @@ function loadProductView(ev) {
 			}
 		})
 }
-
-$(document).ready(function () {
-	const windowWidth = window.innerWidth;
-	console.log(windowWidth);
-	// converterPhoto("photo")
-});
-
-// function converterPhoto(photo){
-// 	let detect = new MobileDetect(window.navigator.userAgent)
-// 	let arrStr = photo.split("/");
-// 	arrStr[3] += "/small"
-// 	let photoName = arrStr[4].split('.')
-// 	arrStr[4] = photoName[0];
-// 	let str = "";
-
-// 	if (detect.phone()) {
-// 		arrStr[4] += ".webp"
-// 		str = arrStr.join("/");
-// 		console.log(str);
-// 		return str;
-// 	}
-// 	else {
-// 		arrStr[4] += ".jpg"
-// 		str = arrStr.join("/");
-// 		return str;
-// 	}
-// };
-
-
-
 
 $('.searchByName').on('input', function (ev) {
 	let searchName = document.querySelector(".searchByName").value
@@ -722,22 +678,15 @@ $(document).ready(function () {
 			});
 		}
 	});
+});
 
-	// $("#callback-form").submit(function () { //Change
-	// 	var th = $(this);
-	// 	$.ajax({
-	// 		type: "POST",
-	// 		url: "contacts", //Change
-	// 		data: th.serialize()
-	// 	}).done(function () {
-	// 		console.log("Ok");
-	// 		// $(".modal-wr2").addClass("active");
-	// 		// setTimeout(function () {
-	// 		// 	// Done Functions
-	// 		// 	$(".modal-wr2").removeClass("active");
-	// 		// 	th.trigger("reset");
-	// 		// }, 3000);
-	// 	});
-	// 	return false;
-	// });
+$(document).ready(function () {
+	if (!localStorage.getItem("cookieAccepted")) {
+		document.getElementById("cookie-notification").style.display = "flex";
+	}
+
+	document.getElementById("accept-cookie").addEventListener("click", function () {
+		localStorage.setItem("cookieAccepted", true);
+		document.getElementById("cookie-notification").style.display = "none";
+	});
 });

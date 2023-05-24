@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using LampStore.Infrastructure;
 using LampStore.Models;
+using LampStore.Models.ProductsPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace LampStore.Pages
@@ -27,7 +28,7 @@ namespace LampStore.Pages
 
 		public async Task<IActionResult> OnPostAsync(long productId, string returnUrl, int quantityProducts = 1)
 		{
-			Product? product = await repository.Products.FirstOrDefaultAsync(p => p.ProductID == productId);
+			Product? product = await repository.Products.FirstOrDefaultAsync(p => p.Id == productId);
 
 			if (product != null)
 			{
@@ -43,13 +44,13 @@ namespace LampStore.Pages
 
 		public IActionResult OnPostRemove(long productId, string returnUrl)
 		{
-			Cart.RemoveLine(Cart.Lines.First(cl => cl.Product.ProductID == productId).Product);
+			Cart.RemoveLine(Cart.Lines.First(cl => cl.Product.Id == productId).Product);
 			return RedirectToPage(new { returnUrl = returnUrl });
 		}
 
 		public IActionResult OnPostRecalculation(long productId, int quantityProducts, string returnUrl)
 		{
-			Cart.Recalculation(Cart.Lines.First(cl => cl.Product.ProductID == productId).Product, quantityProducts);
+			Cart.Recalculation(Cart.Lines.First(cl => cl.Product.Id == productId).Product, quantityProducts);
 			return RedirectToPage(new { returnUrl = returnUrl });
 		}
 	}

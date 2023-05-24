@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Linq;
 using LampStore.Models;
+using LampStore.Models.CollectionsLights;
+using LampStore.Models.LightsModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace LampStore.Pages;
@@ -10,22 +12,28 @@ public class IndexModel : PageModel
 {
 	private IAboutPageRepository aboutRepository;
 	private ICategoryRepository categoryRepository;
+	private ICollectionLight collectionsRepository;
+	private IModelLight lightsModelsRepository;
 
-	public IndexModel(IAboutPageRepository aboutRepo, ICategoryRepository categoryRepo)
+	public IndexModel(IAboutPageRepository aboutRepo, ICategoryRepository categoryRepo, ICollectionLight collectionsRepo, IModelLight lightsModelsRepo)
 	{
 		aboutRepository = aboutRepo;
 		categoryRepository = categoryRepo;
+		collectionsRepository = collectionsRepo;
+		lightsModelsRepository = lightsModelsRepo;
 	}
-
-	public string? H1 { get; set; }
-	public string? Img { get; set; }
-
 	public List<AboutPage> DisplayAboutPages { get; private set; } = new();
 	public List<Category> DisplayCategory { get; private set; } = new();
+	public List<CollectionLight> DisplayCollectionsPages { get; private set; } = new();
+	public List<ModelLight> DisplayLightsModelsPages { get; private set; } = new();
+
+	public int countNode = 0;
 
 	public async Task OnGetAsync()
 	{
-		DisplayAboutPages = await aboutRepository.AboutPages.Select(p => p).ToListAsync();
-		DisplayCategory = await categoryRepository.Categorys.Select(c => c).ToListAsync();
+		DisplayAboutPages = await aboutRepository.AboutPages.Where(p => p.DisplayHomePage == true).ToListAsync();
+		DisplayCategory = await categoryRepository.Categorys.Where(c => c.DisplayHomePage == true).ToListAsync();
+		DisplayCollectionsPages = await collectionsRepository.CollectionLight.Where(c => c.IsAvailable == true && c.IsHomePage == true).ToListAsync();
+		DisplayLightsModelsPages = await lightsModelsRepository.LightsModels.Where(c => c.IsAvailable == true && c.IsHomePage == true).ToListAsync();
 	}
 }

@@ -13,12 +13,12 @@
 <div class="mt-13">
 	<div class="col-12 border-b mb-per-4">
 		<div class="row justify-content-between align-items-xl-center">
-			<div class="col-12 col-xl-6">
+			<div class="col-12 col-xl-5">
 				<div class="img-center__wrapper">
 					<img class="img-responsive" src="@Model.categoryCard?.CategoryImg">
 				</div>
 			</div>
-			<div class="col-md-12 col-xl-5 active">
+			<div class="col-md-12 col-xl-6 active">
 				<h1 class="h1__caption mb-per-5">@Model.categoryCard?.CategoryName</h1>
 				<p class="p__caption mb-per-5">@Model.categoryCard?.Description</p>
 			</div>
@@ -29,12 +29,12 @@
 	{
 		<div class="col-12 border-b mb-per-4">
 			<div class="row justify-content-between align-items-xl-center">
-				<div class="col-12 col-xl-6">
+				<div class="col-12 col-xl-5">
 					<div class="img-center__wrapper">
 						<img class="img-responsive" src="@Model.categoryCard?.ImgTwoUrl">
 					</div>
 				</div>
-				<div class="col-md-12 col-xl-5 active">
+				<div class="col-md-12 col-xl-6 active">
 					<h1 class="h1__caption mb-per-5">@Model.categoryCard?.HeadingTwo</h1>
 					<p class="p__caption mb-per-5">@Model.categoryCard?.DescriptionTwo</p>
 				</div>
@@ -49,14 +49,14 @@
 			<div class="row justify-content-between align-items-xl-center">
 				@if (@Model.categoryCard?.DisplaySlider == true && @Model.categoryCard?.Slider != null)
 				{
-					<div class="col-12 col-xl-6">
+					<div class="col-12 col-xl-5">
 						<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="true">
 							<div class="carousel-inner">
 								@{
 									int count = 0;
 								}
 								<div class="carousel-indicators">
-									@for (int i = 1; i <= @Model.categoryCard?.Slider?.Split(',').ToList().Count(); i++)
+									@for (int i = 0; i < @Model.categoryCard?.Slider?.Split(',').ToList().Count(); i++)
 									{
 										<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="@i"
 											class="active" aria-current="true" aria-label="Slide @i"></button>
@@ -95,13 +95,13 @@
 				}
 				else
 				{
-					<div class="col-12 col-xl-6">
+					<div class="col-12 col-xl-5">
 						<div class="img-center__wrapper">
 							<img class="img-responsive" src="@Model.categoryCard?.ImgThreeUrl">
 						</div>
 					</div>
 				}
-				<div class="col-md-12 col-xl-5 active">
+				<div class="col-md-12 col-xl-6 active">
 					<h1 class="h1__caption mb-per-5">@Model.categoryCard?.HeadingThree</h1>
 					<p class="p__caption mb-per-5">@Model.categoryCard?.DescriptionThree</p>
 				</div>
@@ -120,7 +120,7 @@
 		<div class="catalog-list__wrapper mb-per-2">
 			@foreach (var pr in type)
 			{
-				<a asp-page="CardProduct" class="product__wrapper" asp-route-ProductID="@pr.ProductID"
+				<a asp-page="CardProduct" class="product__wrapper" asp-route-ProductID="@pr.Id"
 			asp-route-Name="@pr.Name">
 					<div class="">
 						<div class="product-img__wrapper">
@@ -132,9 +132,9 @@
 								@if (@pr.Discount != null && @pr.OldPrice != null)
 								{
 									@* <p class="tags-wrp">-@pr.Discount%</p> *@
-									<p class="tags-wrp"><s>@pr.OldPrice?.ToString("C", new CultureInfo("ru-RU"))</s></p>
+									<p class="tags-wrp"><s>@pr.OldPrice?.ToString("C0", new CultureInfo("ru-RU"))</s></p>
 								}
-								<p class="product-price">@pr.Price.ToString("C", new CultureInfo("ru-RU"))</p>
+										<p class="product-price">@pr.Price.ToString("C0", new CultureInfo("ru-RU"))</p>
 							</div>
 						</div>
 					</div>
