@@ -1,0 +1,410 @@
+@page "/admin/collections/edit/{id:long}"
+@page "/admin/collections/create"
+@using LampStore.Models.CollectionsLights
+@inherits OwningComponentBase<ICollectionLight>
+@inject IPopupNotification PopupNotification
+@inject IFolderManager FolderManager
+
+<div class="admin-notification__wrapper">
+	<Popup ListNotifications="ListNotifications" />
+</div>
+
+
+<Confirmation @ref="confirmation" OnCancel="OnCancel" OnConfirm="OnConfirm" IsConfirm="confirmationCheckOnDelete"
+	Title=@confirmationTitle>
+	<div class="toast-body">
+		@if (confirmationCheckOnDelete)
+		{
+			<p>Удалить дополнительный блок @AdditionalBlockToBeDelete?.Caption?</p>
+		}
+		else 
+		{
+			<EditForm Model="AdditionalBlock" OnValidSubmit="CreateAdditionalBlockAsync" id="editAdditionalBlock">
+			<DataAnnotationsValidator />
+			<div class="row">
+				<div class="col">
+					<div class="form-group mb-4">
+						<label>ID дополнительного блока</label>
+						<input class="form-control" disabled value="@AdditionalBlock.Id" />
+					</div>
+					<div class="form-group mb-4">
+						<label>ID записей для связи</label>
+						<input class="form-control" disabled value="@AdditionalBlock.CollectionLightId" />
+					</div>
+					<div class="form-group mb-4">
+						<label>Заголовок блока</label>
+						<ValidationMessage For="@(() => AdditionalBlock.Caption)" />
+						<InputText class="form-control" @bind-Value="AdditionalBlock.Caption" />
+					</div>
+					@if (TabIsActive)
+					{
+						<div class="form-group mb-4">
+							<img class="img-fluid" style="height: 250px;" src="@AdditionalBlock.Url">
+							<label>Изображение</label>
+							<ImgManagerControl @bind-ChildName="AdditionalBlock.Url" PathFolder="@urlPath"
+								FolderName="@CollectionPage.Id.ToString()" IsSlider="false" />
+						</div>
+					}
+					else
+					{
+						<div class="form-group mb-4">
+							<label>Изображение можно загзуить после сохрания записи</label>
+						</div>
+					}
+					<div class="form-group mb-4">
+						<label>Содержимое</label>
+						<ValidationMessage For="@(() => AdditionalBlock.Description)" />
+						<InputTextArea class="form-control" @bind-Value="AdditionalBlock.Description" />
+					</div>
+						<div class="form-group">
+							<label>Тип поля</label>
+							<InputSelect class="form-select" @bind-Value="AdditionalBlock.AdditionalBlockType">
+								<option value="">Выберите тип поля для вывода</option>
+								@foreach (var type in Enum.GetValues<AdditionalBlockType>())
+								{
+									<option value="@type">@EnumExtensions.GetDisplayName(type)</option>
+								}
+							</InputSelect>
+						</div>
+						<div class="form-group mb-4">
+							<label>Опубликовано</label>
+							<InputCheckbox class="" @bind-Value="AdditionalBlock.IsAvailable" />
+						</div>
+						<div class="mt-2">
+							<button form="editAdditionalBlock" type="submit" class="btn btn-warning">Сохранить</button>
+						</div>
+				</div>
+			</div>
+			</EditForm>
+		}
+	</div>
+</Confirmation>
+
+<h3 class="bg-@ThemeColor text-white text-center p-1">@TitleText коллекции товаров</h3>
+<TabControl>
+	<TabPage Text="Коллекция" IsActive="true">
+	<h1 class="">Свойства</h1>
+	<EditForm Model="CollectionPage" OnValidSubmit="SaveCollectionPage" id="creatCooperationPageForm">
+		<DataAnnotationsValidator />
+		<div class="row row-cols-2">
+			<div class="col">
+				@if (CollectionPage!.Id != 0)
+				{
+					<div class="form-group mb-4">
+						<label>ID</label>
+						<input class="form-control" disabled value="@CollectionPage.Id" />
+					</div>
+				}
+				<div class="form-group mb-4">
+					<label>Заголовок</label>
+					<ValidationMessage For="@(() => CollectionPage.Name)" />
+					<InputText class="form-control" @bind-Value="CollectionPage.Name" />
+				</div>
+				<div class="form-group mb-4">
+					<label>Описание для привью</label>
+					<ValidationMessage For="@(() => CollectionPage.Description)" />
+					<InputTextArea class="form-control" @bind-Value="CollectionPage.Description" />
+				</div>
+				<div class="form-group mb-4">
+					<label>Опубликовано</label>
+					<InputCheckbox class="" @bind-Value="CollectionPage.IsAvailable" />
+				</div>
+				<div class="form-group mb-4">
+					<label>Показывать на главной</label>
+					<InputCheckbox class="" @bind-Value="CollectionPage.IsHomePage" />
+				</div>
+			</div>
+			<div class="col">
+			@if (TabIsActive)
+			{
+				<div class="form-group mb-4">
+					<img class="img-fluid" style="height: 250px;" src="@CollectionPage.Img">
+					<label>Изображение</label>
+					<ImgManagerControl @bind-ChildName="CollectionPage.Img" PathFolder="@urlPath"
+						FolderName="@CollectionPage.Id.ToString()" IsSlider="false" />
+				</div>
+			}
+			else
+			{
+				<div class="form-group mb-4">
+					<label>Изображение можно загзуить после сохрания записи</label>
+				</div>
+			}
+			</div>
+		</div>
+	</EditForm>
+	<div class="mt-2">
+		<button form="creatCooperationPageForm" type="submit" class="btn btn-@ThemeColor">Сохранить</button>
+		<NavLink class="btn btn-secondary" href="/admin/collections">Отмена</NavLink>
+	</div>
+	</TabPage>
+	<TabPage Text="Дополнительные блоки" IsActive="@true">
+		<table class="table table-sm table-striped table-bordered">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Заголовок блока</th>
+					<th>Изображение</th>
+					<th>Содержимое</th>
+					<th>Тип поля</th>
+					<th>Опубликован</th>
+					<td />
+				</tr>
+			</thead>
+			<tbody>
+				@if(AdditionalBlocksForCollectionData is not null)
+				{
+					@foreach (AdditionalBlocksForCollection item in AdditionalBlocksForCollectionData)
+					{
+						<tr>
+							<td>@item.Id</td>
+							<td>@item.Caption</td>
+							<td><img class="img-fluid" style="height: 80px;" src="@item.Url" alt=""></td>
+							<td>@item.Description</td>
+							<td>@EnumExtensions.GetDisplayName(@item.AdditionalBlockType)</td>
+							<td>@item.IsAvailable</td>
+							<td class="text-center">
+								<button class="btn btn-info btn-sm" @onclick="@(e => ChangeAdditionalBlock(item))">Изменить</button>
+								<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteAdditionalBlock(item))">Удалить</button>
+							</td>
+						</tr>
+					}
+				}
+			</tbody>
+		</table>	
+	</TabPage>
+	<TabPage Text="Добавить дополнительный блок" IsActive="@TabIsActive">
+		<EditForm Model="AdditionalBlock" OnValidSubmit="CreateAdditionalBlockAsync" id="createAdditionalBlock">
+			<DataAnnotationsValidator />
+			<div class="row row-cols-2">
+				<div class="col">
+						<div class="form-group mb-4">
+							<label>ID дополнительного блока</label>
+							<input class="form-control" disabled value="@AdditionalBlock.Id" />
+						</div>
+						<div class="form-group mb-4">
+						<label>ID записей для связи</label>
+							<input class="form-control" disabled value="@AdditionalBlock.CollectionLightId" />
+						</div>
+					<div class="form-group mb-4">
+						<label>Заголовок блока</label>
+						<ValidationMessage For="@(() => AdditionalBlock.Caption)" />
+						<InputText class="form-control" @bind-Value="AdditionalBlock.Caption" />
+					</div>
+					@if (TabIsActive)
+					{
+						<div class="form-group mb-4">
+							<img class="img-fluid" style="height: 250px;" src="@AdditionalBlock.Url">
+							<label>Изображение</label>
+							<ImgManagerControl @bind-ChildName="AdditionalBlock.Url" PathFolder="@urlPath"
+								FolderName="@CollectionPage.Id.ToString()" IsSlider="false" />
+						</div>
+					}
+					else
+					{
+						<div class="form-group mb-4">
+							<label>Изображение можно загзуить после сохрания записи</label>
+						</div>
+					}
+					<div class="form-group mb-4">
+						<label>Содержимое</label>
+						<ValidationMessage For="@(() => AdditionalBlock.Description)" />
+						<InputTextArea class="form-control" @bind-Value="AdditionalBlock.Description" />
+					</div>
+						<div class="form-group">
+							<label>Тип поля</label>
+							<InputSelect class="form-select" @bind-Value="AdditionalBlock.AdditionalBlockType">
+								<option value="">Выберите тип поля для вывода</option>
+								@foreach (var type in Enum.GetValues<AdditionalBlockType>())
+								{
+									<option value="@type">@EnumExtensions.GetDisplayName(type)</option>
+								}
+							</InputSelect>
+						</div>
+						<div class="form-group mb-4">
+							<label>Опубликовано</label>
+							<InputCheckbox class="" @bind-Value="AdditionalBlock.IsAvailable" />
+						</div>
+						<div class="mt-2">
+							<button form="createAdditionalBlock" type="submit" class="btn btn-warning">Сохранить</button>
+							@* <a class="btn btn-secondary" @onclick="@(e => CancellationNewSetting())">Отмена</a> *@
+						</div>
+				</div>
+			</div>
+		</EditForm>
+	</TabPage>
+</TabControl>
+
+@code {
+
+	public ICollectionLight Repository => Service;
+
+	[Inject]
+	public NavigationManager? NavManager { get; set; }
+
+	[Parameter]
+	public long Id { get; set; } = 0;
+	public CollectionLight CollectionPage { get; set; } = new CollectionLight();
+	public bool TabIsActive { get; set; } = false;
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (Id != 0)
+		{
+			await UpdateDataAsync();
+			TabIsActive = true;
+		}
+	}
+
+	private List<Notification> ListNotifications { get; set; } = new();
+	protected override async Task OnParametersSetAsync()
+	{
+		if (Id != 0)
+		{
+			CollectionPage = await Repository.CollectionLight.FirstOrDefaultAsync(с => с.Id == Id) ?? new();
+		}
+		ListNotifications = await PopupNotification.GetItems();
+		StateHasChanged();
+	}
+
+	private string urlPath = "imegs/img-collections/";
+	public async Task SaveCollectionPage()
+	{
+		bool isCheckName = await CheckName(CollectionPage.Name);
+		if (isCheckName)
+		{
+			Notification notification = new Notification(1, "Ошибка", "Коллекция с таким названием уже существует. Измените название:", CollectionPage.Name);
+			PopupNotification.AddItem(notification);
+			return;
+		}
+		if (Id == 0)
+		{
+			await Repository.CreateCollectionAsync(CollectionPage);
+			await FolderManager.CeateDirectoryAsync(urlPath, Convert.ToInt64(CollectionPage.Id));
+			if (CollectionPage.Id != 0)
+			{
+				TabIsActive = true;
+				GetEditUrl(Convert.ToInt64(CollectionPage.Id));
+				NavManager?.NavigateTo(GetEditUrl(Convert.ToInt64(CollectionPage.Id)));
+				Notification notification = new Notification(1, "Старница сохранена", "Страница коллекции добавлена", CollectionPage.Name);
+				PopupNotification.AddItem(notification);
+				StateHasChanged();
+			}
+		}
+		else
+		{
+			await Repository.SaveCollectionAsync(CollectionPage);
+			Notification notification = new Notification(1, "Изменения сохранены", "Запись отредактирована: Страница коллекции под ID", Id.ToString());
+			PopupNotification.AddItem(notification);
+			NavManager?.NavigateTo("/admin/collections");
+		}
+	}
+	public string GetEditUrl(long id) => $"/admin/collections/edit/{id}";
+
+	public string ThemeColor => Id == 0 ? "primary" : "warning";
+	public string TitleText => Id == 0 ? "Создание" : "Редактирование";
+}
+
+
+@code {
+
+	private async Task UpdateDataAsync()
+	{
+		AdditionalBlocksForCollectionData = await Repository.AdditionalBlocksInCollection.Where(b => b.CollectionLightId == Id).ToListAsync();
+		await InvokeAsync(StateHasChanged);
+	}
+
+	public long IdAdditionalBlock { get; set; } = 0;
+	private IEnumerable<AdditionalBlocksForCollection> AdditionalBlocksForCollectionData { get; set; } = Enumerable.Empty<AdditionalBlocksForCollection>();
+	public AdditionalBlocksForCollection AdditionalBlock { get; set; } = new AdditionalBlocksForCollection();
+	
+	public async Task CreateAdditionalBlockAsync()
+	{
+		if (IdAdditionalBlock == 0)
+		{
+			AdditionalBlock.CollectionLightId = Convert.ToInt32(Id);
+			await Repository.CreateAdditionalBlocksForCollectionAsync(AdditionalBlock);
+			Notification notification = new Notification(1, "Блок сохранен", "Новый блок добавлен", AdditionalBlock.Caption);
+			PopupNotification.AddItem(notification);
+			AdditionalBlock = new();
+			await UpdateDataAsync();
+		}
+		else
+		{
+			AdditionalBlock.CollectionLightId = Convert.ToInt32(Id);
+			await Repository.SaveAdditionalBlocksForCollectionAsync(AdditionalBlock);
+			Notification notification = new Notification(1, "Изменения сохранены", "Дополнительное поле изменено", AdditionalBlock.Id.ToString());
+			PopupNotification.AddItem(notification);
+			confirmation?.Hide();
+			IdAdditionalBlock = 0;
+			AdditionalBlock = new();
+			await UpdateDataAsync();
+		}
+	}
+
+	private void DeleteAdditionalBlock(AdditionalBlocksForCollection additionalBlock)
+	{
+		AdditionalBlockToBeDelete = additionalBlock;
+		confirmationCheckOnDelete = true;
+		confirmationTitle = "Удаление дополнительного блока";
+		confirmation?.Show();
+	}
+
+	Confirmation? confirmation;
+	private AdditionalBlocksForCollection? AdditionalBlockToBeDelete { get; set; }
+	private async Task OnConfirm()
+	{
+		if (AdditionalBlockToBeDelete != null)
+		{
+			await Repository.DeleteAdditionalBlocksForCollectionAsync(AdditionalBlockToBeDelete);
+			confirmation?.Hide();
+			Notification notification = new Notification(1, "Удаление дополнительного блока", "Удален дополнительный блок", AdditionalBlockToBeDelete.Caption);
+			PopupNotification.AddItem(notification);
+			AdditionalBlockToBeDelete = null;
+			await UpdateDataAsync();
+		}
+	}
+
+	private void OnCancel()
+	{
+		confirmation?.Hide();
+		IdAdditionalBlock = 0;
+		AdditionalBlock = new();
+		if (confirmationCheckOnDelete = true && AdditionalBlockToBeDelete != null)
+		{
+			Notification notification = new Notification(1, "Отмена удаления", "Отменено удаление дополнительного блока",
+			AdditionalBlockToBeDelete?.Caption);
+			PopupNotification.AddItem(notification);
+			AdditionalBlockToBeDelete = null;
+		}
+		else
+		{
+			Notification notification = new Notification(1, "Отмена редактирования", "Отменено редактирование дополнительного блока",
+			AdditionalBlockToBeDelete?.Caption);
+			PopupNotification.AddItem(notification);
+		}
+	}
+
+}
+
+@code {
+	private bool confirmationCheckOnDelete;
+	private string confirmationTitle = string.Empty;
+	private async Task ChangeAdditionalBlock(AdditionalBlocksForCollection additionalBlock)
+	{
+		IdAdditionalBlock = additionalBlock.Id;
+		confirmationCheckOnDelete = false;
+		confirmationTitle = "Редактирование дополнительного блока";
+		AdditionalBlock = await Repository.AdditionalBlocksInCollection.FirstOrDefaultAsync(b => b.Id == additionalBlock.Id) ?? new();
+		confirmation?.Show();
+	}
+
+	private async Task<bool> CheckName(string name)
+	{
+		var collectionsNames = await Repository.CollectionLight.Select(c => c.Name).ToListAsync();
+		var result = collectionsNames.Any(n => string.Equals(n, name, StringComparison.CurrentCultureIgnoreCase));
+
+		return result;
+	}
+}

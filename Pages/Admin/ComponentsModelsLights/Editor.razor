@@ -1,0 +1,427 @@
+@page "/admin/models-lights/edit/{id:long}"
+@page "/admin/models-lights/create"
+@using LampStore.Models.LightsModels
+@using LampStore.Models.CollectionsLights
+@inherits OwningComponentBase<IModelLight>
+@inject IPopupNotification PopupNotification
+@inject IFolderManager FolderManager
+
+<div class="admin-notification__wrapper">
+	<Popup ListNotifications="ListNotifications" />
+</div>
+
+<Confirmation @ref="confirmation" OnCancel="OnCancel" OnConfirm="OnConfirmAsync" IsConfirm="confirmationCheckOnDelete"
+	Title=@confirmationTitle>
+	<div class="toast-body">
+		@if (confirmationCheckOnDelete)
+		{
+			<p>Удалить дополнительный блок @AdditionalBlockToBeDelete?.Caption?</p>
+		}
+		else 
+		{
+			<EditForm Model="AdditionalBlock" OnValidSubmit="CreateAdditionalBlockAsync" id="editAdditionalBlock">
+			<DataAnnotationsValidator />
+			<div class="row">
+				<div class="col">
+					<div class="form-group mb-4">
+						<label>ID дополнительного блока</label>
+						<input class="form-control" disabled value="@AdditionalBlock.Id" />
+					</div>
+					<div class="form-group mb-4">
+						<label>ID записей для связи</label>
+						<input class="form-control" disabled value="@AdditionalBlock.ModelLightId" />
+					</div>
+					<div class="form-group mb-4">
+						<label>Заголовок блока</label>
+						<ValidationMessage For="@(() => AdditionalBlock.Caption)" />
+						<InputText class="form-control" @bind-Value="AdditionalBlock.Caption" />
+					</div>
+					@if (TabIsActive)
+					{
+						<div class="form-group mb-4">
+							<img class="img-fluid" style="height: 250px;" src="@AdditionalBlock.Url">
+							<label>Изображение</label>
+							<ImgManagerControl @bind-ChildName="AdditionalBlock.Url" PathFolder="@UrlPath"
+								FolderName="@ModelLightPage.Id.ToString()" IsSlider="false" />
+						</div>
+					}
+					else
+					{
+						<div class="form-group mb-4">
+							<label>Изображение можно загзуить после сохрания записи</label>
+						</div>
+					}
+					<div class="form-group mb-4">
+						<label>Содержимое</label>
+						<ValidationMessage For="@(() => AdditionalBlock.Description)" />
+						<InputTextArea class="form-control" @bind-Value="AdditionalBlock.Description" />
+					</div>
+						<div class="form-group">
+							<label>Тип поля</label>
+							<InputSelect class="form-select" @bind-Value="AdditionalBlock.AdditionalBlockType">
+								<option value="">Выберите тип поля для вывода</option>
+								@foreach (var type in Enum.GetValues<AdditionalBlockType>())
+								{
+									<option value="@type">@EnumExtensions.GetDisplayName(type)</option>
+								}
+							</InputSelect>
+						</div>
+						<div class="form-group mb-4">
+							<label>Опубликовано</label>
+							<InputCheckbox class="" @bind-Value="AdditionalBlock.IsAvailable" />
+						</div>
+						<div class="mt-2">
+							<button form="editAdditionalBlock" type="submit" class="btn btn-warning">Сохранить</button>
+						</div>
+				</div>
+			</div>
+			</EditForm>
+		}
+	</div>
+</Confirmation>
+
+
+<h3 class="bg-@ThemeColor text-white text-center p-1">@TitleText модели для коллекции товаров</h3>
+<TabControl>
+	<TabPage Text="Модель для коллекции" IsActive="true">
+		<h1 class="">Свойства</h1>
+		<EditForm Model="ModelLightPage" OnValidSubmit="SaveModelLightPageAsync" id="creatModelLightForm">
+			<DataAnnotationsValidator />
+			<div class="row row-cols-2">
+				<div class="col">
+					@if (ModelLightPage!.Id != 0)
+					{
+						<div class="form-group mb-4">
+							<label>ID</label>
+							<input class="form-control" disabled value="@ModelLightPage.Id" />
+						</div>
+					}
+					<div class="form-group mb-4">
+						<label>Заголовок</label>
+						<ValidationMessage For="@(() => ModelLightPage.Name)" />
+						<InputText class="form-control" @bind-Value="ModelLightPage.Name" />
+					</div>
+					<div class="form-group mb-4">
+						<label>Описание для привью</label>
+						<ValidationMessage For="@(() => ModelLightPage.Description)" />
+						<InputTextArea class="form-control" @bind-Value="ModelLightPage.Description" />
+					</div>
+					<div class="form-group mb-4">
+						<label>Коллекция</label>
+						<ValidationMessage For="@(() => ModelLightPage.CollectionLightId)" />
+						<InputSelect @bind-Value="ModelLightPage.CollectionLightId" class="form-select">
+							<option value="">Выберите колекцию продукта</option>
+								@foreach (var item in CollectionsModelsData)
+								{
+									<option value="@item.Id">@item.Name</option>
+								}
+						</InputSelect>
+					</div>
+					<div class="form-group mb-4">
+						<label>Опубликовано</label>
+						<InputCheckbox class="" @bind-Value="ModelLightPage.IsAvailable" />
+					</div>
+					<div class="form-group mb-4">
+						<label>Показывать на главной</label>
+						<InputCheckbox class="" @bind-Value="ModelLightPage.IsHomePage" />
+					</div>
+				</div>
+				<div class="col">
+					@if (TabIsActive)
+					{
+						<div class="form-group mb-4">
+							<img class="img-fluid" style="height: 250px;" src="@ModelLightPage.Img">
+							<label>Изображение</label>
+							<ImgManagerControl @bind-ChildName="ModelLightPage.Img" PathFolder="@UrlPath"
+								FolderName="@ModelLightPage.Id.ToString()" IsSlider="false" />
+						</div>
+					}
+					else
+					{
+						<div class="form-group mb-4">
+							<label>Изображение можно загзуить после сохрания записи</label>
+						</div>
+					}
+				</div>
+			</div>
+		</EditForm>
+		<div class="mt-2">
+			<button form="creatModelLightForm" type="submit" class="btn btn-@ThemeColor">Сохранить</button>
+			<NavLink class="btn btn-secondary" href="/admin/models-lights">Отмена</NavLink>
+		</div>
+	</TabPage>
+	<TabPage Text="Дополнительные блоки" IsActive="@true">
+		<table class="table table-sm table-striped table-bordered">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Заголовок блока</th>
+					<th>Изображение</th>
+					<th>Содержимое</th>
+					<th>Тип поля</th>
+					<th>Опубликован</th>
+					<td />
+				</tr>
+			</thead>
+			<tbody>
+				@if(AdditionalBlocksForModelLightData is not null)
+				{
+					@foreach (AdditionalBlocksForModelLight item in AdditionalBlocksForModelLightData)
+					{
+						<tr>
+							<td>@item.Id</td>
+							<td>@item.Caption</td>
+							<td><img class="img-fluid" style="height: 80px;" src="@item.Url"></td>
+							<td>@item.Description</td>
+							<td>@EnumExtensions.GetDisplayName(@item.AdditionalBlockType)</td>
+							<td>@item.IsAvailable</td>
+							<td class="text-center">
+								<button class="btn btn-info btn-sm" @onclick="@(e => ChangeAdditionalBlock(item))">Изменить</button>
+								<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteAdditionalBlock(item))">Удалить</button>
+							</td>
+						</tr>
+					}
+				}
+			</tbody>
+		</table>	
+	</TabPage>
+	<TabPage Text="Добавить дополнительный блок" IsActive="@TabIsActive">
+		<EditForm Model="AdditionalBlock" OnValidSubmit="CreateAdditionalBlockAsync" id="createAdditionalBlock">
+			<DataAnnotationsValidator />
+			<div class="row row-cols-2">
+				<div class="col">
+						<div class="form-group mb-4">
+							<label>ID дополнительного блока</label>
+							<input class="form-control" disabled value="@AdditionalBlock.Id" />
+						</div>
+						<div class="form-group mb-4">
+						<label>ID записей для связи</label>
+							<input class="form-control" disabled value="@AdditionalBlock.ModelLightId" />
+						</div>
+					<div class="form-group mb-4">
+						<label>Заголовок блока</label>
+						<ValidationMessage For="@(() => AdditionalBlock.Caption)" />
+						<InputText class="form-control" @bind-Value="AdditionalBlock.Caption" />
+					</div>
+					@if (TabIsActive)
+					{
+						<div class="form-group mb-4">
+							<img class="img-fluid" style="height: 250px;" src="@AdditionalBlock.Url">
+							<label>Изображение</label>
+							<ImgManagerControl @bind-ChildName="AdditionalBlock.Url" PathFolder="@UrlPath"
+								FolderName="@ModelLightPage.Id.ToString()" IsSlider="false" />
+						</div>
+					}
+					else
+					{
+						<div class="form-group mb-4">
+							<label>Изображение можно загзуить после сохрания записи</label>
+						</div>
+					}
+					<div class="form-group mb-4">
+						<label>Содержимое</label>
+						<ValidationMessage For="@(() => AdditionalBlock.Description)" />
+						<InputTextArea class="form-control" @bind-Value="AdditionalBlock.Description" />
+					</div>
+						<div class="form-group">
+							<label>Тип поля</label>
+							<InputSelect class="form-select" @bind-Value="AdditionalBlock.AdditionalBlockType">
+								<option value="">Выберите тип поля для вывода</option>
+								@foreach (var type in Enum.GetValues<AdditionalBlockType>())
+								{
+									<option value="@type">@EnumExtensions.GetDisplayName(type)</option>
+								}
+							</InputSelect>
+						</div>
+						<div class="form-group mb-4">
+							<label>Опубликовано</label>
+							<InputCheckbox class="" @bind-Value="AdditionalBlock.IsAvailable" />
+						</div>
+						<div class="mt-2">
+							<button form="createAdditionalBlock" type="submit" class="btn btn-warning">Сохранить</button>
+							@* <a class="btn btn-secondary" @onclick="@(e => CancellationNewSetting())">Отмена</a> *@
+						</div>
+				</div>
+			</div>
+		</EditForm>
+	</TabPage>
+</TabControl>
+
+@code {
+
+	public IModelLight Repository => Service;
+
+	[Inject]
+	public NavigationManager? NavManager { get; set; }
+
+	[Parameter]
+	public long Id { get; set; } = 0;
+	public ModelLight ModelLightPage { get; set; } = new ModelLight();
+	public bool TabIsActive { get; set; } = false;
+
+	public IEnumerable<CollectionLight> CollectionsModelsData { get; set; } = Enumerable.Empty<CollectionLight>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		CollectionsModelsData = await Repository.CollectionLight.ToListAsync();
+		if (Id != 0)
+		{
+			await UpdateDataAsync();
+			TabIsActive = true;
+		}
+	}
+
+	private List<Notification> ListNotifications { get; set; } = new();
+	protected override async Task OnParametersSetAsync()
+	{
+		if (Id != 0)
+		{
+			ModelLightPage = Repository.LightsModels.FirstOrDefault(с => с.Id == Id) ?? new();
+		}
+		ListNotifications = await PopupNotification.GetItems();
+		StateHasChanged();
+	}
+
+	private const string UrlPath = "imegs/img-models-lights/";
+	private async Task SaveModelLightPageAsync()
+	{
+		bool isCheckName = await CheckNameAsync(ModelLightPage.Name);
+		if (isCheckName)
+		{
+			Notification notification = new Notification(1, "Ошибка", "Модель с таким названием уже существует. Измените название:", ModelLightPage.Name);
+			PopupNotification.AddItem(notification);
+			return;
+		}
+		
+		if (Id == 0)
+		{
+			ModelLightPage.Img = "imegs/system-img/no-img.png";
+			await Repository.CreateModelLightAsync(ModelLightPage);
+			await FolderManager.CeateDirectoryAsync(UrlPath, Convert.ToInt64(ModelLightPage.Id));
+			
+			if (ModelLightPage.Id != 0)
+			{
+				TabIsActive = true;
+				GetEditUrl(Convert.ToInt64(ModelLightPage.Id));
+				NavManager?.NavigateTo(GetEditUrl(Convert.ToInt64(ModelLightPage.Id)));
+				Notification notification = new Notification(1, "Старница сохранена", "Страница о компании добавлена", ModelLightPage.Name);
+				PopupNotification.AddItem(notification);
+				StateHasChanged();
+			}
+		}
+		else
+		{
+			await Repository.SaveModelLightAsync(ModelLightPage);
+			Notification notification = new Notification(1, "Изменения сохранены", "Запись отредактирована: Страница о компании под номером", Id.ToString());
+			PopupNotification.AddItem(notification);
+			NavManager?.NavigateTo("/admin/models-lights");
+		}
+	}
+	public string GetEditUrl(long id) => $"/admin/models-lights/edit/{id}";
+
+	public string ThemeColor => Id == 0 ? "primary" : "warning";
+	public string TitleText => Id == 0 ? "Создание" : "Редактирование";
+}
+
+@code {
+
+	private async Task UpdateDataAsync()
+	{
+		AdditionalBlocksForModelLightData = await Repository.AdditionalBlocksInModelLight.Where(b => b.ModelLightId == Id).ToListAsync();
+		await InvokeAsync(StateHasChanged);
+	}
+
+	private long IdAdditionalBlock { get; set; } = 0;
+	private IEnumerable<AdditionalBlocksForModelLight> AdditionalBlocksForModelLightData { get; set; } = Enumerable.Empty<AdditionalBlocksForModelLight>();
+	private AdditionalBlocksForModelLight AdditionalBlock { get; set; } = new AdditionalBlocksForModelLight();
+	
+	private async Task CreateAdditionalBlockAsync()
+	{
+		if (IdAdditionalBlock == 0)
+		{
+			AdditionalBlock.ModelLightId = Convert.ToInt32(Id);
+			await Repository.CreateAdditionalBlocksForModelLightAsync(AdditionalBlock);
+			Notification notification = new Notification(1, "Блок сохранен", "Новый блок добавлен", AdditionalBlock.Caption);
+			PopupNotification.AddItem(notification);
+			AdditionalBlock = new();
+			await UpdateDataAsync();
+		}
+		else
+		{
+			AdditionalBlock.ModelLightId = Convert.ToInt32(Id);
+			await Repository.SaveAdditionalBlocksForModelLightAsync(AdditionalBlock);
+			Notification notification = new Notification(1, "Изменения сохранены", "Дополнительное поле изменено", AdditionalBlock.Id.ToString());
+			PopupNotification.AddItem(notification);
+			confirmation?.Hide();
+			IdAdditionalBlock = 0;
+			AdditionalBlock = new();
+			await UpdateDataAsync();
+		}
+	}
+
+	private void DeleteAdditionalBlock(AdditionalBlocksForModelLight additionalBlock)
+	{
+		AdditionalBlockToBeDelete = additionalBlock;
+		confirmationCheckOnDelete = true;
+		confirmationTitle = "Удаление дополнительного блока";
+		confirmation?.Show();
+	}
+
+	Confirmation? confirmation;
+	private AdditionalBlocksForModelLight? AdditionalBlockToBeDelete { get; set; }
+	private async Task OnConfirmAsync()
+	{
+		if (AdditionalBlockToBeDelete != null)
+		{
+			await Repository.DeleteAdditionalBlocksForModelLightAsync(AdditionalBlockToBeDelete);
+			confirmation?.Hide();
+			Notification notification = new Notification(1, "Удаление дополнительного блока", "Удален дополнительный блок", AdditionalBlockToBeDelete.Caption);
+			PopupNotification.AddItem(notification);
+			AdditionalBlockToBeDelete = null;
+			await UpdateDataAsync();
+		}
+	}
+
+	private void OnCancel()
+	{
+		confirmation?.Hide();
+		IdAdditionalBlock = 0;
+		AdditionalBlock = new();
+		if (confirmationCheckOnDelete = true && AdditionalBlockToBeDelete != null)
+		{
+			Notification notification = new Notification(1, "Отмена удаления", "Отменено удаление дополнительного блока",
+			AdditionalBlockToBeDelete?.Caption);
+			PopupNotification.AddItem(notification);
+			AdditionalBlockToBeDelete = null;
+		}
+		else
+		{
+			Notification notification = new Notification(1, "Отмена редактирования", "Отменено редактирование дополнительного блока",
+			AdditionalBlockToBeDelete?.Caption);
+			PopupNotification.AddItem(notification);
+		}
+	}
+
+}
+
+@code {
+	private bool confirmationCheckOnDelete;
+	private string confirmationTitle = string.Empty;
+	
+	private async Task ChangeAdditionalBlock(AdditionalBlocksForModelLight additionalBlock)
+	{
+		IdAdditionalBlock = additionalBlock.Id;
+		confirmationCheckOnDelete = false;
+		confirmationTitle = "Редактирование дополнительного блока";
+		AdditionalBlock = await Repository.AdditionalBlocksInModelLight.FirstOrDefaultAsync(b => b.Id == additionalBlock.Id) ?? new();
+		confirmation?.Show();
+	}
+
+	private async Task<bool> CheckNameAsync(string name)
+	{
+		var lightsModelsNames = await Repository.LightsModels.Select(c => c.Name).ToListAsync();
+		var result = lightsModelsNames.Any(n => string.Equals(n, name, StringComparison.CurrentCultureIgnoreCase));
+
+		return result;
+	}
+}

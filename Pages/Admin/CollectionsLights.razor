@@ -1,0 +1,172 @@
+@page "/admin/collections"
+@using LampStore.Models.ProductsPages
+@using LampStore.Models.CollectionsLights
+@inherits OwningComponentBase<ICollectionLight>
+@inject IPopupNotification popupNotification
+@inject IFolderManager folderManager
+
+<Confirmation @ref="confirmation" OnCancel="OnCancel" OnConfirm="OnConfirm" IsConfirm="confirmationCheckOnDelete"
+	Title="Удаление коллекции...">
+	<div class="toast-body">
+		@confirmationText
+	</div>
+</Confirmation>
+<div class="admin-notification__wrapper">
+	<Popup ListNotifications="ListNotifications" />
+</div>
+
+@if (loading)
+{
+	<div class="lds-spinner">
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+</div>
+}
+else
+{
+
+	<table class="table table-sm table-striped table-bordered">
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Название коллекции</th>
+			<th>Изображение</th>
+			<th>Описание коллекции</th>
+			<th>Количество товаров</th>
+			<th>Опубликовано</th>
+			<th>Показывать на главной</th>
+			<td />
+		</tr>
+	</thead>
+	<tbody>
+		@if (CollectionsData?.Count() > 0)
+			{
+				@foreach (CollectionLight c in CollectionsData)
+				{
+					<tr>
+						<td>@c.Id</td>
+						<td>@c.Name</td>
+						<td><img class="img-fluid" style="height: 80px;" src=@c.Img></td>
+						<td>@c.Description</td>
+						<td>@c.Products.Select(p => p).Count()</td>
+						<td>@c.IsAvailable</td>
+						<td>@c.IsHomePage</td>
+						<td class="text-center">
+							<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(c.Id)">
+								Изменить
+							</NavLink>
+							<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteCollection(c))">
+								Удалить
+							</button>
+						</td>
+					</tr>
+				}
+			}
+			else
+			{
+				<tr>
+					<td colspan="5" class="text-center">Категории, не найдены.</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+<NavLink class="btn btn-primary" href="/admin/collections/create">Добавить</NavLink>
+
+@code {
+	public ICollectionLight Repository => Service;
+	public IEnumerable<CollectionLight> CollectionsData { get; set; } = Enumerable.Empty<CollectionLight>();
+	private List<Product> Products { get; set; } = new();
+	private bool loading = false;
+
+	protected async override Task OnInitializedAsync()
+	{
+		try
+		{
+			loading = true;
+			await UpdateData();
+			loading = false;
+		}
+		catch (InvalidOperationException ex)
+		{
+			Console.WriteLine("Исключение InvalidOperationException Orders: " + ex.Message);
+			loading = true;
+			await UpdateData();
+			loading = false;
+		}
+	}
+
+	public async Task UpdateData()
+	{
+		Products = await Repository.Products.Select(p => p).ToListAsync();
+		CollectionsData = await Repository.CollectionLight.ToListAsync();
+	}
+
+
+	private bool confirmationCheckOnDelete;
+	private string confirmationText = string.Empty;
+	public void DeleteCollection(CollectionLight c)
+	{
+		if (c.Products.Count() > 0)
+		{
+			confirmationCheckOnDelete = false;
+			confirmationText = $"В коллекции {c.Name} есть товары, удаление невозможно. Перенести товары из данной коллекции и повторите попытку.";
+		}
+		else
+		{
+			confirmationCheckOnDelete = true;
+			confirmationText = $"Вы уверены что хотите удалить коллекцию {c.Name}?";
+		}
+		CollectionLightToBeDelete = c;
+		confirmation?.Show();
+	}
+
+	public string GetEditUrl(long id) => $"/admin/collections/edit/{id}";
+}
+
+@code {
+	Confirmation? confirmation;
+	private CollectionLight? CollectionLightToBeDelete { get; set; }
+	private string urlPath = "wwwroot/imegs/img-collections/";
+	private async Task OnConfirm()
+	{
+		if (CollectionLightToBeDelete != null)
+		{
+			folderManager.DeleteDirectory(urlPath + CollectionLightToBeDelete.Id);
+			await Repository.DeleteCollectionAsync(CollectionLightToBeDelete);
+			confirmation?.Hide();
+			Notification notification = new Notification(1, "Удаление коллекции", "Удалена коллекция",
+			CollectionLightToBeDelete.Name);
+			popupNotification.AddItem(notification);
+			CollectionLightToBeDelete = null;
+			await UpdateData();
+		}
+	}
+
+	private void OnCancel()
+	{
+		Notification notification = new Notification(1, "Отмена удаления", "Отменено удаление коллекции",
+		CollectionLightToBeDelete?.Name);
+		confirmation?.Hide();
+		popupNotification.AddItem(notification);
+		CollectionLightToBeDelete = null;
+	}
+
+	private List<Notification> ListNotifications { get; set; } = new();
+
+	protected override async Task OnParametersSetAsync()
+	{
+		ListNotifications = await popupNotification.GetItems();
+		StateHasChanged();
+	}
+}

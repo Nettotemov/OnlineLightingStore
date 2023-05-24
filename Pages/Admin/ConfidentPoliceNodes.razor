@@ -1,0 +1,145 @@
+@page "/admin/confident-police"
+@inherits OwningComponentBase<IConfidentPolicyRepository>
+@inject IPopupNotification popupNotification
+
+<Confirmation @ref="confirmation" OnCancel="OnCancel" OnConfirm="OnConfirm" IsConfirm="true"
+	Title="Удаление записи политики и конфиденциальности">
+	<div class="toast-body">
+		Вы уверены что хотите удалить запись
+		@if (ConfidentPolicyToBeDelete != null)
+		{
+			<p>@ConfidentPolicyToBeDelete.Name ?</p>
+		}
+	</div>
+</Confirmation>
+<div class="admin-notification__wrapper">
+	<Popup ListNotifications="ListNotifications" />
+</div>
+
+@if (loading)
+{
+	<div class="lds-spinner">
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+</div>
+}
+else
+{
+	<table class="table table-sm table-striped table-bordered">
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>Заголовок</th>
+			<td />
+		</tr>
+	</thead>
+	<tbody>
+		@if (ConfidentPolicyData?.Count() > 0)
+			{
+				@foreach (ConfidentPolicy c in ConfidentPolicyData)
+				{
+					<tr>
+						<td>@c.ID</td>
+						<td>@c.Name</td>
+						<td class="text-center">
+							<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(c.ID)">
+								Изменить
+							</NavLink>
+							<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteConfidentPolicy(c))">
+								Удалить
+							</button>
+						</td>
+					</tr>
+				}
+			}
+			else
+			{
+				<tr>
+					<td colspan="5" class="text-center">Записи, не найдены.</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+<NavLink class="btn btn-primary" href="/admin/confident-police/create">Добавить</NavLink>
+
+@code {
+	public IConfidentPolicyRepository Repository => Service;
+	public IEnumerable<ConfidentPolicy> ConfidentPolicyData { get; set; } = Enumerable.Empty<ConfidentPolicy>();
+	private bool loading = false;
+
+	protected async override Task OnInitializedAsync()
+	{
+		try
+		{
+			loading = true;
+			await UpdateData();
+			loading = false;
+		}
+		catch (InvalidOperationException ex)
+		{
+			Console.WriteLine("Исключение InvalidOperationException About: " + ex.Message);
+			loading = true;
+			await UpdateData();
+			loading = false;
+		}
+	}
+
+	public async Task UpdateData()
+	{
+		ConfidentPolicyData = await Repository.ConfidentPolicys.ToListAsync();
+	}
+
+	public void DeleteConfidentPolicy(ConfidentPolicy confidentPolicy)
+	{
+		ConfidentPolicyToBeDelete = confidentPolicy;
+		confirmation?.Show();
+	}
+
+	public string GetEditUrl(long id) => $"/admin/confident-police/edit/{id}";
+}
+
+@code {
+	Confirmation? confirmation;
+	private ConfidentPolicy? ConfidentPolicyToBeDelete { get; set; }
+	private async Task OnConfirm()
+	{
+		if (ConfidentPolicyToBeDelete != null)
+		{
+			Repository.DeletePolicy(ConfidentPolicyToBeDelete);
+			confirmation?.Hide();
+			Notification notification = new Notification(1, "Удаление записи", "Удалена запись политики и конфиденциальности",
+			ConfidentPolicyToBeDelete.Name);
+			popupNotification.AddItem(notification);
+			ConfidentPolicyToBeDelete = null;
+			await UpdateData();
+		}
+	}
+
+	private void OnCancel()
+	{
+		confirmation?.Hide();
+		Notification notification = new Notification(1, "Отмена удаления", "Отменено удаление записи политики и конфиденциальности",
+		ConfidentPolicyToBeDelete!.Name);
+		popupNotification.AddItem(notification);
+		ConfidentPolicyToBeDelete = null;
+	}
+
+	private List<Notification> ListNotifications { get; set; } = new();
+
+	protected override async Task OnParametersSetAsync()
+	{
+		ListNotifications = await popupNotification.GetItems();
+		StateHasChanged();
+	}
+}

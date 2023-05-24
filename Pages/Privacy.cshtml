@@ -1,0 +1,30 @@
+@page "/privacy"
+@model Privacy
+@{
+	Layout = "_Layout";
+	ViewData["Title"] = "Вопросы и ответы";
+	ViewData["Breadcrumb"] = await Component.InvokeAsync("BreadcrumbSummary", new[] { (url: "/", page: "Главная"),
+(url: "/privacy", page: "Политика конфиденциальности") });
+}
+
+<div class="privacy__wrapper mt-10">
+	<div class="col-12" data-color-section="dark">
+		@if (@Model.DisplayConfidentPolicy.Count() > 0)
+		{
+			@for (int i = 0; i < Model.DisplayConfidentPolicy.Count(); i++)
+			{
+				var idValue = $"plus{i}";
+				var idInput = $"input{i}";
+
+				<a class="privacy__p open-input pt-2 pb-2" data-target="@i">@Model.DisplayConfidentPolicy[i].Name
+					<span id="@idValue" class="icon-plus icon-plus-active"></span>
+				</a>
+				<div id="@idInput" class="search-input__inline" style="display: none;">
+					<div>
+						@Html.Raw(Model.DisplayConfidentPolicy[i].Value)
+					</div>
+				</div>
+			}
+		}
+	</div>
+</div>
