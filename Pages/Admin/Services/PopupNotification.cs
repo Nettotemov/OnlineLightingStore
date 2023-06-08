@@ -4,16 +4,16 @@ namespace LampStore.Pages.Admin.Services
 {
 	public class PopupNotification : IPopupNotification
 	{
-		private List<Notification> ListNotifications { get; set; } = new();
-
-		public Task<List<Notification>> GetItems()
+		public IList<Notification> ListNotifications { get; set; } = new List<Notification>();
+		public void AddItem(Notification notification)
 		{
-			return Task.FromResult(ListNotifications);
+			ListNotifications.Add(notification);
 		}
 
-		public void AddItem(Notification item)
+		public void CreateNotification(string title, string description, string name, int count)
 		{
-			ListNotifications.Add(item);
+			Notification notification = new(count, title, description, name);
+			AddItem(notification);
 		}
 	}
 }

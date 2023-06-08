@@ -1,18 +1,16 @@
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using LampStore.Models.ProductsPages;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
 
-namespace LampStore.Models
+namespace LampStore.Models.ProductsPages
 {
 	public class ProductType
 	{
 		[Key]
 		public int Id { get; set; }
 
-		[Required(ErrorMessage = "Пожалуйста, укажите значение")]
-		public string Name { get; set; } = string.Empty;
+		[Required(ErrorMessage = "Пожалуйста, укажите название")]
+		public string Name { get; set; } = null!;
 
 		[JsonIgnore]
 		[BindNever]

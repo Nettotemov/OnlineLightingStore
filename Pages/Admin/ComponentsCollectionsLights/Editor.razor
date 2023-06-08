@@ -6,7 +6,7 @@
 @inject IFolderManager FolderManager
 
 <div class="admin-notification__wrapper">
-	<Popup ListNotifications="ListNotifications" />
+	<Popup ListNotifications="PopupNotification.ListNotifications" />
 </div>
 
 
@@ -257,14 +257,12 @@
 		}
 	}
 
-	private List<Notification> ListNotifications { get; set; } = new();
 	protected override async Task OnParametersSetAsync()
 	{
 		if (Id != 0)
 		{
 			CollectionPage = await Repository.CollectionLight.FirstOrDefaultAsync(с => с.Id == Id) ?? new();
 		}
-		ListNotifications = await PopupNotification.GetItems();
 		StateHasChanged();
 	}
 

@@ -1,16 +1,14 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Linq;
 using LampStore.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LampStore.Pages;
 
-public class FaqModel : PageModel
+public class Faq : PageModel
 {
 	private IInfoRepository infoRepository;
 
-	public FaqModel(IInfoRepository infoRepo)
+	public Faq(IInfoRepository infoRepo)
 	{
 		infoRepository = infoRepo;
 	}

@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using LampStore.Models;
+using LampStore.Models.AboutPages;
 using LampStore.Models.CollectionsLights;
 using LampStore.Models.LightsModels;
 using Microsoft.EntityFrameworkCore;

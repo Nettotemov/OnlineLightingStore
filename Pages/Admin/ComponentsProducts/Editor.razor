@@ -3,7 +3,6 @@
 @using LampStore.Models.ProductsPages
 @using LampStore.Models.LightsModels
 @using LampStore.Models.CollectionsLights
-@using System.Collections
 @inherits OwningComponentBase<IStoreRepository>
 @inject IPopupNotification PopupNotification
 @inject IFolderManager FolderManager
@@ -182,11 +181,11 @@
 			<div class="form-group mb-4">
 				<img class="img-fluid" style="height: 250px;" src="@Product.MainPhoto">
 				<label>Изображение</label>
-				<ImgManagerControl @bind-ChildName="Product.MainPhoto" PathFolder="@urlPath"
+				<ImgManagerControl @bind-ChildName="Product.MainPhoto" PathFolder="@UrlPath"
 					FolderName="@Product.Id.ToString()" IsSlider="false" />
 			</div>
 			<div class="form-group row">
-				<ImgManagerControl @bind-ChildName="Product.Photos" PathFolder="@urlPath"
+				<ImgManagerControl @bind-ChildName="Product.Photos" PathFolder="@UrlPath"
 					FolderName="@Product.Id.ToString()" IsSlider="true" />
 			</div>
 		</EditForm>
@@ -251,6 +250,8 @@
 	public Product Product { get; set; } = new Product();
 	public List<Category> DisplayedCategories { get; set; } = new();
 	public bool TabIsActive { get; set; } = false;
+	
+	private const string UrlPath = "imegs/img-products/";
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -272,34 +273,29 @@
 		await UpdateDataAsync();
 	}
 
-	private string urlPath = "imegs/img-products/";
 	private async Task SaveProductAsync()
 	{
 		if (Id == 0)
 		{
-			Product.MainPhoto = "imegs/system-img/no-img.png";
 			await Repository.CreateProductAsync(Product);
-			await FolderManager.CeateDirectoryAsync(urlPath, Convert.ToInt64(Product.Id));
+			await FolderManager.CeateDirectoryAsync(UrlPath, Convert.ToInt64(Product.Id));
 			if (Product.Id != 0)
 			{
 				TabIsActive = true;
-				GetEditUrl(Convert.ToInt64(Product.Id));
-				NavManager?.NavigateTo(GetEditUrl(Convert.ToInt64(Product.Id)));
-				Notification notification = new Notification(1, "Товар сохранен", "Товар добавлен", Product.Name);
-				PopupNotification.AddItem(notification);
+				NavManager?.NavigateTo(GetEditUrl(Product.Id));
+				PopupNotification.CreateNotification("Товар сохранен", "Товар добавлен", Product.Name);
 				StateHasChanged();
 			}
 		}
 		else
 		{
 			await Repository.SaveProductAsync(Product);
-			Notification notification = new Notification(1, "Изменения сохранены", "Запись отредактирована", Id.ToString());
-			PopupNotification.AddItem(notification);
+			PopupNotification.CreateNotification("Изменения сохранены", "Запись отредактирована", Id.ToString());
 			NavManager?.NavigateTo("/admin/products");
 		}
 	}
 
-	public string GetEditUrl(long id) => $"/admin/products/edit/{id}";
+	private string GetEditUrl(long id) => $"/admin/products/edit/{id}";
 
 
 	public string ThemeColor => Id == 0 ? "primary" : "warning";
@@ -314,16 +310,16 @@
 
 @code {
 	public long IdTag { get; set; } = 0;
-	public Tag NewTag { get; set; } = new Tag();
+	private Tag NewTag { get; set; } = new ();
 	
 	private IEnumerable<Tag> TagsData { get; set; } = Enumerable.Empty<Tag>();
 
 	public List<Tag> ListAddTags { get; set; } = new();
 	public List<Tag> DisplayProductTags { get; set; } = new();
 
-	public IEnumerable<CollectionLight> CollectionsModelsData { get; set; } = Enumerable.Empty<CollectionLight>();
+	private IEnumerable<CollectionLight> CollectionsModelsData { get; set; } = Enumerable.Empty<CollectionLight>();
 
-	public IEnumerable<ModelLight> ModelsLightsData { get; set; } = Enumerable.Empty<ModelLight>();
+	private IEnumerable<ModelLight> ModelsLightsData { get; set; } = Enumerable.Empty<ModelLight>();
 	
 	private async Task UpdateDataAsync()
 	{
@@ -409,8 +405,8 @@ confirmation?.Show();
 		if (e.Value != null && e.Value.ToString() != "")
 		{
 			Product.CollectionLightId = Convert.ToInt32(e.Value);
-			ModelsLightsData = await Repository.LightsModels.Where(m => m.CollectionLightId ==
-			Product.CollectionLightId).ToListAsync();
+			ModelsLightsData = await Repository.LightsModels
+				.Where(m => m.CollectionLightId == Product.CollectionLightId).ToListAsync();
 			_isModelsLightsSelectDisabled = false;
 		}
 		else 

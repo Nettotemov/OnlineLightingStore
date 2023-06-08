@@ -16,7 +16,7 @@
 	</div>
 </Confirmation>
 <div class="admin-notification__wrapper">
-	<Popup ListNotifications="ListNotifications" />
+	<Popup ListNotifications="PopupNotification.ListNotifications" />
 </div>
 
 
@@ -64,7 +64,7 @@ else
 						<td><img class="img-fluid" style="height: 80px;" src="@p.MainPhoto"></td>
 						<td>@p.Name</td>
 						<td>@p.Artikul</td>
-						<td>@p.Category?.CategoryName</td>
+						<td>@p.Category.CategoryName</td>
 						<td>@p.Price.ToString("c", new CultureInfo("ru-RU"))</td>
 						<td>@p.Discount</td>
 						<td>@p.OldPrice?.ToString("C", new CultureInfo("ru-RU"))</td>
@@ -96,13 +96,16 @@ else
 	</table>
 }
 
-<NavLink class="btn btn-primary" href="/admin/products/create">Добавить</NavLink>
+<button class="btn btn-primary" @onclick="@(e => CreateNewProduct())">
+	Добавить
+</button>
+
 
 @code {
 	public IStoreRepository Repository => Service;
 	public IEnumerable<Product> ProductData { get; set; } = Enumerable.Empty<Product>();
 
-	public List<Category>? DisplayedCategories { get; set; }
+	public IList<Category>? DisplayedCategories { get; set; }
 
 	private bool loading = false;
 
@@ -124,9 +127,15 @@ else
 		}
 	}
 
+	private bool AllowNewProductToBeCreated { get; set; }
+
 	public async Task UpdateData()
 	{
-		DisplayedCategories = await Repository.Category.Select(c => c).Distinct().ToListAsync(); //получение категорий
+		DisplayedCategories = await Repository.Category.Select(c => c).Distinct().ToListAsync();
+		if (DisplayedCategories is not null && DisplayedCategories.Count > 0)
+		{
+			AllowNewProductToBeCreated = true;
+		}
 		ProductData = await Repository.Products.ToListAsync();
 	}
 
@@ -165,12 +174,21 @@ else
 		PopupNotification.AddItem(notification);
 		ProductToBeDelete = null;
 	}
+	
+	[Inject]
+	public NavigationManager? NavManager { get; set; }
 
-	private List<Notification> ListNotifications { get; set; } = new();
-
-	protected override async Task OnParametersSetAsync()
+	private void CreateNewProduct()
 	{
-		ListNotifications = await PopupNotification.GetItems();
-		StateHasChanged();
+		if (!AllowNewProductToBeCreated)
+		{
+			PopupNotification.CreateNotification("Ошибка добавления товара",
+				"Отсутствуют категории для товаров. ",
+				"Добавьте категории и повторите попытку");
+		}
+		else
+		{
+			NavManager?.NavigateTo("/admin/products/create");
+		}
 	}
 }

@@ -1,5 +1,7 @@
 @using LampStore.Services
-@model System.Collections.Generic.List<Settings>
+@using LampStore.Components
+@model IEnumerable<Settings>
+
 <div class="header-animation">
 	<header id="header" class="header">
 		<div class="container">
@@ -20,7 +22,8 @@
 							<a class="nav-link a-btn__header" asp-page="/faq" asp-area="">Информация</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link a-btn__header" asp-page="/about">Компания</a>
+							<a class="nav-link a-btn__header" asp-page="/about" 
+							   asp-route-Id="@HeaderSummaryViewComponent.IdAboutPage">Компания</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link a-btn__header" asp-area=""
@@ -56,7 +59,7 @@
 			</div>
 			<hr class="footer-line__wrapper">
 			<div class="menu-wrapper__items">
-				<a asp-page="/about" class="menu__h3">Компания</a>
+				<a asp-page="/about" asp-route-Id="@HeaderSummaryViewComponent.IdAboutPage" class="menu__h3">Компания</a>
 				<a asp-page="/faq" asp-area="" class="menu__h3">Информация</a>
 				<a asp-area="" asp-page="/cooperationpages" class="menu__h3">Сотрудничество</a>
 				<a asp-area="" asp-page="/contacts" class="menu__h3">Контакты</a>

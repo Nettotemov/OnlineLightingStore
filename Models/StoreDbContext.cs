@@ -1,6 +1,7 @@
 using LampStore.Models.CollectionsLights;
 using LampStore.Models.LightsModels;
 using LampStore.Models.ProductsPages;
+using LampStore.Models.AboutPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace LampStore.Models
@@ -18,6 +19,7 @@ namespace LampStore.Models
 		public DbSet<Order> Orders => Set<Order>();
 
 		public DbSet<AboutPage> AboutPages => Set<AboutPage>();
+		public DbSet<AdditionalBlocksForAboutPage> AdditionalBlocksForAboutPage => Set<AdditionalBlocksForAboutPage>();
 
 		public DbSet<Info> InfoPages => Set<Info>();
 		public DbSet<InfoProp> InfoProp => Set<InfoProp>();

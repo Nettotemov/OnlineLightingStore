@@ -5,7 +5,8 @@
 		<h2>Спасибо за заказ!</h2>
 		<p>Спасибо за размещение заказа #@OrderId</p>
 		<p>Мы с вами свяжемся как можно скорее.</p>
-		<a class="form-catalog__text cart__btn-checkout" asp-controller="Home">Вернуться в каталог</a>
+		<a class="form-catalog__text cart__btn-checkout" asp-page="/catalog" asp-route-productPage="1"
+		   asp-route-sortOrder="0">Вернуться в каталог</a>
 	</div>
 </div>
 

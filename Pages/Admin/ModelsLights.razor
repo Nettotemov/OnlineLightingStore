@@ -12,7 +12,7 @@
 	</div>
 </Confirmation>
 <div class="admin-notification__wrapper">
-	<Popup ListNotifications="ListNotifications" />
+	<Popup ListNotifications="PopupNotification.ListNotifications" />
 </div>
 
 @if (loading)
@@ -162,13 +162,5 @@ else
 		confirmation?.Hide();
 		PopupNotification.AddItem(notification);
 		ModelLightToBeDelete = null;
-	}
-
-	private List<Notification> ListNotifications { get; set; } = new();
-
-	protected override async Task OnParametersSetAsync()
-	{
-		ListNotifications = await PopupNotification.GetItems();
-		StateHasChanged();
 	}
 }

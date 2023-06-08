@@ -2,7 +2,8 @@ namespace LampStore.Pages.Admin.Services.Interface
 {
 	public interface IPopupNotification
 	{
-		Task<List<Notification>> GetItems();
-		void AddItem(Notification item);
+		IList<Notification> ListNotifications { get; set; }
+		void AddItem(Notification notification);
+		void CreateNotification(string title, string description, string name, int count = 1);
 	}
 }

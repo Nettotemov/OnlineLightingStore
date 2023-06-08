@@ -5,7 +5,7 @@
 @inject IFolderManager folderManager
 
 <div class="admin-notification__wrapper">
-	<Popup ListNotifications="ListNotifications" />
+	<Popup ListNotifications="popupNotification.ListNotifications" />
 </div>
 
 <Confirmation @ref="confirmation" OnCancel="OnCancel" OnConfirm="OnConfirm" IsConfirm="confirmationCheckOnDelete"
@@ -225,7 +225,6 @@
 		}
 	}
 
-	private List<Notification> ListNotifications { get; set; } = new();
 	protected override async Task OnParametersSetAsync()
 	{
 		if (Id != 0)
@@ -233,7 +232,6 @@
 			AdditionalField.InfoId = FaqPage.ID;
 			FaqPage = await Repository.Info.FirstOrDefaultAsync(с => с.ID == Id) ?? new();
 		}
-		ListNotifications = await popupNotification.GetItems();
 		StateHasChanged();
 	}
 

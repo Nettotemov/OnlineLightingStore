@@ -26,7 +26,7 @@ namespace LampStore.Pages
 		public string? SortedName { get; set; }
 
 		public IList<Product> DisplayedProducts { get; private set; } = null!;
-		public IList<Tag> DisplayedTags { get; private set; } = null!;
+		public IList<Tag>? DisplayedTags { get; private set; }
 		public IList<Category> DisplayedCategories { get; private set; } = null!;
 		public SelectList? Category { get; set; }
 		public IList<string> DisplayedColors { get; private set; } = null!;
@@ -73,8 +73,8 @@ namespace LampStore.Pages
 
 			DisplayedProducts = await repository.Products.Where(p => p.IsPublished).ToListAsync();
 			
-			DisplayedTags = await repository.Products
-				.SelectMany(t => t.ProductTags)
+			DisplayedTags = await repository.Tags
+				.Select(t => t)
 				.Distinct()
 				.ToListAsync();
 
@@ -197,7 +197,7 @@ namespace LampStore.Pages
 
 				case SortCatalog.Novelties:
 					return products.OrderByDescending(k => 
-						k.ProductTags.FirstOrDefault(p => p.Value == "Новинка")).ToList();
+						k.ProductTags?.FirstOrDefault(p => p.Value == "Новинка")).ToList();
 
 				default:
 					return products.OrderBy(s => s.Id).ToList();

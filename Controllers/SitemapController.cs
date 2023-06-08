@@ -11,11 +11,11 @@ namespace LampStore.Controllers
 {
     public class SitemapController : Controller
     {
-        private ICatalogRepository repository;
-        private IInfoRepository infoRepository;
-        private ICooperationRepository cooperationRepository;
-        private ICollectionLight collectionRepository;
-        private IModelLight modelLightRepository;
+        private readonly ICatalogRepository repository;
+        private readonly IInfoRepository infoRepository;
+        private readonly ICooperationRepository cooperationRepository;
+        private readonly ICollectionLight collectionRepository;
+        private readonly IModelLight modelLightRepository;
         public SitemapController(ICatalogRepository repo, IInfoRepository infoRepo, ICooperationRepository cooperationRepo, ICollectionLight collectionRepo, IModelLight modelLightRepo)
         {
             repository = repo;
@@ -35,16 +35,16 @@ namespace LampStore.Controllers
             var collections = await GetCollectionsAsync();
             var modelsLights = await GetLightsModelsAsync();
 
-            List<SitemapNode> nodes = new List<SitemapNode>
+            var nodes = new List<SitemapNode>
             {
-            new SitemapNode(Url.Action("Index", "Home")),
-            new SitemapNode(Url.Action("Index", "about")),
-            new SitemapNode(Url.Action("Index", "catalog")),
-            new SitemapNode(Url.Action("Index", "info")),
-            new SitemapNode(Url.Action("Index", "cooperation")),
-            new SitemapNode(Url.Action("Index", "contacts")),
-            new SitemapNode(Url.Action("Index", "collections")),
-            new SitemapNode(Url.Action("Index", "privacy"))
+                new SitemapNode("/"),
+                new SitemapNode("/about"),
+                new SitemapNode("/catalog"),
+                new SitemapNode("/info"),
+                new SitemapNode("/cooperation"),
+                new SitemapNode("/contacts"),
+                new SitemapNode("/collections"),
+                new SitemapNode("/privacy")
             };
 
             foreach (var product in products)
@@ -85,7 +85,7 @@ namespace LampStore.Controllers
 
             foreach (var c in collections)
             {
-                nodes.Add(new SitemapNode(Url.Action(c.Name.ToLower(), "collections"))
+                nodes.Add(new SitemapNode($"/collections/{c.Name.ToLower()}")
                 {
                     ChangeFrequency = ChangeFrequency.Monthly,
                     Priority = 0.5M

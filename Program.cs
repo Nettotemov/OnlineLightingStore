@@ -1,4 +1,5 @@
 using LampStore.Models;
+using LampStore.Models.AboutPages;
 using LampStore.Models.CollectionsLights;
 using LampStore.Models.LightsModels;
 using LampStore.Models.ProductsPages;

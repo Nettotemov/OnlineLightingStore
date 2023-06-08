@@ -17,7 +17,7 @@ namespace LampStore.Models.ProductsPages
 		[Required(ErrorMessage = "Пожалуйста, введите название продукта")]
 		public string Name { get; set; } = null!;
 		
-		public string MainPhoto { get; set; } = null!;
+		public string MainPhoto { get; set; } = "imegs/system-img/no-img.png";
 		
 		public string? Photos { get; set; }
 

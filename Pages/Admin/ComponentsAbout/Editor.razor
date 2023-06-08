@@ -1,8 +1,84 @@
 @page "/admin/about/edit/{id:long}"
 @page "/admin/about/create"
+@using LampStore.Models.AboutPages
 @inherits OwningComponentBase<IAboutPageRepository>
-@inject IPopupNotification popupNotification
-@inject IFolderManager folderManager
+@inject IPopupNotification PopupNotification
+@inject IFolderManager FolderManager
+
+<div class="admin-notification__wrapper">
+	<Popup ListNotifications="PopupNotification.ListNotifications" />
+</div>
+
+
+<Confirmation @ref="Confirmation" OnCancel="OnCancel" OnConfirm="OnConfirm" IsConfirm="confirmationCheckOnDelete"
+	Title=@confirmationTitle>
+	<div class="toast-body">
+		@if (confirmationCheckOnDelete)
+		{
+			<p>Удалить дополнительный блок @AdditionalBlockToBeDelete?.Caption?</p>
+		}
+		else 
+		{
+			<EditForm Model="AdditionalBlock" OnValidSubmit="CreateAdditionalBlockAsync" id="editAdditionalBlock">
+			<DataAnnotationsValidator />
+			<div class="row">
+				<div class="col">
+					<div class="form-group mb-4">
+						<label>ID дополнительного блока</label>
+						<input class="form-control" disabled value="@AdditionalBlock.Id" />
+					</div>
+					<div class="form-group mb-4">
+						<label>ID записей для связи</label>
+						<input class="form-control" disabled value="@AdditionalBlock.AboutPageId" />
+					</div>
+					<div class="form-group mb-4">
+						<label>Заголовок блока</label>
+						<ValidationMessage For="@(() => AdditionalBlock.Caption)" />
+						<InputText class="form-control" @bind-Value="AdditionalBlock.Caption" />
+					</div>
+					@if (TabIsActive)
+					{
+						<div class="form-group mb-4">
+							<img class="img-fluid" style="height: 250px;" src="@AdditionalBlock.Img" alt="">
+							<label>Изображение</label>
+							<ImgManagerControl @bind-ChildName="AdditionalBlock.Img" PathFolder="@urlPath"
+								FolderName="@AboutPage.Id.ToString()" IsSlider="false" />
+						</div>
+					}
+					else
+					{
+						<div class="form-group mb-4">
+							<label>Изображение можно загзуить после сохрания записи</label>
+						</div>
+					}
+					<div class="form-group mb-4">
+						<label>Содержимое</label>
+						<ValidationMessage For="@(() => AdditionalBlock.Description)" />
+						<InputTextArea class="form-control" @bind-Value="AdditionalBlock.Description" />
+					</div>
+						<div class="form-group">
+							<label>Тип поля</label>
+							<InputSelect class="form-select" @bind-Value="AdditionalBlock.AdditionalBlockType">
+								<option value="">Выберите тип поля для вывода</option>
+								@foreach (var type in Enum.GetValues<AdditionalBlockType>())
+								{
+									<option value="@type">@EnumExtensions.GetDisplayName(type)</option>
+								}
+							</InputSelect>
+						</div>
+						<div class="form-group mb-4">
+							<label>Опубликовано</label>
+							<InputCheckbox class="" @bind-Value="AdditionalBlock.IsAvailable" />
+						</div>
+						<div class="mt-2">
+							<button form="editAdditionalBlock" type="submit" class="btn btn-warning">Сохранить</button>
+						</div>
+				</div>
+			</div>
+			</EditForm>
+		}
+	</div>
+</Confirmation>
 
 <h3 class="bg-@ThemeColor text-white text-center p-1">@TitleText о компании</h3>
 <TabControl>
@@ -12,82 +88,145 @@
 			<DataAnnotationsValidator />
 			<div class="row row-cols-2">
 				<div class="col">
-					@if (AboutPage!.ID != 0)
+					@if (AboutPage!.Id != 0)
 					{
 						<div class="form-group mb-4">
 							<label>ID</label>
-							<input class="form-control" disabled value="@AboutPage.ID" />
+							<input class="form-control" disabled value="@AboutPage.Id" />
 						</div>
 					}
+						<div class="form-group mb-4">
+							<img class="img-fluid" style="height: 250px;" src="@AboutPage.ImgOneUrl" alt="">
+							<label>Изображение</label>
+							<ImgManagerControl @bind-ChildName="AboutPage.ImgOneUrl" PathFolder="@urlPath"
+							                   FolderName="@AboutPage.Id.ToString()" IsSlider="false"/>
+						</div>
 					<div class="form-group mb-4">
 						<label>Заголовок 1го блока</label>
-						<ValidationMessage For="@(() => AboutPage.HeadingOneNode)" />
-						<InputText class="form-control" @bind-Value="AboutPage.HeadingOneNode" />
+						<ValidationMessage For="@(() => AboutPage.Heading)" />
+						<InputText class="form-control" @bind-Value="AboutPage.Heading" />
 					</div>
 					<div class="form-group mb-4">
 						<label>Описание страницы 1го блока</label>
-						<ValidationMessage For="@(() => AboutPage.ParagraphOneNode)" />
-						<InputTextArea class="form-control" @bind-Value="AboutPage.ParagraphOneNode" />
+						<ValidationMessage For="@(() => AboutPage.Paragraph)" />
+						<InputTextArea class="form-control" @bind-Value="AboutPage.Paragraph" />
 					</div>
 					<div class="form-group mb-4">
 						<label>Показывать на главной</label>
 						<InputCheckbox class="" @bind-Value="AboutPage.DisplayHomePage" />
 					</div>
+					<div class="form-group mb-4">
+						<label>Опубликована</label>
+						<InputCheckbox class="" @bind-Value="AboutPage.IsPublished" />
+					</div>
+					<div class="form-group mb-4">
+						<label>Использовать как главную страницу: О компании</label>
+						<InputCheckbox class="" @bind-Value="AboutPage.MainAboutCompany" />
+					</div>
 				</div>
 				<div class="col">
 					<div class="form-group">
-						<img class="img-fluid" style="height: 250px;" src=@AboutPage.ImgOneUrl>
+						<img class="img-fluid" style="height: 250px;" src=@AboutPage.ImgOneUrl alt="">
 					</div>
 				</div>
 			</div>
 		</EditForm>
 	</TabPage>
-	<TabPage Text="Галерея" IsActive=@TabIsActive>
-		<EditForm Model="AboutPage" OnValidSubmit="SaveAboutPage" id="creatAboutPageForm">
-			<DataAnnotationsValidator />
-			<div class="form-group mb-4">
-				<img class="img-fluid" style="height: 250px;" src="@AboutPage.ImgOneUrl">
-				<label>Изображение</label>
-				<ImgManagerControl @bind-ChildName="AboutPage.ImgOneUrl" PathFolder="@urlPath"
-					FolderName="@AboutPage.ID.ToString()" IsSlider="false" />
-			</div>
-		</EditForm>
-	</TabPage>
-	<TabPage Text="Доп. блок" IsActive="@TabIsActive">
-		<EditForm Model="AboutPage" OnValidSubmit="SaveAboutPage" id="creatAboutPageForm">
+	<TabPage Text="Дополнительные блоки" IsActive="@true">
+    		<table class="table table-sm table-striped table-bordered">
+    			<thead>
+    				<tr>
+    					<th>ID</th>
+    					<th>Заголовок блока</th>
+    					<th>Изображение</th>
+    					<th>Содержимое</th>
+    					<th>Тип поля</th>
+    					<th>Опубликован</th>
+    					<td />
+    				</tr>
+    			</thead>
+    			<tbody>
+    				@if(AdditionalBlocksForAboutPageData is not null)
+    				{
+    					@foreach (var item in AdditionalBlocksForAboutPageData)
+    					{
+    						<tr>
+    							<td>@item.Id</td>
+    							<td>@item.Caption</td>
+    							<td><img class="img-fluid" style="height: 80px;" src="@item.Img" alt=""></td>
+    							<td>@item.Description</td>
+    							<td>@EnumExtensions.GetDisplayName(@item.AdditionalBlockType)</td>
+    							<td>@item.IsAvailable</td>
+    							<td class="text-center">
+    								<button class="btn btn-info btn-sm" @onclick="@(e => ChangeAdditionalBlock(item))">Изменить</button>
+	                                <button class="btn btn-danger btn-sm" @onclick="@(e => DeleteAdditionalBlock(item))">Удалить</button> 
+    							</td>
+    						</tr>
+    					}
+    				}
+    			</tbody>
+		    </table> 
+		</TabPage>
+	<TabPage Text="Доп. блоки" IsActive="@TabIsActive">
+		<EditForm Model="AdditionalBlock" OnValidSubmit="CreateAdditionalBlockAsync" id="createAdditionalBlock">
 			<DataAnnotationsValidator />
 			<div class="row row-cols-2">
 				<div class="col">
-					<div class="form-group">
-						<label>Заголовок 2го блока</label>
-						<InputText class="form-control" @bind-Value="AboutPage.HeadingTwoNode" />
+					<div class="form-group mb-4">
+						<label>ID дополнительного блока</label>
+						<input class="form-control" disabled value="@AdditionalBlock.Id" />
+					</div>
+					<div class="form-group mb-4">
+						<label>ID записей для связи</label>
+						<input class="form-control" disabled value="@AdditionalBlock.AboutPageId" />
+					</div>
+					<div class="form-group mb-4">
+						<label>Заголовок блока</label>
+						<ValidationMessage For="@(() => AdditionalBlock.Caption)" />
+						<InputText class="form-control" @bind-Value="AdditionalBlock.Caption" />
+					</div>
+					@if (TabIsActive)
+					{
+						<div class="form-group mb-4">
+							<img class="img-fluid" style="height: 250px;" src="@AdditionalBlock.Img" alt="">
+							<label>Изображение</label>
+							<ImgManagerControl @bind-ChildName="AdditionalBlock.Img" PathFolder="@urlPath"
+							                   FolderName="@AboutPage.Id.ToString()" IsSlider="false" />
+						</div>
+					}
+					else
+					{
+						<div class="form-group mb-4">
+							<label>Изображение можно загзуить после сохрания записи</label>
+						</div>
+					}
+					<div class="form-group mb-4">
+						<label>Содержимое</label>
+						<ValidationMessage For="@(() => AdditionalBlock.Description)" />
+						<InputTextArea class="form-control" @bind-Value="AdditionalBlock.Description" />
 					</div>
 					<div class="form-group">
-						<label>Описнаие для 2го блока</label>
-						<InputTextArea class="form-control" @bind-Value="AboutPage.ParagraphTwoNode" />
+						<label>Тип поля</label>
+						<InputSelect class="form-select" @bind-Value="AdditionalBlock.AdditionalBlockType">
+							<option value="">Выберите тип поля для вывода</option>
+							@foreach (var type in Enum.GetValues<AdditionalBlockType>())
+							{
+								<option value="@type">@EnumExtensions.GetDisplayName(type)</option>
+							}
+						</InputSelect>
 					</div>
-				</div>
-				<div class="col">
-					<div class="form-group">
-						<img class="img-fluid" style="height: 250px;" src=@AboutPage.ImgTwoUrl>
-						<label>Картинка для 2го блока</label>
-						<ImgManagerControl @bind-ChildName="AboutPage.ImgTwoUrl" PathFolder="@urlPath"
-							FolderName="@AboutPage.ID.ToString()" IsSlider="false" />
+					<div class="form-group mb-4">
+						<label>Опубликовано</label>
+						<InputCheckbox class="" @bind-Value="AdditionalBlock.IsAvailable" />
+					</div>
+					<div class="mt-2">
+						<button form="createAdditionalBlock" type="submit" class="btn btn-warning">Сохранить</button>
+						@* <a class="btn btn-secondary" @onclick="@(e => CancellationNewSetting())">Отмена</a> *@
 					</div>
 				</div>
 			</div>
-			@* <div class="form-group">
-			<label>Ссылка на видео 1</label>
-			<img class="img-fluid" style="height: 250px;" src=@AboutPage.VideoOneUrl>
-			<InputText class="form-control" @bind-Value="AboutPage.VideoOneUrl" />
-			</div>
-			<div class="form-group">
-			<label>Ссылка на видео 2</label>
-			<img class="img-fluid" style="height: 250px;" src=@AboutPage.VideoTwoUrl>
-			<InputText class="form-control" @bind-Value="AboutPage.VideoTwoUrl" />
-			</div> *@
 		</EditForm>
-	</TabPage>
+		</TabPage>
 </TabControl>
 <div class="mt-2">
 	<button form="creatAboutPageForm" type="submit" class="btn btn-@ThemeColor">Сохранить</button>
@@ -107,11 +246,12 @@
 	public bool TabIsActive { get; set; } = false;
 
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
 		if (Id != 0)
 		{
 			TabIsActive = true;
+			await UpdateDataAsync();
 		}
 	}
 
@@ -119,7 +259,7 @@
 	{
 		if (Id != 0)
 		{
-			AboutPage = Repository.AboutPages.FirstOrDefault(с => с.ID == Id) ?? new();
+			AboutPage = Repository.AboutPages.FirstOrDefault(с => с.Id == Id) ?? new();
 		}
 	}
 
@@ -128,23 +268,20 @@
 	{
 		if (Id == 0)
 		{
-			Repository.CreateAboutPage(AboutPage);
-			await folderManager.CeateDirectoryAsync(urlPath, Convert.ToInt64(AboutPage.ID));
-			if (AboutPage.ID != 0)
+			await Repository.CreateAboutPageAsync(AboutPage);
+			await FolderManager.CeateDirectoryAsync(urlPath, Convert.ToInt64(AboutPage.Id));
+			if (AboutPage.Id != 0)
 			{
 				TabIsActive = true;
-				GetEditUrl(Convert.ToInt64(AboutPage.ID));
-				NavManager?.NavigateTo(GetEditUrl(Convert.ToInt64(AboutPage.ID)));
-				Notification notification = new Notification(1, "Старница сохранена", "Страница о компании добавлена", AboutPage.HeadingOneNode);
-				popupNotification.AddItem(notification);
+				NavManager?.NavigateTo(GetEditUrl(Convert.ToInt64(AboutPage.Id)));
+				PopupNotification.CreateNotification("Старница сохранена", "Страница о компании добавлена", AboutPage.Heading);
 				StateHasChanged();
 			}
 		}
 		else
 		{
-			Repository.SaveAboutPage(AboutPage);
-			Notification notification = new Notification(1, "Изменения сохранены", "Запись отредактирована: Страница о компании под номером", Id.ToString());
-			popupNotification.AddItem(notification);
+			await Repository.SaveAboutPageAsync(AboutPage);
+			PopupNotification.CreateNotification("Изменения сохранены", "Запись отредактирована: Страница о компании под номером", Id.ToString());
 			NavManager?.NavigateTo("/admin/about");
 		}
 	}
@@ -152,4 +289,93 @@
 
 	public string ThemeColor => Id == 0 ? "primary" : "warning";
 	public string TitleText => Id == 0 ? "Создание" : "Редактирование";
+}
+
+@code {
+	private long IdAdditionalBlock { get; set; } = 0;
+	private IEnumerable<AdditionalBlocksForAboutPage> AdditionalBlocksForAboutPageData { get; set; } 
+		= Enumerable.Empty<AdditionalBlocksForAboutPage>();
+	private AdditionalBlocksForAboutPage AdditionalBlock { get; set; } = new ();
+	private Confirmation? Confirmation { get; set; }
+	
+	private async Task CreateAdditionalBlockAsync()
+	{
+		if (IdAdditionalBlock == 0)
+		{
+			AdditionalBlock.AboutPageId = (int)Id;
+			await Repository.CreateAdditionalBlocksForAboutPageAsync(AdditionalBlock);
+			PopupNotification.CreateNotification("Блок сохранен", "Новый блок добавлен", AdditionalBlock.Caption);
+			AdditionalBlock = new();
+		}
+		else
+		{
+			AdditionalBlock.AboutPageId = (int)Id;
+			await Repository.SaveAdditionalBlocksForAboutPageAsync(AdditionalBlock);
+			PopupNotification.CreateNotification("Изменения сохранены", "Дополнительное поле изменено", AdditionalBlock.Id.ToString());
+			Confirmation?.Hide();
+			IdAdditionalBlock = 0;
+			AdditionalBlock = new();
+		}
+		await UpdateDataAsync();
+	}
+	
+	private async Task UpdateDataAsync()
+	{
+		AdditionalBlocksForAboutPageData = await Repository.AdditionalBlocksInAboutPage.Where(p => p.AboutPageId == Id).ToListAsync();
+		await InvokeAsync(StateHasChanged);
+	}
+	
+	private AdditionalBlocksForAboutPage? AdditionalBlockToBeDelete { get; set; }
+	
+	private void DeleteAdditionalBlock(AdditionalBlocksForAboutPage additionalBlock)
+	{
+		AdditionalBlockToBeDelete = additionalBlock;
+		confirmationCheckOnDelete = true;
+		confirmationTitle = "Удаление дополнительного блока";
+		Confirmation?.Show();
+	}
+	
+	private void OnCancel()
+	{
+		Confirmation?.Hide();
+		IdAdditionalBlock = 0;
+		AdditionalBlock = new();
+		if (confirmationCheckOnDelete = true && AdditionalBlockToBeDelete != null)
+		{
+			Notification notification = new Notification(1, "Отмена удаления", "Отменено удаление дополнительного блока",
+				AdditionalBlockToBeDelete?.Caption);
+			PopupNotification.AddItem(notification);
+			AdditionalBlockToBeDelete = null;
+		}
+		else
+		{
+			Notification notification = new Notification(1, "Отмена редактирования", "Отменено редактирование дополнительного блока",
+				AdditionalBlockToBeDelete?.Caption);
+			PopupNotification.AddItem(notification);
+		}
+	}
+	
+	private bool confirmationCheckOnDelete;
+	private string confirmationTitle = string.Empty;
+	private async Task ChangeAdditionalBlock(AdditionalBlocksForAboutPage additionalBlock)
+	{
+		IdAdditionalBlock = additionalBlock.Id;
+		confirmationCheckOnDelete = false;
+		confirmationTitle = "Редактирование дополнительного блока";
+		AdditionalBlock = await Repository.AdditionalBlocksInAboutPage.FirstOrDefaultAsync(b => b.Id == additionalBlock.Id) ?? new();
+		Confirmation?.Show();
+	}
+	
+	private async Task OnConfirm()
+	{
+		if (AdditionalBlockToBeDelete != null)
+		{
+			await Repository.DeleteAdditionalBlocksForAboutPageAsync(AdditionalBlockToBeDelete);
+			Confirmation?.Hide();
+			Notification notification = new Notification(1, "Удаление дополнительного блока", "Удален дополнительный блок", AdditionalBlockToBeDelete.Caption);
+			PopupNotification.AddItem(notification);
+			AdditionalBlockToBeDelete = null;
+			await UpdateDataAsync();
+		}
+	}
 }

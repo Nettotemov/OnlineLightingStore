@@ -1,10 +1,8 @@
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Text.Json.Serialization;
-using LampStore.Models.ProductsPages;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace LampStore.Models
+namespace LampStore.Models.ProductsPages
 {
 	public class Tag
 	{

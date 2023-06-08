@@ -22,7 +22,7 @@
 
 @code {
 	[Parameter]
-	public List<Notification> ListNotifications { get; set; } = new();
+	public IList<Notification>? ListNotifications { get; set; }
 
 	private void RemoveItem()
 	{
@@ -37,17 +37,17 @@
 	private async void RemoveTimerNotificationsAsync(Notification notification)
 	{
 		await Task.Delay(7000);
-		ListNotifications.Remove(notification);
+		ListNotifications?.Remove(notification);
 		await InvokeAsync(StateHasChanged);
 	}
 
 	private void RemoveAllNotifications()
 	{
-		ListNotifications.Clear();
+		ListNotifications?.Clear();
 	}
 
 	private void RemoveNotification(Notification notification)
 	{
-		ListNotifications.Remove(notification);
+		ListNotifications?.Remove(notification);
 	}
 }

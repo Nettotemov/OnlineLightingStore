@@ -14,7 +14,7 @@
 	</div>
 </Confirmation>
 <div class="admin-notification__wrapper">
-	<Popup ListNotifications="ListNotifications" />
+	<Popup ListNotifications="popupNotification.ListNotifications" />
 </div>
 
 @if (loading)
@@ -142,13 +142,5 @@ else
 		CooperationPageToBeDelete!.NameCooperation);
 		popupNotification.AddItem(notification);
 		CooperationPageToBeDelete = null;
-	}
-
-	private List<Notification> ListNotifications { get; set; } = new();
-
-	protected override async Task OnParametersSetAsync()
-	{
-		ListNotifications = await popupNotification.GetItems();
-		StateHasChanged();
 	}
 }

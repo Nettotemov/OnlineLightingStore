@@ -13,7 +13,7 @@
 	</div>
 </Confirmation>
 <div class="admin-notification__wrapper">
-	<Popup ListNotifications="ListNotifications" />
+	<Popup ListNotifications="popupNotification.ListNotifications" />
 </div>
 
 
@@ -124,14 +124,8 @@ else
 	public int Id { get; set; } = 0;
 
 	public string? value;
-	private List<Notification> ListNotifications { get; set; } = new();
 	private bool loading = false;
-
-	protected async override Task OnParametersSetAsync()
-	{
-		ListNotifications = await popupNotification.GetItems();
-		await UpdateData();
-	}
+	
 	public async Task UpdateData()
 	{
 		loading = true;

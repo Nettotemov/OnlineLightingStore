@@ -7,7 +7,7 @@
 @inject IFolderManager FolderManager
 
 <div class="admin-notification__wrapper">
-	<Popup ListNotifications="ListNotifications" />
+	<Popup ListNotifications="PopupNotification.ListNotifications" />
 </div>
 
 <Confirmation @ref="confirmation" OnCancel="OnCancel" OnConfirm="OnConfirmAsync" IsConfirm="confirmationCheckOnDelete"
@@ -271,14 +271,12 @@
 		}
 	}
 
-	private List<Notification> ListNotifications { get; set; } = new();
 	protected override async Task OnParametersSetAsync()
 	{
 		if (Id != 0)
 		{
-			ModelLightPage = Repository.LightsModels.FirstOrDefault(с => с.Id == Id) ?? new();
+			ModelLightPage = await Repository.LightsModels.FirstOrDefaultAsync(с => с.Id == Id) ?? new();
 		}
-		ListNotifications = await PopupNotification.GetItems();
 		StateHasChanged();
 	}
 
