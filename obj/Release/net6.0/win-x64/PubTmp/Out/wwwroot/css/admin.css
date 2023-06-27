@@ -134,3 +134,14 @@ textarea.form-control {
 }
 
 /* loader */
+
+.toast-body {
+	overflow: scroll;
+	height: auto;
+	max-height: 75vh;
+}
+
+.modal-fullscreen .modal-content {
+	overflow: scroll;
+	background: #fff;
+}

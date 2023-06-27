@@ -1,4 +1,4 @@
-using LampStore.Models;
+using LampStore.Infrastructure;
 using LampStore.Models.ProductsPages;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -27,7 +27,6 @@ namespace LampStore.Pages
 
 		public IList<Product> DisplayedProducts { get; private set; } = null!;
 		public IList<Tag>? DisplayedTags { get; private set; }
-		public IList<Category> DisplayedCategories { get; private set; } = null!;
 		public SelectList? Category { get; set; }
 		public IList<string> DisplayedColors { get; private set; } = null!;
 		public IList<ProductType> DisplayedTypes { get; private set; } = null!;
@@ -52,26 +51,21 @@ namespace LampStore.Pages
 			SortedCatalog = sortOrder.GetHashCode();
 			SortedName = sortOrder.GetDisplayName();
 			
-			DisplayedCategories = await repository.Category.Select(c => c).Distinct().ToListAsync();
+			Category = new SelectList( await repository.Category.Where(c => c.IsPublished)
+				.Select(c => c.CategoryName).Distinct().ToListAsync(), CategoryName );
 			
-			Category = new SelectList( await repository.Category
-					.Select(c => c.CategoryName)
-					.Distinct()
-					.ToListAsync(),
-				CategoryName );
+			var products = await GetProductsAsync();
 			
-			DisplayedColors = await repository.Products.Select(p => p.Color).Distinct().ToListAsync();
+			DisplayedColors = products.Select(p => p.Color).Distinct().ToList();
 			
-			DisplayedTypes = await repository.Types.Select(p => p).Distinct().ToListAsync();
+			DisplayedTypes = products.Select(p => p.ProductType).Distinct().ToList();
 			
-			var strMaterials = string.Join(",", repository.Products.Select(c => c.Material)
-				.Distinct()
-				.OrderBy(p => p))
-				.ToString();
+			var strMaterials = string.Join(", ", products.Select(c => c.Material)
+				.Distinct().OrderBy(p => p)).ToString();
 			
 			DisplayedMaterials = ParametersExtensions.GetDisplayParameters(strMaterials);
 
-			DisplayedProducts = await repository.Products.Where(p => p.IsPublished).ToListAsync();
+			DisplayedProducts = await GetProductsAsync();
 			
 			DisplayedTags = await repository.Tags
 				.Select(t => t)
@@ -92,7 +86,7 @@ namespace LampStore.Pages
 					materials, 
 					types);
 
-				PagingInfo = await PaginationBuilderAsync(productPage);
+				PagingInfo = PaginationBuilderAsync(DisplayedProducts, productPage);
 
 				DisplayedProducts = Pagination(productPage);
 				
@@ -122,9 +116,8 @@ namespace LampStore.Pages
 			SortCatalog sortOrder, 
 			int productPage = 1)
 		{
-			DisplayedProducts = await repository.Products.Where(p => p.IsPublished).ToListAsync();
+			DisplayedProducts = await GetProductsAsync();
 
-			DisplayedCategories = await repository.Category.Select(c => c).Distinct().ToListAsync();
 			try
 			{
 				DisplayedProducts = ProductSorting(sortOrder, DisplayedProducts);
@@ -139,7 +132,7 @@ namespace LampStore.Pages
 					materials, 
 					types);
 				
-				PagingInfo = await PaginationBuilderAsync(productPage);
+				PagingInfo = PaginationBuilderAsync(DisplayedProducts, productPage);
 
 				DisplayedProducts = Pagination(productPage);
 
@@ -169,12 +162,18 @@ namespace LampStore.Pages
 
 		public async Task<IActionResult> OnGetAllProductsAsync()
 		{
-			var products = await repository.Products.Select(p => p).ToListAsync();
+			var products = await repository.Products
+				.Where(p => p.IsPublished && p.Category.IsPublished)
+				.Select(p => p).ToListAsync();
 
-			string json = JsonConvert.SerializeObject(products, Formatting.Indented);
+			var json = JsonConvert.SerializeObject(products, Formatting.Indented);
 
 			return new JsonResult(new { json });
 		}
+		
+		public async Task<IList<Product>> GetProductsAsync()
+			=> await repository.Products.Where(p => p.IsPublished && p.Category.IsPublished)
+				.Select(p => p).ToListAsync();
 
 		private IList<Product> ProductSorting(SortCatalog sortOrder, IList<Product> products)
 		{
@@ -268,16 +267,16 @@ namespace LampStore.Pages
 			return products;
 		}
 
-		private async Task<PagingInfo> PaginationBuilderAsync(int productPage = 1)
+		private PagingInfo PaginationBuilderAsync(IList<Product> products, int productPage = 1)
 		{
 			var pagingInfo = new PagingInfo
 			{
 				CurrentPage = productPage,
 				ItemsPerPage = PageSize,
-				TotalItems = await repository.Products.CountAsync(),
-				TotalPages = (int)Math.Ceiling((decimal)DisplayedProducts.Count() / PageSize),
-				PlaceholderMaxPrice = DisplayedProducts.Select(p => p.Price).Max(),
-				PlaceholderMinPrice = DisplayedProducts.Select(p => p.Price).Min()
+				TotalItems = products.Count,
+				TotalPages = (int)Math.Ceiling((decimal)products.Count / PageSize),
+				PlaceholderMaxPrice = products.Select(p => p.Price).Max(),
+				PlaceholderMinPrice = products.Select(p => p.Price).Min()
 			};
 
 			return pagingInfo;

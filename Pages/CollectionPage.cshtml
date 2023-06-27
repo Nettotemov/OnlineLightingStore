@@ -15,7 +15,7 @@ page:@Model.CollectionLightPage.Name) });
 		<div class="row justify-content-between align-items-xl-center">
 			<div class="col-12 col-xl-5">
 				<div class="img-center__wrapper">
-					<img class="img-responsive" src="@Model.CollectionLightPage?.Img">
+					<img class="img-responsive" src="@Model.CollectionLightPage?.Img" alt="">
 				</div>
 			</div>
 			<div class="col-md-12 col-xl-6 active">
@@ -26,37 +26,37 @@ page:@Model.CollectionLightPage.Name) });
 	</div>
 </div>
 
-@if (@Model.CollectionLightPage != null)
+@if (@Model.CollectionLightPage is {AdditionalBlocks: not null })
 {
-	@foreach (var item in @Model.CollectionLightPage.AdditionalBlocks)
+	foreach (var item in @Model.CollectionLightPage.AdditionalBlocks)
 	{
 		<div class="col-12 border-b mb-per-4">
-	<div class="row justify-content-between align-items-xl-center">
-		<div class="col-12 col-xl-5">
-			<div class="img-center__wrapper">
-				<img class="img-responsive" src="@item.Url">
+			<div class="row justify-content-between align-items-xl-center">
+				<div class="col-12 col-xl-5">
+					<div class="img-center__wrapper">
+						<img class="img-responsive" src="@item.Url">
+					</div>
+				</div>
+				<div class="col-md-12 col-xl-6 active">
+					<h1 class="h1__caption mb-per-5">@item.Caption</h1>
+					<p class="p__caption mb-per-5">@item.Description</p>
+				</div>
 			</div>
 		</div>
-		<div class="col-md-12 col-xl-6 active">
-			<h1 class="h1__caption mb-per-5">@item.Caption</h1>
-			<p class="p__caption mb-per-5">@item.Description</p>
-		</div>
-	</div>
-</div>
 	}
 }
 
 @if (Model.LightsModelsPages.Any())
 {
-	<h3 class="h3__caption fw-bold">Модели из коллекции @Model.CollectionLightPage.Name</h3>
+	<h3 class="h3__caption fw-bold">Модели из коллекции @Model.CollectionLightPage?.Name</h3>
 	<div class="catalog-list__wrapper border-b mb-per-2">
 	@foreach (var p in @Model.LightsModelsPages)
 		{
 			<a asp-page="ModelLightPage" class="product__wrapper"
-		asp-route-collectionName="@Model.CollectionLightPage.Name.ToLower()" asp-route-modelName="@p.Name.ToLower()">
+		asp-route-collectionName="@Model.CollectionLightPage?.Name.ToLower()" asp-route-modelName="@p.Name.ToLower()">
 				<div class="">
 					<div class="product-img__wrapper">
-						<img class="img-center" src="@p.Products?.FirstOrDefault()?.MainPhoto">
+						<img class="img-center" src="@p.Img" alt="">
 					</div>
 					<div class="product-desc__wrapper">
 						<p class="title-wrp product-price">@p.Name</p>
@@ -93,8 +93,8 @@ page:@Model.CollectionLightPage.Name) });
 				else
 				{
 					<div class="configurator-img__wrapper">
-						<img id="configuratorSubproductImg" class="img-center"
-							src="@Model.CollectionLightPage?.Products.FirstOrDefault()?.MainPhoto">
+						<img id="configuratorSubproductImg" class="img-center" 
+						     src="@Model.CollectionLightPage?.Products?.FirstOrDefault()?.MainPhoto" alt="">
 					</div>
 				}
 			</div>

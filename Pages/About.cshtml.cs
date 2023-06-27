@@ -36,8 +36,6 @@ namespace LampStore.Pages
 				AboutPage = new AboutPage()
 				{
 					ImgOneUrl = aboutPage.ImgOneUrl,
-					Title = aboutPage.Title,
-					Description = aboutPage.Description,
 					Heading = aboutPage.Heading,
 					Paragraph = aboutPage.Paragraph,
 					IsPublished = aboutPage.IsPublished,
@@ -65,8 +63,6 @@ namespace LampStore.Pages
 			AboutPage = new AboutPage()
 			{
 				ImgOneUrl = mainAboutPage.ImgOneUrl,
-				Title = mainAboutPage.Title,
-				Description = mainAboutPage.Description,
 				Heading = mainAboutPage.Heading,
 				Paragraph = mainAboutPage.Paragraph,
 				IsPublished = mainAboutPage.IsPublished,

@@ -57,3 +57,5 @@
 \\Mac\Home\Downloads\LS\LampStore\LampStore\obj\Release\net6.0\win-x64\LampStore.pdb
 \\Mac\Home\Downloads\LS\LampStore\LampStore\obj\Release\net6.0\win-x64\LampStore.genruntimeconfig.cache
 \\Mac\Home\Downloads\LS\LampStore\LampStore\obj\Release\net6.0\win-x64\ref\LampStore.dll
+\\Mac\Home\Downloads\LS\LampStore\LampStore\bin\Release\net6.0\win-x64\Castle.Core.dll
+\\Mac\Home\Downloads\LS\LampStore\LampStore\bin\Release\net6.0\win-x64\Microsoft.EntityFrameworkCore.Proxies.dll

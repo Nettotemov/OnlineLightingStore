@@ -7,6 +7,10 @@
 @inject IPopupNotification PopupNotification
 @inject IFolderManager FolderManager
 
+<div class="admin-notification__wrapper">
+	<Popup ListNotifications="PopupNotification.ListNotifications" />
+</div>
+
 <h3 class="bg-@ThemeColor text-white text-center p-1">@TitleText a Product</h3>
 <TabControl>
 	<TabPage Text="Товар" IsActive="true">
@@ -46,7 +50,7 @@
 					</div>
 					<div class="form-group mb-4">
 						<label>Модель</label>
-						<InputSelect disabled="@(_isModelsLightsSelectDisabled)" @bind-Value="Product.ModelLightId"
+						<InputSelect disabled="@(isModelsLightsSelectDisabled)" @bind-Value="Product.ModelLightId"
 	   						class="form-select">
 							<option value="">Выберите модель продукта</option>
 							@foreach (var item in ModelsLightsData)
@@ -79,7 +83,7 @@
 					<option value="">Выберите категорию</option>
 					@foreach (var item in DisplayedCategories)
 					{
-						<option value="@item.ID">@item.CategoryName</option>
+						<option value="@item.Id">@item.CategoryName</option>
 					}
 				</InputSelect>
 			</div>
@@ -190,48 +194,124 @@
 			</div>
 		</EditForm>
 	</TabPage>
-	<TabPage Text="Добавление значений" IsActive="true">
-		<EditForm Model="NewTag" OnValidSubmit="CreateNewTagAsync" id="сreateNewTag">
-			<DataAnnotationsValidator />
-			<div class="row row-cols-2">
-				<div class="col">
-					<div class="form-group mb-4">
-						<label>ID тега</label>
-						<input class="form-control" disabled value="@NewTag.Id" />
-					</div>
-					<div class="form-group mb-4">
-						<label>Знаечние тега</label>
-						<ValidationMessage For="@(() => NewTag.Value)" />
-						<InputText class="form-control" @bind-Value="NewTag.Value" />
-					</div>
-					<div class="mt-2">
-						<button form="сreateNewTag" type="submit" class="btn btn-warning">Добавить тег</button>
-						@* <a class="btn btn-secondary" @onclick="@(e => CancellationNewSetting())">Отмена</a> *@
-					</div>
+<TabPage Text="Добавление тегов" IsActive="true">
+	<table class="table table-sm table-striped table-bordered">
+		<thead>
+		<tr>
+			<th>ID</th>
+			<th>Тег</th>
+			<td />
+		</tr>
+		</thead>
+		<tbody>
+		@if (ProductTypesData?.Count() > 0)
+		{
+			@foreach (var t in TagsData)
+			{
+				<tr>
+					<td>@t.Id</td>
+					<td>@t.Value</td>
+					<td class="text-center">
+						@*<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(p.Id)">
+        							Изменить тип
+        						</NavLink>*@
+						<button class="btn btn-danger btn-sm" @onclick="@(() => DeleteTagAsync(t))">
+							Удалить
+						</button>
+					</td>
+				</tr>
+			}
+		}
+		else
+		{
+			<tr>
+				<td colspan="5" class="text-center">Теги, не найдены.</td>
+			</tr>
+		}
+		</tbody>
+	</table>
+	
+	<EditForm Model="NewTag" OnValidSubmit="CreateNewTagAsync" id="сreateNewTag">
+		<DataAnnotationsValidator/>
+		<div class="row row-cols-2">
+			<div class="col">
+				<div class="form-group mb-4">
+					<label>ID тега</label>
+					<input class="form-control" disabled value="@NewTag.Id"/>
+				</div>
+				<div class="form-group mb-4">
+					<label>Знаечние тега</label>
+					<ValidationMessage For="@(() => NewTag.Value)"/>
+					<InputText class="form-control" @bind-Value="NewTag.Value"/>
+				</div>
+				<div class="mt-2">
+					<button form="сreateNewTag" type="submit" class="btn btn-success">Добавить тег</button>
+					@* <a class="btn btn-secondary" @onclick="@(e => CancellationNewSetting())">Отмена</a> *@
 				</div>
 			</div>
-		</EditForm>
-		<EditForm Model="Type" OnValidSubmit="CreateTypeProduct" id="createTypeProduct">
-			<DataAnnotationsValidator />
-			<div class="row row-cols-2">
-				<div class="col">
-					<div class="form-group mb-4">
-						<label>ID типа продкта</label>
-						<input class="form-control" disabled value="@Type.Id" />
-					</div>
-					<div class="form-group mb-4">
-						<label>Тип продукта</label>
-						<ValidationMessage For="@(() => Type.Name)" />
-						<InputText class="form-control" @bind-Value="Type.Name" />
-					</div>
-					<div class="mt-2">
-						<button form="createTypeProduct" type="submit" class="btn btn-warning">Добавить тип</button>
-						@* <a class="btn btn-secondary" @onclick="@(e => CancellationNewSetting())">Отмена</a> *@
-					</div>
+		</div>
+	</EditForm>
+</TabPage>
+<TabPage Text="Типы продуктов" IsActive="true">
+	<table class="table table-sm table-striped table-bordered">
+    	<thead>
+    		<tr>
+    			<th>ID</th>
+    			<th>Название</th>
+    			<th>Количество товаров</th>
+    			<td />
+    		</tr>
+    	</thead>
+    	<tbody>
+			@if (ProductTypesData?.Count() > 0)
+			{
+    			@foreach (var p in ProductTypesData)
+    			{
+    				<tr>
+    					<td>@p.Id</td>
+						   <td>@p.Name</td>
+						   <td>@CountProductsForProductType(ProductsData, p)</td>
+						   <td class="text-center">
+							   @*<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(p.Id)">
+    							Изменить тип
+    						</NavLink>*@
+    						<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteTypeProduct(p))">
+    							Удалить тип
+    						</button>
+    					</td>
+    				</tr>
+    			}
+			}
+			else
+			{
+    			<tr>
+    				<td colspan="5" class="text-center">Типы, не найдены.</td>
+    			</tr>
+			}
+        </tbody>
+    </table>
+	
+	<EditForm Model="NewProductType" OnValidSubmit="CreateTypeProduct" id="createTypeProduct">
+		<DataAnnotationsValidator/>
+		<div class="row row-cols-2">
+			<div class="col">
+				<div class="form-group mb-4">
+					<label>ID типа продкта</label>
+					<input class="form-control" disabled value="@NewProductType.Id"/>
+				</div>
+				<div class="form-group mb-4">
+					<label>Тип продукта</label>
+					<ValidationMessage For="@(() => NewProductType.Name)"/>
+					<InputText class="form-control" @bind-Value="NewProductType.Name"/>
+				</div>
+				<div class="mt-2">
+					<button form="createTypeProduct" type="submit" class="btn btn-success">Добавить тип</button>
+					@* <a class="btn btn-secondary" @onclick="@(e => CancellationNewSetting())">Отмена</a> *@
 				</div>
 			</div>
-		</EditForm>
-	</TabPage>
+		</div>
+	</EditForm>
+</TabPage>
 </TabControl>
 <div class="mt-2">
 	<button form="creatProductForm" type="submit" class="btn btn-@ThemeColor">Сохранить</button>
@@ -240,16 +320,17 @@
 
 @code {
 
-	public IStoreRepository Repository => Service;
+	private IStoreRepository Repository => Service;
 
 	[Inject]
 	public NavigationManager? NavManager { get; set; }
 
 	[Parameter]
 	public long Id { get; set; } = 0;
-	public Product Product { get; set; } = new Product();
-	public List<Category> DisplayedCategories { get; set; } = new();
-	public bool TabIsActive { get; set; } = false;
+	private Product Product { get; set; } = new Product();
+	private List<Category> DisplayedCategories { get; set; } = new();
+	private bool TabIsActive { get; set; } = false;
+	private IEnumerable<Product> ProductsData { get; set; } = Enumerable.Empty<Product>();
 	
 	private const string UrlPath = "imegs/img-products/";
 
@@ -298,13 +379,12 @@
 	private string GetEditUrl(long id) => $"/admin/products/edit/{id}";
 
 
-	public string ThemeColor => Id == 0 ? "primary" : "warning";
-	public string TitleText => Id == 0 ? "Create" : "Edit";
+	private string ThemeColor => Id == 0 ? "primary" : "warning";
+	private string TitleText => Id == 0 ? "Create" : "Edit";
 
-	public long PriceProduct(long oldPrice, int discount)
+	private long PriceProduct(long oldPrice, int discount)
 	{
-		long price;
-		return price = oldPrice - oldPrice * discount / 100;
+		return oldPrice - oldPrice * discount / 100;
 	}
 }
 
@@ -313,10 +393,6 @@
 	private Tag NewTag { get; set; } = new ();
 	
 	private IEnumerable<Tag> TagsData { get; set; } = Enumerable.Empty<Tag>();
-
-	public List<Tag> ListAddTags { get; set; } = new();
-	public List<Tag> DisplayProductTags { get; set; } = new();
-
 	private IEnumerable<CollectionLight> CollectionsModelsData { get; set; } = Enumerable.Empty<CollectionLight>();
 
 	private IEnumerable<ModelLight> ModelsLightsData { get; set; } = Enumerable.Empty<ModelLight>();
@@ -326,6 +402,7 @@
 		TagsData = await Repository.Tags.ToListAsync();
 		ProductTypesData = await Repository.Types.ToListAsync();
 		CollectionsModelsData = await Repository.CollectionsModels.ToListAsync();
+		ProductsData = await Repository.Products.ToListAsync();
 		if (Product.CollectionLightId != 0)
 		{
 			ModelsLightsData = await Repository.LightsModels.Where(m => m.CollectionLightId ==
@@ -338,33 +415,36 @@
 
 	private async Task CreateNewTagAsync()
 	{
+		var isCheckNameTag = await CheckNameTagAsync(NewTag.Value, (int)Id);
+		if (isCheckNameTag)
+		{
+			PopupNotification.CreateNotification("Ошибка", "Тег с таким названием уже существует. Измените название:", NewTag.Value);
+			return;
+		}
+		
 		await Repository.CreateTagAsync(NewTag);
+		PopupNotification.CreateNotification("Добвление тега", "Тег добавлен", NewTag.Value);
+		NewTag = new Tag();
 		await UpdateDataAsync();
-		@* if (IdTag == 0)
-{
-Repository.CreateAdditionalField(AdditionalField);
-Notification notification = new Notification(1, "Поле сохранено", "Новое поле добавлено", AdditionalField.Name);
-popupNotification.AddItem(notification);
-await UpdateData();
-}
-else
-{
-NewTag.InfoId = FaqPage.ID;
-Repository.SaveAdditionalField(AdditionalField);
-Notification notification = new Notification(1, "Изменения сохранены", "Дополнительное поле изменено",
-AdditionalField.ID.ToString());
-popupNotification.AddItem(notification);
-await UpdateData();
-} *@
+	}
+	
+	private async Task<bool> CheckNameTagAsync(string name, int id)
+	{
+		var names = await Repository.Tags
+			.Where(c => c.Id != id)
+			.Select(c => c.Value).ToListAsync();
+		
+		var result = names.Any(n => string.Equals(n, name, StringComparison.CurrentCultureIgnoreCase));
+
+		return result;
 	}
 
-	@* public void DeleteInfoProp(InfoProp infoProp)
-{
-InfoPropToBeDelete = infoProp;
-confirmationCheckOnDelete = true;
-confirmationTitle = "Удаление дополнительного поля";
-confirmation?.Show();
-} *@
+	private async Task DeleteTagAsync(Tag tag)
+	{
+		await Repository.DeleteTagAsync(tag);
+		PopupNotification.CreateNotification("Удаление тега", "Тег удален", tag.Value);
+		await UpdateDataAsync();
+	}
 
 	private readonly List<(Tag tag, bool isChecked)> listIsChecked = new();
 	private void CheckTags(List<Tag>? tags)
@@ -391,15 +471,35 @@ confirmation?.Show();
 		else { Product.ProductTags?.Remove(tag); }
 	}
 
-	public IEnumerable<ProductType> ProductTypesData { get; set; } = Enumerable.Empty<ProductType>();
-	public ProductType Type { get; set; } = new ProductType();
+	private IEnumerable<ProductType> ProductTypesData { get; set; } = Enumerable.Empty<ProductType>();
+	private ProductType NewProductType { get; set; } = new ();
+
 	private async Task CreateTypeProduct()
 	{
-		await Repository.CreateTypeAsync(Type);
+		await Repository.CreateTypeAsync(NewProductType);
+		PopupNotification.CreateNotification("Добвление типа", "Тип добавлен", NewProductType.Name);
+		NewProductType = new ProductType();
+		await UpdateDataAsync();
+	}
+	
+	private async Task DeleteTypeProduct(ProductType productType)
+	{
+		if (CountProductsForProductType(ProductsData, productType) != 0)
+		{
+			PopupNotification.CreateNotification("Ошибка удаление типа!!!", "У данного типа имеются товары в количестве:",
+				$"{CountProductsForProductType(ProductsData, productType)} шт. Смените у данных товаров тип и потовроите попытку.");
+			return;
+		}
+		
+		await Repository.DeleteTypeAsync(productType);
+		PopupNotification.CreateNotification("Удаление типа", "Тип удален", productType.Name);
 		await UpdateDataAsync();
 	}
 
-	private bool _isModelsLightsSelectDisabled = false;
+	private int CountProductsForProductType(IEnumerable<Product> productsData, ProductType productType)
+		=> productsData.Count(prod => prod.ProductType == productType);
+
+	private bool isModelsLightsSelectDisabled = false;
 	private async Task OnModelsLightsSelectChangeAsync(ChangeEventArgs e)
 	{
 		if (e.Value != null && e.Value.ToString() != "")
@@ -407,13 +507,13 @@ confirmation?.Show();
 			Product.CollectionLightId = Convert.ToInt32(e.Value);
 			ModelsLightsData = await Repository.LightsModels
 				.Where(m => m.CollectionLightId == Product.CollectionLightId).ToListAsync();
-			_isModelsLightsSelectDisabled = false;
+			isModelsLightsSelectDisabled = false;
 		}
 		else 
 		{
 			Product.CollectionLightId = null;
 			Product.ModelLightId = null;
-			_isModelsLightsSelectDisabled = true; 
+			isModelsLightsSelectDisabled = true; 
 		}
 	}
 }

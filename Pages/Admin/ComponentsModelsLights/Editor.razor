@@ -283,11 +283,10 @@
 	private const string UrlPath = "imegs/img-models-lights/";
 	private async Task SaveModelLightPageAsync()
 	{
-		bool isCheckName = await CheckNameAsync(ModelLightPage.Name);
+		bool isCheckName = await CheckNameAsync(ModelLightPage.Name, (int)Id);
 		if (isCheckName)
 		{
-			Notification notification = new Notification(1, "Ошибка", "Модель с таким названием уже существует. Измените название:", ModelLightPage.Name);
-			PopupNotification.AddItem(notification);
+			PopupNotification.CreateNotification("Ошибка", "Модель с таким названием уже существует. Измените название:", ModelLightPage.Name);
 			return;
 		}
 		
@@ -415,10 +414,13 @@
 		confirmation?.Show();
 	}
 
-	private async Task<bool> CheckNameAsync(string name)
+	private async Task<bool> CheckNameAsync(string name, int id)
 	{
-		var lightsModelsNames = await Repository.LightsModels.Select(c => c.Name).ToListAsync();
-		var result = lightsModelsNames.Any(n => string.Equals(n, name, StringComparison.CurrentCultureIgnoreCase));
+		var names = await Repository.LightsModels
+			.Where(c => c.Id != id)
+			.Select(c => c.Name).ToListAsync();
+		
+		var result = names.Any(n => string.Equals(n, name, StringComparison.CurrentCultureIgnoreCase));
 
 		return result;
 	}

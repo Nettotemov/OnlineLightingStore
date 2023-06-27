@@ -1,8 +1,14 @@
 @page "/admin/categories/edit/{id:long}"
 @page "/admin/categories/create"
+@using LampStore.Models.MetaTags
 @inherits OwningComponentBase<ICategoryRepository>
 @inject IPopupNotification popupNotification
 @inject IFolderManager folderManager
+@inject IMetaManager MetaManager
+
+<div class="admin-notification__wrapper">
+	<Popup ListNotifications="popupNotification.ListNotifications" />
+</div>
 
 <h3 class="bg-@ThemeColor text-white text-center p-1">@TitleText категорий</h3>
 <TabControl>
@@ -12,13 +18,25 @@
 			<DataAnnotationsValidator />
 			<div class="row row-cols-2">
 				<div class="col">
-					@if (Category.ID != 0)
+					@if (Category.Id != 0)
 					{
 						<div class="form-group mb-4">
 							<label>ID</label>
-							<input class="form-control" disabled value="@Category.ID" />
+							<input class="form-control" disabled value="@Category.Id" />
 						</div>
 					}
+					<div class="form-group mb-4">
+						<label>Title</label>
+						<InputText class="form-control" @bind-Value="Category.MetaData.Title" />
+					</div>
+					<div class="form-group mb-4">
+						<label>Description</label>
+						<InputText class="form-control" @bind-Value="Category.MetaData.Description" />
+					</div>	
+					<div class="form-group mb-4">
+						<label>Url для старницы</label>
+						<InputText class="form-control" @bind-Value="Category.MetaData.Url" />
+					</div>
 					<div class="form-group mb-4">
 						<label>Название категории</label>
 						<ValidationMessage For="@(() => Category.CategoryName)" />
@@ -26,8 +44,12 @@
 					</div>
 					<div class="form-group mb-4">
 						<label>ID родительской категории</label>
-						<ValidationMessage For="@(() => Category.ParentID)" />
-						<InputNumber class="form-control" @bind-Value="Category.ParentID" />
+						<ValidationMessage For="@(() => Category.ParentId)" />
+						<InputNumber class="form-control" @bind-Value="Category.ParentId" />
+					</div>
+					<div class="form-group mb-4">
+						<label>Опубликовать</label>
+						<InputCheckbox class="" @bind-Value="Category.IsPublished" />
 					</div>
 					<div class="form-group mb-4">
 						<label>Показывать на главной</label>
@@ -56,7 +78,7 @@
 				<label>Основное изображение</label>
 				<img class="img-fluid" style="height: 250px;" src="@Category.CategoryImg">
 				<ImgManagerControl @bind-ChildName="Category.CategoryImg" PathFolder="@urlPath"
-					FolderName="@Category.ID.ToString()" IsSlider="false" />
+					FolderName="@Category.Id.ToString()" IsSlider="false" />
 			</div>
 			<div class="col-12">
 				<div class="form-group mb-2">
@@ -68,7 +90,7 @@
 					<div class="form-group row mb-4">
 						<label>Слайдер</label>
 						<ImgManagerControl @bind-ChildName="Category.Slider" PathFolder="@urlPath"
-						FolderName="@Category.ID.ToString()" IsSlider="true" />
+						FolderName="@Category.Id.ToString()" IsSlider="true" />
 					</div>
 				}
 			</div>
@@ -94,7 +116,7 @@
 						<label>Картинка для 2го блока</label>
 						<img class="img-fluid" style="height: 250px;" src=@Category.ImgTwoUrl>
 						<ImgManagerControl @bind-ChildName="Category.ImgTwoUrl" PathFolder="@urlPath"
-							FolderName="@Category.ID.ToString()" IsSlider="false" />
+							FolderName="@Category.Id.ToString()" IsSlider="false" />
 					</div>
 				</div>
 				<div class="col">
@@ -112,7 +134,7 @@
 						<label>Картинка для 3го блока</label>
 						<img class="img-fluid" style="height: 250px;" src="@Category.ImgThreeUrl">
 						<ImgManagerControl @bind-ChildName="Category.ImgThreeUrl" PathFolder="@urlPath"
-							FolderName="@Category.ID.ToString()" IsSlider="false" />
+							FolderName="@Category.Id.ToString()" IsSlider="false" />
 					</div>
 				</div>
 			</div>
@@ -134,32 +156,64 @@
 	public long Id { get; set; } = 0;
 	public Category Category { get; set; } = new Category();
 	public bool TabIsActive { get; set; } = false;
+	private MetaData MetaData { get; set; } = new();
+	private IList<string> OtherUrls { get; set; } = null!;
 
 	protected override void OnParametersSet()
 	{
 		if (Id != 0)
 		{
-			Category = Repository.Categorys.FirstOrDefault(с => с.ID == Id) ?? new();
+			Category = Repository.Category.FirstOrDefault(с => с.Id == Id) ?? new();
 			TabIsActive = true;
 		}
 	}
 
+	protected override async Task OnInitializedAsync()
+	{
+		Category.MetaData = new MetaData();
+		OtherUrls = await Repository.Category.Where(c => c.Id != Id).Select(m => m.MetaData.Url).ToListAsync();
+		
+		if (Id != 0)
+		{
+			MetaData.CategoryId = Id;
+			MetaData.Title = Category.MetaData.Title;
+			MetaData.Description = Category.MetaData.Description;
+		}
+		
+	}
+
+
 	public string GetEditUrl(long id) => $"/admin/categories/edit/{id}";
 
 	private string urlPath = "imegs/img-category/";
+
+	private string? UrlPage { get; set; } 
+
 	public async Task SaveCategory()
 	{
+		var isCheckName = await CheckNameAsync(Category.CategoryName, (int)Id);
+		if (isCheckName)
+		{
+			popupNotification.CreateNotification("Ошибка", "Категория с таким названием уже существует. Измените название:", Category.CategoryName);
+			return;
+		}
+
+		if (string.IsNullOrEmpty(Category.MetaData.Url) || MetaManager.CheckUrl(Category.MetaData.Url, OtherUrls))
+		{
+			Category.MetaData.Url = MetaManager.UrlBuilder(Category.CategoryName, OtherUrls);
+		}
+
 		if (Id == 0)
 		{
 			Repository.CreateCategory(Category);
-			await folderManager.CeateDirectoryAsync(urlPath, Convert.ToInt64(Category.ID));
-			if (Category.ID != 0)
+
+			await folderManager.CeateDirectoryAsync(urlPath, Convert.ToInt64(Category.Id));
+			if (Category.Id != 0)
 			{
 				TabIsActive = true;
-				GetEditUrl(Convert.ToInt64(Category.ID));
-				NavManager?.NavigateTo(GetEditUrl(Convert.ToInt64(Category.ID)));
-				Notification notification = new Notification(1, "Категория сохранена", "Добавлена категория", Category.CategoryName);
-				popupNotification.AddItem(notification);
+				GetEditUrl(Convert.ToInt64(Category.Id));
+				NavManager?.NavigateTo(GetEditUrl(Convert.ToInt64(Category.Id)));
+				popupNotification.CreateNotification("Категория сохранена", "Добавлена категория", Category.CategoryName);
 				StateHasChanged();
 			}
 		}
@@ -174,4 +228,17 @@
 
 	public string ThemeColor => Id == 0 ? "primary" : "warning";
 	public string TitleText => Id == 0 ? "Создание" : "Редактирование";
+}
+
+@code {
+	private async Task<bool> CheckNameAsync(string name, int id)
+	{
+		var names = await Repository.Category
+			.Where(c => c.Id != id)
+			.Select(c => c.CategoryName).ToListAsync();
+		
+		var result = names.Any(n => string.Equals(n, name, StringComparison.CurrentCultureIgnoreCase));
+
+		return result;
+	}
 }

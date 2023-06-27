@@ -1,65 +1,70 @@
 using LampStore.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using LampStore.Models.ProductsPages;
-using LampStore.Services;
 using Microsoft.EntityFrameworkCore;
-
-
 
 namespace LampStore.Pages
 {
 	public class CategoryPage : PageModel
 	{
-		private IStoreRepository repository;
+		private readonly ICategoryRepository repository;
 
-		public CategoryPage(IStoreRepository repo)
+		public CategoryPage(ICategoryRepository repo)
 		{
 			repository = repo;
 		}
 
-		public Category? categoryCard;
-		public List<Product> DisplayedProducts { get; private set; } = new();
-		public List<ProductType> DisplayedTypes { get; private set; } = new();
+		public Category CategoryCard { get; private set; } = null!;
+		public IList<Product>? DisplayedProducts { get; private set; }
+		public IEnumerable<IGrouping<string, Product>>? ProductsByType { get; private set; }
 
-		public async Task<IActionResult> OnGetAsync(string categoryName) //инициализация категории
+		public async Task<IActionResult> OnGetAsync(string url)
 		{
 			try
 			{
-				DisplayedTypes = await repository.Types.Select(p => p).Distinct().ToListAsync();
-				List<Category> listCategories = await repository.Category.Select(c => c).OrderBy(c => c.ID).ToListAsync();
+				var categoryPage = await repository.Category
+					.FirstOrDefaultAsync(c => c.MetaData.Url == url && c.IsPublished);
+				
+				if (categoryPage is null) return StatusCode(404);
 
-				foreach (var category in listCategories)
+				DisplayedProducts = await GetProducts(categoryPage.Id);
+
+				ProductsByType = GroupingOfProductsByType(DisplayedProducts);
+				
+				CategoryCard = new Category()
 				{
-					if (categoryName == Transliteration.Front(category.CategoryName.ToLower()))
-					{
-						DisplayedProducts = await repository.Products.Where(p => p.Category!.ID == category.ID).ToListAsync();
-						categoryCard = new Category()
-						{
-							CategoryName = category.CategoryName,
-							CategoryImg = category.CategoryImg,
-							Description = category.Description,
-							HeadingTwo = category.HeadingTwo,
-							ImgTwoUrl = category.ImgTwoUrl,
-							DescriptionTwo = category.DescriptionTwo,
-							HeadingThree = category.HeadingThree,
-							ImgThreeUrl = category.ImgThreeUrl,
-							DescriptionThree = category.DescriptionThree,
-							DisplaySlider = category.DisplaySlider,
-							Slider = category.Slider
-						};
-
-						return Page();
-					}
-				}
-				return StatusCode(404);
+					MetaData = categoryPage.MetaData,
+					CategoryName = categoryPage.CategoryName,
+					CategoryImg = categoryPage.CategoryImg,
+					Description = categoryPage.Description,
+					HeadingTwo = categoryPage.HeadingTwo,
+					ImgTwoUrl = categoryPage.ImgTwoUrl,
+					DescriptionTwo = categoryPage.DescriptionTwo,
+					HeadingThree = categoryPage.HeadingThree,
+					ImgThreeUrl = categoryPage.ImgThreeUrl,
+					DescriptionThree = categoryPage.DescriptionThree,
+					DisplaySlider = categoryPage.DisplaySlider,
+					Slider = categoryPage.Slider
+				};
+				
+				return Page();
 			}
 			catch (Exception)
 			{
 				return StatusCode(404);
 			}
+		}
+		
+		private async Task<IList<Product>> GetProducts(long id)
+			=> await repository.Products.Where(p => p.Category.Id == id).ToListAsync();
+
+		private IEnumerable<IGrouping<string, Product>> GroupingOfProductsByType(IList<Product> products)
+		{
+			var productsByType = from product in products 
+				group product by product.ProductType.Name;
+
+			return productsByType;
 		}
 	}
 }

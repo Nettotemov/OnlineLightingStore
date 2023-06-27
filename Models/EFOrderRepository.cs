@@ -4,7 +4,7 @@ namespace LampStore.Models
 {
 	public class EFOrderRepository : IOrderRepository
 	{
-		private StoreDbContext context;
+		private readonly StoreDbContext context;
 
 		public EFOrderRepository(StoreDbContext ctx)
 		{

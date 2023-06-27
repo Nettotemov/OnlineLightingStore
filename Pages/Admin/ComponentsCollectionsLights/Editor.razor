@@ -39,9 +39,9 @@
 					@if (TabIsActive)
 					{
 						<div class="form-group mb-4">
-							<img class="img-fluid" style="height: 250px;" src="@AdditionalBlock.Url">
+							<img class="img-fluid" style="height: 250px;" src="@AdditionalBlock.Url" alt="">
 							<label>Изображение</label>
-							<ImgManagerControl @bind-ChildName="AdditionalBlock.Url" PathFolder="@urlPath"
+							<ImgManagerControl @bind-ChildName="AdditionalBlock.Url" PathFolder="@UrlPath"
 								FolderName="@CollectionPage.Id.ToString()" IsSlider="false" />
 						</div>
 					}
@@ -62,7 +62,7 @@
 								<option value="">Выберите тип поля для вывода</option>
 								@foreach (var type in Enum.GetValues<AdditionalBlockType>())
 								{
-									<option value="@type">@EnumExtensions.GetDisplayName(type)</option>
+									<option value="@type">@type.GetDisplayName()</option>
 								}
 							</InputSelect>
 						</div>
@@ -118,9 +118,9 @@
 			@if (TabIsActive)
 			{
 				<div class="form-group mb-4">
-					<img class="img-fluid" style="height: 250px;" src="@CollectionPage.Img">
+					<img class="img-fluid" style="height: 250px;" src="@CollectionPage.Img" alt="">
 					<label>Изображение</label>
-					<ImgManagerControl @bind-ChildName="CollectionPage.Img" PathFolder="@urlPath"
+					<ImgManagerControl @bind-ChildName="CollectionPage.Img" PathFolder="@UrlPath"
 						FolderName="@CollectionPage.Id.ToString()" IsSlider="false" />
 				</div>
 			}
@@ -161,11 +161,11 @@
 							<td>@item.Caption</td>
 							<td><img class="img-fluid" style="height: 80px;" src="@item.Url" alt=""></td>
 							<td>@item.Description</td>
-							<td>@EnumExtensions.GetDisplayName(@item.AdditionalBlockType)</td>
+							<td>@item.AdditionalBlockType.GetDisplayName()</td>
 							<td>@item.IsAvailable</td>
 							<td class="text-center">
-								<button class="btn btn-info btn-sm" @onclick="@(e => ChangeAdditionalBlock(item))">Изменить</button>
-								<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteAdditionalBlock(item))">Удалить</button>
+								<button class="btn btn-info btn-sm" @onclick="@(() => ChangeAdditionalBlock(item))">Изменить</button>
+								<button class="btn btn-danger btn-sm" @onclick="@(() => DeleteAdditionalBlock(item))">Удалить</button>
 							</td>
 						</tr>
 					}
@@ -194,9 +194,9 @@
 					@if (TabIsActive)
 					{
 						<div class="form-group mb-4">
-							<img class="img-fluid" style="height: 250px;" src="@AdditionalBlock.Url">
+							<img class="img-fluid" style="height: 250px;" src="@AdditionalBlock.Url" alt="">
 							<label>Изображение</label>
-							<ImgManagerControl @bind-ChildName="AdditionalBlock.Url" PathFolder="@urlPath"
+							<ImgManagerControl @bind-ChildName="AdditionalBlock.Url" PathFolder="@UrlPath"
 								FolderName="@CollectionPage.Id.ToString()" IsSlider="false" />
 						</div>
 					}
@@ -217,7 +217,7 @@
 								<option value="">Выберите тип поля для вывода</option>
 								@foreach (var type in Enum.GetValues<AdditionalBlockType>())
 								{
-									<option value="@type">@EnumExtensions.GetDisplayName(type)</option>
+									<option value="@type">@type.GetDisplayName()</option>
 								}
 							</InputSelect>
 						</div>
@@ -237,15 +237,15 @@
 
 @code {
 
-	public ICollectionLight Repository => Service;
+	private ICollectionLight Repository => Service;
 
 	[Inject]
 	public NavigationManager? NavManager { get; set; }
 
 	[Parameter]
 	public long Id { get; set; } = 0;
-	public CollectionLight CollectionPage { get; set; } = new CollectionLight();
-	public bool TabIsActive { get; set; } = false;
+	private CollectionLight CollectionPage { get; set; } = new ();
+	private bool TabIsActive { get; set; } = false;
 
 
 	protected override async Task OnInitializedAsync()
@@ -266,20 +266,20 @@
 		StateHasChanged();
 	}
 
-	private string urlPath = "imegs/img-collections/";
-	public async Task SaveCollectionPage()
+	private const string UrlPath = "imegs/img-collections/";
+	private async Task SaveCollectionPage()
 	{
-		bool isCheckName = await CheckName(CollectionPage.Name);
+		var isCheckName = await CheckNameAsync(CollectionPage.Name, (int)Id);
 		if (isCheckName)
 		{
-			Notification notification = new Notification(1, "Ошибка", "Коллекция с таким названием уже существует. Измените название:", CollectionPage.Name);
-			PopupNotification.AddItem(notification);
+			PopupNotification.CreateNotification("Ошибка", "Коллекция с таким названием уже существует. Измените название:", CollectionPage.Name);
 			return;
 		}
+		
 		if (Id == 0)
 		{
 			await Repository.CreateCollectionAsync(CollectionPage);
-			await FolderManager.CeateDirectoryAsync(urlPath, Convert.ToInt64(CollectionPage.Id));
+			await FolderManager.CeateDirectoryAsync(UrlPath, Convert.ToInt64(CollectionPage.Id));
 			if (CollectionPage.Id != 0)
 			{
 				TabIsActive = true;
@@ -313,18 +313,17 @@
 		await InvokeAsync(StateHasChanged);
 	}
 
-	public long IdAdditionalBlock { get; set; } = 0;
+	private long IdAdditionalBlock { get; set; } = 0;
 	private IEnumerable<AdditionalBlocksForCollection> AdditionalBlocksForCollectionData { get; set; } = Enumerable.Empty<AdditionalBlocksForCollection>();
-	public AdditionalBlocksForCollection AdditionalBlock { get; set; } = new AdditionalBlocksForCollection();
+	private AdditionalBlocksForCollection AdditionalBlock { get; set; } = new();
 	
-	public async Task CreateAdditionalBlockAsync()
+	private async Task CreateAdditionalBlockAsync()
 	{
 		if (IdAdditionalBlock == 0)
 		{
 			AdditionalBlock.CollectionLightId = Convert.ToInt32(Id);
 			await Repository.CreateAdditionalBlocksForCollectionAsync(AdditionalBlock);
-			Notification notification = new Notification(1, "Блок сохранен", "Новый блок добавлен", AdditionalBlock.Caption);
-			PopupNotification.AddItem(notification);
+			PopupNotification.CreateNotification("Блок сохранен", "Новый блок добавлен", AdditionalBlock.Caption);
 			AdditionalBlock = new();
 			await UpdateDataAsync();
 		}
@@ -357,8 +356,7 @@
 		{
 			await Repository.DeleteAdditionalBlocksForCollectionAsync(AdditionalBlockToBeDelete);
 			confirmation?.Hide();
-			Notification notification = new Notification(1, "Удаление дополнительного блока", "Удален дополнительный блок", AdditionalBlockToBeDelete.Caption);
-			PopupNotification.AddItem(notification);
+			PopupNotification.CreateNotification("Удаление дополнительного блока", "Удален дополнительный блок", AdditionalBlockToBeDelete.Caption);
 			AdditionalBlockToBeDelete = null;
 			await UpdateDataAsync();
 		}
@@ -369,18 +367,17 @@
 		confirmation?.Hide();
 		IdAdditionalBlock = 0;
 		AdditionalBlock = new();
-		if (confirmationCheckOnDelete = true && AdditionalBlockToBeDelete != null)
+		if (AdditionalBlockToBeDelete == null) return;
+		if (confirmationCheckOnDelete)
 		{
-			Notification notification = new Notification(1, "Отмена удаления", "Отменено удаление дополнительного блока",
-			AdditionalBlockToBeDelete?.Caption);
-			PopupNotification.AddItem(notification);
+			PopupNotification.CreateNotification("Отмена удаления", "Отменено удаление дополнительного блока",
+				AdditionalBlockToBeDelete.Caption);
 			AdditionalBlockToBeDelete = null;
 		}
 		else
 		{
-			Notification notification = new Notification(1, "Отмена редактирования", "Отменено редактирование дополнительного блока",
-			AdditionalBlockToBeDelete?.Caption);
-			PopupNotification.AddItem(notification);
+			PopupNotification.CreateNotification("Отмена редактирования", "Отменено редактирование дополнительного блока",
+				AdditionalBlockToBeDelete.Caption);
 		}
 	}
 
@@ -397,11 +394,14 @@
 		AdditionalBlock = await Repository.AdditionalBlocksInCollection.FirstOrDefaultAsync(b => b.Id == additionalBlock.Id) ?? new();
 		confirmation?.Show();
 	}
-
-	private async Task<bool> CheckName(string name)
+	
+	private async Task<bool> CheckNameAsync(string name, int id)
 	{
-		var collectionsNames = await Repository.CollectionLight.Select(c => c.Name).ToListAsync();
-		var result = collectionsNames.Any(n => string.Equals(n, name, StringComparison.CurrentCultureIgnoreCase));
+		var names = await Repository.CollectionLight
+			.Where(c => c.Id != id)
+			.Select(c => c.Name).ToListAsync();
+		
+		var result = names.Any(n => string.Equals(n, name, StringComparison.CurrentCultureIgnoreCase));
 
 		return result;
 	}

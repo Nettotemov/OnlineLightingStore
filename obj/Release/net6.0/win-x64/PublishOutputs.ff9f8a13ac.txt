@@ -4,6 +4,7 @@
 \\Mac\Home\Downloads\LS\LampStore\LampStore\obj\Release\net6.0\win-x64\PubTmp\Out\LampStore.dll
 \\Mac\Home\Downloads\LS\LampStore\LampStore\obj\Release\net6.0\win-x64\PubTmp\Out\LampStore.runtimeconfig.json
 \\Mac\Home\Downloads\LS\LampStore\LampStore\obj\Release\net6.0\win-x64\PubTmp\Out\LampStore.pdb
+\\Mac\Home\Downloads\LS\LampStore\LampStore\obj\Release\net6.0\win-x64\PubTmp\Out\Castle.Core.dll
 \\Mac\Home\Downloads\LS\LampStore\LampStore\obj\Release\net6.0\win-x64\PubTmp\Out\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 \\Mac\Home\Downloads\LS\LampStore\LampStore\obj\Release\net6.0\win-x64\PubTmp\Out\Microsoft.AspNetCore.JsonPatch.dll
 \\Mac\Home\Downloads\LS\LampStore\LampStore\obj\Release\net6.0\win-x64\PubTmp\Out\Microsoft.AspNetCore.Mvc.Razor.Host.dll
@@ -13,6 +14,7 @@
 \\Mac\Home\Downloads\LS\LampStore\LampStore\obj\Release\net6.0\win-x64\PubTmp\Out\Microsoft.DotNet.PlatformAbstractions.dll
 \\Mac\Home\Downloads\LS\LampStore\LampStore\obj\Release\net6.0\win-x64\PubTmp\Out\Microsoft.EntityFrameworkCore.dll
 \\Mac\Home\Downloads\LS\LampStore\LampStore\obj\Release\net6.0\win-x64\PubTmp\Out\Microsoft.EntityFrameworkCore.Abstractions.dll
+\\Mac\Home\Downloads\LS\LampStore\LampStore\obj\Release\net6.0\win-x64\PubTmp\Out\Microsoft.EntityFrameworkCore.Proxies.dll
 \\Mac\Home\Downloads\LS\LampStore\LampStore\obj\Release\net6.0\win-x64\PubTmp\Out\Microsoft.EntityFrameworkCore.Relational.dll
 \\Mac\Home\Downloads\LS\LampStore\LampStore\obj\Release\net6.0\win-x64\PubTmp\Out\Microsoft.EntityFrameworkCore.SqlServer.dll
 \\Mac\Home\Downloads\LS\LampStore\LampStore\obj\Release\net6.0\win-x64\PubTmp\Out\Microsoft.Extensions.DependencyModel.dll

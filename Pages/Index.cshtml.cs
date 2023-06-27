@@ -26,12 +26,12 @@ public class IndexModel : PageModel
 	public List<CollectionLight> DisplayCollectionsPages { get; private set; } = new();
 	public List<ModelLight> DisplayLightsModelsPages { get; private set; } = new();
 
-	public int countNode = 0;
+	public int CountNode = 0;
 
 	public async Task OnGetAsync()
 	{
 		DisplayAboutPages = await aboutRepository.AboutPages.Where(p => p.DisplayHomePage == true).ToListAsync();
-		DisplayCategory = await categoryRepository.Categorys.Where(c => c.DisplayHomePage == true).ToListAsync();
+		DisplayCategory = await categoryRepository.Category.Where(c => c.DisplayHomePage == true).ToListAsync();
 		DisplayCollectionsPages = await collectionsRepository.CollectionLight.Where(c => c.IsAvailable == true && c.IsHomePage == true).ToListAsync();
 		DisplayLightsModelsPages = await lightsModelsRepository.LightsModels.Where(c => c.IsAvailable == true && c.IsHomePage == true).ToListAsync();
 	}

@@ -6,7 +6,6 @@ namespace LampStore.Models.ProductsPages
 {
 	public class ProductType
 	{
-		[Key]
 		public int Id { get; set; }
 
 		[Required(ErrorMessage = "Пожалуйста, укажите название")]

@@ -45,10 +45,10 @@
 	</div>
 	<div class="cart-right__wrapper">
 		<h2 class="fw-bold">Корзина</h2>
-		@if (@Model?.Lines.Count() != 0)
+		@if (Model?.Lines.Count() != 0)
 		{
 			<div class="cart-chechout__wrapper">
-				@foreach (var line in @Model?.Lines ?? Enumerable.Empty<CartLine>())
+				@foreach (var line in Model?.Lines ?? Enumerable.Empty<CartLine>())
 				{
 					<div class="product-cart-chechout__wrapper">
 						<div class="product-cart-img__wrapper">

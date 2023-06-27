@@ -148,7 +148,7 @@
 								<div id="input5" class="search-input__inline" style="display: none;">
 									<div id="tags" class="">
 										<ul class="">
-											@foreach (Tag tags in Model.DisplayedTags ?? Enumerable.Empty<Tag>())
+											@foreach (var tags in Model.DisplayedTags ?? Enumerable.Empty<Tag>())
 											{
 												<li class="checkbox">
 													<input type="checkbox" name="tags" value="@tags.Value" id="@tags.Value"

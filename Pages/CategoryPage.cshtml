@@ -1,12 +1,13 @@
-@page "/{CategoryName}"
+@page "/{url}"
 @model CategoryPage
 @using System.Globalization
 
 @{
 	Layout = "_Layout";
-	ViewData["Title"] = @Model.categoryCard?.CategoryName + " купить";
+	ViewData["Title"] = @Model.CategoryCard.MetaData.Title;
+	ViewData["Description"] = @Model.CategoryCard.MetaData.Description;
 	ViewData["Breadcrumb"] = await Component.InvokeAsync("BreadcrumbSummary", new[] { (url: "/", page: "Главная"), (url:
-"/category/" + @Model.categoryCard!.ID.ToString(), page:@Model.categoryCard?.CategoryName) });
+"/category/" + @Model.CategoryCard!.Id.ToString(), page:@Model.CategoryCard?.CategoryName) });
 }
 
 
@@ -15,39 +16,39 @@
 		<div class="row justify-content-between align-items-xl-center">
 			<div class="col-12 col-xl-5">
 				<div class="img-center__wrapper">
-					<img class="img-responsive" src="@Model.categoryCard?.CategoryImg">
+					<img class="img-responsive" src="@Model.CategoryCard?.CategoryImg" alt="">
 				</div>
 			</div>
 			<div class="col-md-12 col-xl-6 active">
-				<h1 class="h1__caption mb-per-5">@Model.categoryCard?.CategoryName</h1>
-				<p class="p__caption mb-per-5">@Model.categoryCard?.Description</p>
+				<h1 class="h1__caption mb-per-5">@Model.CategoryCard?.CategoryName</h1>
+				<p class="p__caption mb-per-5">@Model.CategoryCard?.Description</p>
 			</div>
 		</div>
 	</div>
 
-	@if (@Model.categoryCard?.HeadingTwo != null && @Model.categoryCard?.ImgTwoUrl != null)
+	@if (Model.CategoryCard?.HeadingTwo != null && Model.CategoryCard?.ImgTwoUrl != null)
 	{
 		<div class="col-12 border-b mb-per-4">
 			<div class="row justify-content-between align-items-xl-center">
 				<div class="col-12 col-xl-5">
 					<div class="img-center__wrapper">
-						<img class="img-responsive" src="@Model.categoryCard?.ImgTwoUrl">
+						<img class="img-responsive" src="@Model.CategoryCard?.ImgTwoUrl" alt="">
 					</div>
 				</div>
 				<div class="col-md-12 col-xl-6 active">
-					<h1 class="h1__caption mb-per-5">@Model.categoryCard?.HeadingTwo</h1>
-					<p class="p__caption mb-per-5">@Model.categoryCard?.DescriptionTwo</p>
+					<h1 class="h1__caption mb-per-5">@Model.CategoryCard?.HeadingTwo</h1>
+					<p class="p__caption mb-per-5">@Model.CategoryCard?.DescriptionTwo</p>
 				</div>
 			</div>
 		</div>
 	}
 
-	@if (@Model.categoryCard?.HeadingThree != null && (@Model.categoryCard?.ImgThreeUrl != null ||
-			@Model.categoryCard?.Slider != null))
+	@if (@Model.CategoryCard?.HeadingThree != null && (@Model.CategoryCard?.ImgThreeUrl != null ||
+			@Model.CategoryCard?.Slider != null))
 	{
 		<div class="col-12 border-b mb-per-4">
 			<div class="row justify-content-between align-items-xl-center">
-				@if (@Model.categoryCard?.DisplaySlider == true && @Model.categoryCard?.Slider != null)
+				@if (@Model.CategoryCard?.DisplaySlider == true && @Model.CategoryCard?.Slider != null)
 				{
 					<div class="col-12 col-xl-5">
 						<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="true">
@@ -56,25 +57,25 @@
 									int count = 0;
 								}
 								<div class="carousel-indicators">
-									@for (int i = 0; i < @Model.categoryCard?.Slider?.Split(',').ToList().Count(); i++)
+									@for (int i = 0; i < @Model.CategoryCard?.Slider?.Split(',').ToList().Count(); i++)
 									{
 										<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="@i"
 											class="active" aria-current="true" aria-label="Slide @i"></button>
 									}
 								</div>
-								@foreach (var img in @Model.categoryCard?.Slider?.Split(',').ToList() ?? new List<string>())
+								@foreach (var img in @Model.CategoryCard?.Slider?.Split(',').ToList() ?? new List<string>())
 								{
 
 									@if (count == 0)
 									{
 										<div class="carousel-item active">
-											<img src="@img" class="d-block w-100" alt="@Model.categoryCard?.CategoryName">
+											<img src="@img" class="d-block w-100" alt="@Model.CategoryCard?.CategoryName">
 										</div>
 									}
 									else
 									{
 										<div class="carousel-item">
-											<img src="@img" class="d-block w-100" alt="@Model.categoryCard?.CategoryName">
+											<img src="@img" class="d-block w-100" alt="@Model.CategoryCard?.CategoryName">
 										</div>
 									}
 									count++;
@@ -97,49 +98,47 @@
 				{
 					<div class="col-12 col-xl-5">
 						<div class="img-center__wrapper">
-							<img class="img-responsive" src="@Model.categoryCard?.ImgThreeUrl">
+							<img class="img-responsive" src="@Model.CategoryCard?.ImgThreeUrl" alt="">
 						</div>
 					</div>
 				}
 				<div class="col-md-12 col-xl-6 active">
-					<h1 class="h1__caption mb-per-5">@Model.categoryCard?.HeadingThree</h1>
-					<p class="p__caption mb-per-5">@Model.categoryCard?.DescriptionThree</p>
+					<h1 class="h1__caption mb-per-5">@Model.CategoryCard?.HeadingThree</h1>
+					<p class="p__caption mb-per-5">@Model.CategoryCard?.DescriptionThree</p>
 				</div>
 			</div>
 		</div>
 	}
-
-
-	@{
-		var productsAndType = from product in @Model!.DisplayedProducts
-									group product by product.ProductType?.Name;
-	}
-	@foreach (var type in productsAndType)
+	
+	@if (Model.ProductsByType is not null)
 	{
-		<h3 class="h3__caption fw-bold">@type.Key</h3>
-		<div class="catalog-list__wrapper mb-per-2">
-			@foreach (var pr in type)
-			{
-				<a asp-page="CardProduct" class="product__wrapper" asp-route-ProductID="@pr.Id"
-			asp-route-Name="@pr.Name">
-					<div class="">
-						<div class="product-img__wrapper">
-							<img class="img-center" src="@pr.MainPhoto">
-						</div>
-						<div class="product-desc__wrapper">
-							<p class="title-wrp">@pr.Name</p>
-							<div class="product-price__wrapper">
-								@if (@pr.Discount != null && @pr.OldPrice != null)
-								{
+		@foreach (var type in Model.ProductsByType)
+		{
+			<h3 class="h3__caption fw-bold">@type.Key</h3>
+			<div class="catalog-list__wrapper mb-per-2">
+				@foreach (var pr in type)
+				{
+					<a asp-page="CardProduct" class="product__wrapper" asp-route-ProductID="@pr.Id"
+					   asp-route-Name="@pr.Name">
+						<div class="">
+							<div class="product-img__wrapper">
+								<img class="img-center" src="@pr.MainPhoto" alt="@pr.Name">
+							</div>
+							<div class="product-desc__wrapper">
+								<p class="title-wrp">@pr.Name</p>
+								<div class="product-price__wrapper">
+									@if (@pr.Discount != null && @pr.OldPrice != null)
+									{
 									@* <p class="tags-wrp">-@pr.Discount%</p> *@
-									<p class="tags-wrp"><s>@pr.OldPrice?.ToString("C0", new CultureInfo("ru-RU"))</s></p>
-								}
-										<p class="product-price">@pr.Price.ToString("C0", new CultureInfo("ru-RU"))</p>
+										<p class="tags-wrp"><s>@pr.OldPrice?.ToString("C0", new CultureInfo("ru-RU"))</s></p>
+									}
+									<p class="product-price">@pr.Price.ToString("C0", new CultureInfo("ru-RU"))</p>
+								</div>
 							</div>
 						</div>
-					</div>
-				</a>
-			}
-		</div>
+					</a>
+				}
+			</div>
+		}
 	}
 </div>

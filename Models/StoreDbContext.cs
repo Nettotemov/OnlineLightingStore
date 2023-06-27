@@ -2,6 +2,7 @@ using LampStore.Models.CollectionsLights;
 using LampStore.Models.LightsModels;
 using LampStore.Models.ProductsPages;
 using LampStore.Models.AboutPages;
+using LampStore.Models.MetaTags;
 using Microsoft.EntityFrameworkCore;
 
 namespace LampStore.Models
@@ -34,5 +35,6 @@ namespace LampStore.Models
 
 		public DbSet<ModelLight> LightsModels => Set<ModelLight>();
 		public DbSet<AdditionalBlocksForModelLight> AdditionalBlocksForModelLight => Set<AdditionalBlocksForModelLight>();
+		public DbSet<MetaData> MetaDatas => Set<MetaData>();
 	}
 }

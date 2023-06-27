@@ -46,10 +46,10 @@ namespace LampStore.Controllers
                 new SitemapNode("/collections"),
                 new SitemapNode("/privacy")
             };
-
+            
             foreach (var product in products)
             {
-                nodes.Add(new SitemapNode(Url.Action(product.Name.ToLower(), "catalog", new { id = product.Id }))
+                nodes.Add(new SitemapNode($"/catalog/{product.Name.ToLower()}/{product.Id}")
                 {
                     ChangeFrequency = ChangeFrequency.Monthly,
                     Priority = 0.5M
@@ -58,7 +58,7 @@ namespace LampStore.Controllers
 
             foreach (var category in categorys)
             {
-                nodes.Add(new SitemapNode(Url.Action("Index", Transliteration.Front(category.CategoryName.ToLower())))
+                nodes.Add(new SitemapNode($"{category}")
                 {
                     ChangeFrequency = ChangeFrequency.Monthly,
                     Priority = 0.5M
@@ -67,7 +67,7 @@ namespace LampStore.Controllers
 
             foreach (var i in info)
             {
-                nodes.Add(new SitemapNode(Url.Action(i.ID.ToString(), "info"))
+                nodes.Add(new SitemapNode($"/info/{i.ID}")
                 {
                     ChangeFrequency = ChangeFrequency.Monthly,
                     Priority = 0.5M
@@ -76,7 +76,7 @@ namespace LampStore.Controllers
 
             foreach (var c in cooperation)
             {
-                nodes.Add(new SitemapNode(Url.Action(c.ID.ToString(), "cooperation"))
+                nodes.Add(new SitemapNode($"/cooperation/{c.ID}")
                 {
                     ChangeFrequency = ChangeFrequency.Monthly,
                     Priority = 0.5M
@@ -94,7 +94,7 @@ namespace LampStore.Controllers
 
             foreach (var c in modelsLights)
             {
-                nodes.Add(new SitemapNode(Url.Action(c.CollectionModel.Name.ToLower(), "collections", new { id = c.Name.ToLower() }))
+                nodes.Add(new SitemapNode($"/collections/{c.CollectionModel.Name.ToLower()}/{c.Name.ToLower()}")
                 {
                     ChangeFrequency = ChangeFrequency.Monthly,
                     Priority = 0.5M
@@ -109,9 +109,10 @@ namespace LampStore.Controllers
             return await repository.Products.ToListAsync();
         }
 
-        private async Task<List<Category>> GetCategoryAsync()
+        private async Task<List<string>> GetCategoryAsync()
         {
-            return await repository.Categorys.Where(c => c.DisplayHomePage == true).ToListAsync();
+            return await repository.Category.Where(c => c.DisplayHomePage == true)
+                .Select(c => c.MetaData.Url).ToListAsync();
         }
 
         private async Task<List<Info>> GetInfoAsync()
@@ -129,6 +130,7 @@ namespace LampStore.Controllers
             return await collectionRepository.CollectionLight.Where(c => c.IsAvailable == true).ToListAsync();
         }
 
-        private async Task<List<ModelLight>> GetLightsModelsAsync() => await modelLightRepository.LightsModels.Where(c => c.IsAvailable == true).ToListAsync();
+        private async Task<List<ModelLight>> GetLightsModelsAsync() 
+            => await modelLightRepository.LightsModels.Where(c => c.IsAvailable == true).ToListAsync();
     }
 }

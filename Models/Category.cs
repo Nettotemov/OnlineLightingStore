@@ -28,8 +28,6 @@ namespace LampStore.Models
 		public bool DisplaySlider { get; set; }
 		public bool DisplayHomePage { get; set; }
 		public bool IsPublished { get; set; }
-		
-		public int MetaDataId { get; set; }
-		public virtual MetaData MetaData { get; set; } = null!;
+		public MetaData MetaData { get; set; } = null!;
 	}
 }

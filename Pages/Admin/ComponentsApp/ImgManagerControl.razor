@@ -6,7 +6,7 @@
 {
 	@if (!string.IsNullOrEmpty(ChildName))
 	{
-		@foreach (var img in ChildName!.Split(", ").ToList())
+		@foreach (var img in ChildName.Split(", ").ToList())
 		{
 			<div class="card col-2 mb-4">
 				<img class="img-thumbnail" src="@img">
@@ -70,7 +70,7 @@
 	{
 		if (IsSlider)
 		{
-			if (ChildName != string.Empty)
+			if (!string.IsNullOrEmpty(ChildName))
 			{
 				ChildName += ", " + input;
 			}

@@ -90,7 +90,7 @@ else
 	private List<Product> Products { get; set; } = new();
 	private bool loading = false;
 
-	protected async override Task OnInitializedAsync()
+	protected override async Task OnInitializedAsync()
 	{
 		try
 		{
@@ -116,9 +116,9 @@ else
 
 	private bool confirmationCheckOnDelete;
 	private string confirmationText = string.Empty;
-	public void DeleteCollection(ModelLight m)
+	private void DeleteCollection(ModelLight m)
 	{
-		if (m.Products.Count() > 0)
+		if (m.Products?.Count() > 0)
 		{
 			confirmationCheckOnDelete = false;
 			confirmationText = $"В модели {m.Name} есть товары, удаление невозможно. Перенести товары из данной коллекции и повторите попытку.";

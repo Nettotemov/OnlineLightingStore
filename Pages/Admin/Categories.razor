@@ -44,6 +44,9 @@ else
 			<th>Описание категории</th>
 			<th>Количество товаров</th>
 			<th>Показывать на главной</th>
+			<th>Опубликована</th>
+			<th>Title</th>
+			<th>Description</th>
 			<td />
 		</tr>
 	</thead>
@@ -53,15 +56,18 @@ else
 			@foreach (Category c in CategoryData)
 			{
 				<tr>
-					<td>@c.ID</td>
+					<td>@c.Id</td>
 					<td>@c.CategoryName</td>
 					<td><img class="img-fluid" style="height: 80px;" src=@c.CategoryImg></td>
-					<td>@c.ParentID</td>
+					<td>@c.ParentId</td>
 					<td>@c.Description</td>
-					<td>@Products.Where(p => p.CategoryId == c.ID).Count()</td>
+					<td>@Products.Where(p => p.CategoryId == c.Id).Count()</td>
 					<td>@c.DisplayHomePage</td>
+					<td>@c.IsPublished</td>
+					<td>@c.MetaData.Title</td>
+					<td>@c.MetaData.Description</td>
 					<td class="text-center">
-						<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(c.ID ?? 0)">
+						<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(c.Id)">
 							Изменить
 						</NavLink>
 						<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteCategory(c))">
@@ -90,7 +96,7 @@ else
 
 	private bool loading = false;
 
-	protected async override Task OnInitializedAsync()
+	protected override async Task OnInitializedAsync()
 	{	
 		try
 		{
@@ -110,12 +116,12 @@ else
 	public async Task UpdateData()
 	{
 		Products = await Repository.Products.Select(p => p).ToListAsync();
-		CategoryData = await Repository.Categorys.ToListAsync();
+		CategoryData = await Repository.Category.ToListAsync();
 	}
 
 	public void DeleteCategory(Category category)
 	{
-		var CheckedProductsInCategory = Products.Where(p => p.CategoryId == category.ID).ToList();
+		var CheckedProductsInCategory = Products.Where(p => p.CategoryId == category.Id).ToList();
 		if (CheckedProductsInCategory?.Count > 0)
 		{
 			confirmationCheckOnDelete = false;
@@ -143,7 +149,7 @@ else
 	{
 		if (CategoryToBeDelete != null && confirmationCheckOnDelete)
 		{
-			folderManager.DeleteDirectory(urlPath + CategoryToBeDelete.ID);
+			folderManager.DeleteDirectory(urlPath + CategoryToBeDelete.Id);
 			Repository.DeleteCategory(CategoryToBeDelete);
 			confirmation?.Hide();
 			Notification notification = new Notification(1, "Удаление категории", "Удалена категория", CategoryToBeDelete.CategoryName);

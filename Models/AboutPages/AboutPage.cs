@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using LampStore.Models.MetaTags;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace LampStore.Models.AboutPages
@@ -6,11 +7,6 @@ namespace LampStore.Models.AboutPages
 	public class AboutPage
 	{
 		public long Id { get; set; }
-
-		public string? Title { get; init; }
-		
-		public string? Description { get; init; }
-
 		public string ImgOneUrl { get; set; } = "imegs/system-img/no-img.png";
 		
 		[Required(ErrorMessage = "Пожалуйста, введите заголовок")]
@@ -27,5 +23,7 @@ namespace LampStore.Models.AboutPages
 		public bool IsPublished { get; set; }
 		
 		public bool MainAboutCompany { get; set; }
+		
+		public MetaData MetaData { get; set; } = null!;
 	}
 }
