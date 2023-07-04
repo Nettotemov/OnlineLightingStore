@@ -1,13 +1,14 @@
-@page "/collections/{collectionName}"
+@page "/collections/{url}"
 @model CollectionPage
 @using System.Globalization
 
 @{
 	Layout = "_Layout";
-	ViewData["Title"] = "Купить освещение из коллекции" + @Model.CollectionLightPage?.Name;
+	ViewData["Title"] = Model.CollectionLightPage.MetaData.Title;
+	ViewData["Description"] = Model.CollectionLightPage.MetaData.Description;
 	ViewData["Breadcrumb"] = await Component.InvokeAsync("BreadcrumbSummary", new[] { (url: "/", page: "Главная"),
-(url: "/collections", page:"Коллекции"), (url: @Model.CollectionLightPage!.Name.ToString(),
-page:@Model.CollectionLightPage.Name) });
+(url: "/collections", page:"Коллекции"), (url: Model.CollectionLightPage.MetaData.Url,
+page:Model.CollectionLightPage.Name) });
 }
 
 <div class="mt-13">
@@ -15,12 +16,12 @@ page:@Model.CollectionLightPage.Name) });
 		<div class="row justify-content-between align-items-xl-center">
 			<div class="col-12 col-xl-5">
 				<div class="img-center__wrapper">
-					<img class="img-responsive" src="@Model.CollectionLightPage?.Img" alt="">
+					<img class="img-responsive" src="@Model.CollectionLightPage.Img" alt="">
 				</div>
 			</div>
 			<div class="col-md-12 col-xl-6 active">
-				<h1 class="h1__caption mb-per-5">@Model.CollectionLightPage?.Name</h1>
-				<p class="p__caption mb-per-5">@Model.CollectionLightPage?.Description</p>
+				<h1 class="h1__caption mb-per-5">@Model.CollectionLightPage.Name</h1>
+				<p class="p__caption mb-per-5">@Model.CollectionLightPage.Description</p>
 			</div>
 		</div>
 	</div>
@@ -28,13 +29,13 @@ page:@Model.CollectionLightPage.Name) });
 
 @if (@Model.CollectionLightPage is {AdditionalBlocks: not null })
 {
-	foreach (var item in @Model.CollectionLightPage.AdditionalBlocks)
+	foreach (var item in Model.CollectionLightPage.AdditionalBlocks)
 	{
 		<div class="col-12 border-b mb-per-4">
 			<div class="row justify-content-between align-items-xl-center">
 				<div class="col-12 col-xl-5">
 					<div class="img-center__wrapper">
-						<img class="img-responsive" src="@item.Url">
+						<img class="img-responsive" src="@item.Url" alt="@item.Caption">
 					</div>
 				</div>
 				<div class="col-md-12 col-xl-6 active">
@@ -46,14 +47,14 @@ page:@Model.CollectionLightPage.Name) });
 	}
 }
 
-@if (Model.LightsModelsPages.Any())
+@if (Model.LightsModelsPages is not null && Model.LightsModelsPages.Count > 0)
 {
-	<h3 class="h3__caption fw-bold">Модели из коллекции @Model.CollectionLightPage?.Name</h3>
+	<h3 class="h3__caption fw-bold">Модели из коллекции @Model.CollectionLightPage.Name</h3>
 	<div class="catalog-list__wrapper border-b mb-per-2">
-	@foreach (var p in @Model.LightsModelsPages)
+	@foreach (var p in Model.LightsModelsPages)
 		{
 			<a asp-page="ModelLightPage" class="product__wrapper"
-		asp-route-collectionName="@Model.CollectionLightPage?.Name.ToLower()" asp-route-modelName="@p.Name.ToLower()">
+		asp-route-collectionName="@Model.CollectionLightPage.Name.ToLower()" asp-route-modelName="@p.Name.ToLower()">
 				<div class="">
 					<div class="product-img__wrapper">
 						<img class="img-center" src="@p.Img" alt="">
@@ -64,11 +65,9 @@ page:@Model.CollectionLightPage.Name) });
 							@if (@p.Products?.FirstOrDefault()?.Discount != null &&
 									@p.Products?.FirstOrDefault()?.OldPrice != null)
 							{
-								@* <p class="tags-wrp">-@pr.Discount%</p> *@
-								<p class="tags-wrp"><s>@p.Products?.FirstOrDefault()?.OldPrice?.ToString("C0", new
-							CultureInfo("ru-RU"))</s></p>
+								<p class="tags-wrp"><s>@p.Products?.FirstOrDefault()?.OldPrice?.ToString("C0", new CultureInfo("ru-RU"))</s></p>
 							}
-							<p class="product-price">От: @p.Products?.Select(p => p.Price).Min().ToString("C0", new
+							<p class="product-price">От: @p.Products?.Select(product => product.Price).Min().ToString("C0", new
 						CultureInfo("ru-RU"))</p>
 						</div>
 					</div>
@@ -84,17 +83,17 @@ page:@Model.CollectionLightPage.Name) });
 	<div class="configurator-subproduct__wrapper mt-2 mb-5">
 		<div class="configurator-subproduct row">
 			<div class="col-12 col-xl-4">
-				@if (@Model.ProductId != null)
+				@if (Model.ProductId != null)
 				{
 					<div class="configurator-img__wrapper">
-						<img id="configuratorSubproductImg" class="img-center" src="@Model.Product?.MainPhoto">
+						<img id="configuratorSubproductImg" class="img-center" src="@Model.Product?.MainPhoto" alt="@Model.Product?.Name">
 					</div>
 				}
 				else
 				{
 					<div class="configurator-img__wrapper">
 						<img id="configuratorSubproductImg" class="img-center" 
-						     src="@Model.CollectionLightPage?.Products?.FirstOrDefault()?.MainPhoto" alt="">
+						     src="@Model.CollectionLightPage.Products?.FirstOrDefault()?.MainPhoto" alt="@Model.CollectionLightPage.Products?.FirstOrDefault()?.Name">
 					</div>
 				}
 			</div>
@@ -121,9 +120,9 @@ page:@Model.CollectionLightPage.Name) });
 				}
 				else
 				{
-					<h1 id="configuratorSubproductCaption" class="font-bold text-muted">@Model.CollectionLightPage?.Name
+					<h1 id="configuratorSubproductCaption" class="font-bold text-muted">@Model.CollectionLightPage.Name
 					</h1>
-					@if (@Model.Products.Count() > 0)
+					@if (Model.Products?.Count() > 0)
 					{
 						<p id="configuratorProductPrice" class="h5 text-muted mb-4"
 							price-value="@Model.Products.Select(p => p.Price).Min().ToString()">
@@ -182,10 +181,10 @@ page:@Model.CollectionLightPage.Name) });
 	<form id="collectionPageForm" method="get" asp-page="/CollectionPage" asp-page-handler="Params">
 		<div class="row configurator-form__wrapper">
 			<div class="col-12 col-xl-3 col-xxl-2 col-lg-4 mb-3">
-			@if (Model.CollectionLightPage.ModelLights.Any())
+			@if (Model.CollectionLightPage is {ModelLights: not null } && Model.CollectionLightPage.ModelLights.Any())
 			{
-				@if (@Model.Products.Select(p => p.ModelLight.Name).Distinct().Count() >= 1 &&
-						@Model.CollectionLightPage!.Products.Select(p => p.ModelLight.Name).Distinct().Count() != 1)
+				@if ((Model.Products?.Select(p => p.ModelLight.Name).Distinct()).Any() &&
+						Model.CollectionLightPage.Products?.Select(p => p.ModelLight?.Name).Distinct().Count() != 1)
 				{
 					<div class="configurator__wrapper select-model-name">
 						<h4 class="configurator__caption">Модель:</h4>
@@ -193,10 +192,10 @@ page:@Model.CollectionLightPage.Name) });
 						<div class="configurator__btns">
 							<input type="hidden" id="configuratorModelName" name="modelName" value="">
 							<div class="selectModelsProduct d-flex flex-column" id="selectModelsProduct">
-								@foreach (var m in @Model.CollectionLightPage.Products.Select(p =>
+								@foreach (var m in Model.CollectionLightPage.Products?.Select(p =>
 										p.ModelLight.Name).Distinct())
 								{
-									@if (@Model.Products.Select(p => p.ModelLight.Name).Distinct().Where(p => p == m).Any())
+									@if (Model.Products.Select(p => p.ModelLight?.Name).Distinct().Any(p => p == m))
 									{
 										<button class="radio-btn" type="button" name="@m" data-value="@m">@m</button>
 									}
@@ -216,12 +215,12 @@ page:@Model.CollectionLightPage.Name) });
 						<div id="result"></div>
 						<div class="configurator__btns">
 							<input type="hidden" id="configuratorModelName" name="modelName"
-								value="@Model.Products.Select(p => p.ModelLight.Name).Distinct().FirstOrDefault()">
+								value="@Model.Products.Select(p => p.ModelLight?.Name).Distinct().FirstOrDefault()">
 							<div class="selectModelsProduct d-flex flex-column" id="selectModelsProduct">
-								@foreach (var m in @Model.CollectionLightPage!.Products.Select(p =>
+								@foreach (var m in Model.CollectionLightPage.Products?.Select(p =>
 										p.ModelLight.Name).Distinct())
 								{
-									@if (m == @Model.Products.Select(p => p.ModelLight.Name).Distinct().FirstOrDefault())
+									@if (m == Model.Products.Select(p => p.ModelLight.Name).Distinct().FirstOrDefault())
 									{
 										<button class="radio-btn active" type="button" name="@m" data-value="@m">@m</button>
 									}
@@ -253,19 +252,19 @@ page:@Model.CollectionLightPage.Name) });
 			</div>
 
 			<div class="col-12 col-xl-3 col-xxl-2 col-lg-4 mb-3">
-				@if (@Model.Products.Select(p => p.Color).Distinct().Count() >= 1 &&
-						@Model.CollectionLightPage.Products.Select(p => p.Color).Distinct().Count() != 1)
+				@if (Model.Products != null &&
+				     Model.Products.Select(p => p.Color).Distinct().Any() &&
+				     Model.CollectionLightPage.Products?.Select(p => p.Color).Distinct().Count() != 1)
 				{
 					<div class="configurator__wrapper select-color-product">
 						<h4 class="configurator__caption">Цвет:</h4>
 						<div class="configurator__btns">
 							<input type="hidden" id="configuratorColorProduct" name="colorProduct" value="">
 							<div class="selectColorsProduct d-flex flex-column" id="selectColorsProduct">
-								@foreach (var color in @Model.CollectionLightPage.Products.Select(p => p.Color).Distinct())
+								@foreach (var color in Model.CollectionLightPage.Products?.Select(p => p.Color).Distinct()!)
 								{
 
-									@if (@Model.Products.Select(p => p.Color).Distinct().Where(p => p ==
-											color).Any())
+									@if (@Model.Products.Select(p => p.Color).Distinct().Any(p => p == color))
 									{
 										<button class="radio-btn" type="button" data-value="@color" name="@color">@color</button>
 									}
@@ -275,7 +274,6 @@ page:@Model.CollectionLightPage.Name) });
 											name="@color">@color</button>
 									}
 								}
-
 							</div>
 						</div>
 					</div>
@@ -286,12 +284,12 @@ page:@Model.CollectionLightPage.Name) });
 						<h4 class="configurator__caption">Цвет:</h4>
 						<div class="configurator__btns">
 							<input type="hidden" id="configuratorColorProduct" name="colorProduct"
-								value="@Model.Products.Select(p => p.Color).Distinct().FirstOrDefault()">
+								value="@Model.Products?.Select(p => p.Color).Distinct().FirstOrDefault()">
 							<div class="selectColorsProduct d-flex flex-column" id="selectColorsProduct">
-								@foreach (var color in @Model.CollectionLightPage.Products.Select(p => p.Color).Distinct())
+								@foreach (var color in Model.CollectionLightPage.Products?.Select(p => p.Color).Distinct()!)
 								{
 
-									@if (color == @Model.Products.Select(p => p.Color).Distinct().FirstOrDefault())
+									@if (color == Model.Products?.Select(p => p.Color).Distinct().FirstOrDefault())
 									{
 										<button class="radio-btn active" type="button" data-value="@color"
 											name="@color">@color</button>
@@ -309,25 +307,24 @@ page:@Model.CollectionLightPage.Name) });
 				}
 			</div>
 			<div class="col-12 col-xl-3 col-xxl-2 col-lg-4 mb-3">
-				@if (@Model.Products.Select(p => p.Size).Distinct().Count() >= 1 &&
-						@Model.CollectionLightPage.Products.Select(p => p.Size).Distinct().Count() != 1)
+				@if ((Model.Products?.Select(p => p.Size).Distinct()!).Any() &&
+						Model.CollectionLightPage.Products.Select(p => p.Size).Distinct().Count() != 1)
 				{
 					<div class="configurator__wrapper select-size-product">
 						<h4 class="configurator__caption">Размер:</h4>
 						<div class="configurator__btns">
 							<input type="hidden" id="configuratorSizeProduct" name="size" value="">
 							<div class="selectSizeProduct d-flex flex-column" id="selectSizeProduct">
-								@foreach (var size in @Model.CollectionLightPage.Products.Select(p => p.Size).Distinct())
+								@foreach (var size in Model.CollectionLightPage.Products.Select(p => p.Size).Distinct())
 								{
-									@if (@Model.Products.Select(p => p.Size).Distinct().Where(p => p ==
-											size).Any())
+									@if (Model.Products.Select(p => p.Size).Distinct().Any(p => p == size))
 									{
-										<button class="radio-btn" type="button" data-value="@size" name="@size">@size</button>
+										<button class="radio-btn" type="button" data-value="@size" name="@size">@size мм</button>
 									}
 									else
 									{
 										<button class="radio-btn" disabled type="button" data-value="@size"
-											name="@size">@size</button>
+											name="@size">@size мм</button>
 									}
 								}
 							</div>
@@ -340,19 +337,19 @@ page:@Model.CollectionLightPage.Name) });
 						<h4 class="configurator__caption">Размер:</h4>
 						<div class="configurator__btns">
 							<input type="hidden" id="configuratorSizeProduct" name="size"
-								value="@Model.Products.Select(p => p.Size).Distinct().FirstOrDefault()">
+								value="@Model.Products?.Select(p => p.Size).Distinct().FirstOrDefault()">
 							<div class="selectSizeProduct d-flex flex-column" id="selectSizeProduct">
-								@foreach (var size in @Model.CollectionLightPage.Products.Select(p => p.Size).Distinct())
+								@foreach (var size in Model.CollectionLightPage.Products.Select(p => p.Size).Distinct())
 								{
-									@if (size == @Model.Products.Select(p => p.Size).Distinct().FirstOrDefault())
+									@if (size ==@Model.Products?.Select(p => p.Size).Distinct().FirstOrDefault())
 									{
 										<button class="radio-btn active" type="button" data-value="@size"
-											name="@size">@size</button>
+											name="@size">@size мм</button>
 									}
 									else
 									{
 										<button class="radio-btn" disabled type="button" data-value="@size"
-											name="@size">@size</button>
+											name="@size">@size мм</button>
 									}
 								}
 							</div>
@@ -361,8 +358,8 @@ page:@Model.CollectionLightPage.Name) });
 				}
 			</div>
 			<div class="col-12 col-xl-3 col-lg-4 col-xxl-2 mb-3">
-				@if (@Model.Products.Select(p => p.LightSource).Distinct().Count() >= 1 &&
-						@Model.CollectionLightPage.Products.Select(p => p.LightSource).Distinct().Count() != 1)
+				@if ((Model.Products?.Select(p => p.LightSource).Distinct()!).Any() &&
+						Model.CollectionLightPage.Products.Select(p => p.LightSource).Distinct().Count() != 1)
 				{
 					<div class="configurator__wrapper select-light-source-product">
 						<h4 class="configurator__caption">Источник света:</h4>
@@ -372,8 +369,7 @@ page:@Model.CollectionLightPage.Name) });
 								@foreach (var lightSource in @Model.CollectionLightPage.Products.Select(p =>
 										p.LightSource).Distinct())
 								{
-									@if (@Model.Products.Select(p => p.LightSource).Distinct().Where(p => p ==
-											lightSource).Any())
+									@if (Model.Products.Select(p => p.LightSource).Distinct().Any(p => p == lightSource))
 									{
 										<button class="radio-btn" type="button" data-value="@lightSource"
 											name="@lightSource">@lightSource</button>
@@ -394,12 +390,12 @@ page:@Model.CollectionLightPage.Name) });
 						<h4 class="configurator__caption">Источник света:</h4>
 						<div class="configurator__btns">
 							<input type="hidden" id="configuratorLightSourceProduct" name="lightSource"
-								value="@Model.Products.Select(p => p.LightSource).Distinct().FirstOrDefault()">
+								value="@Model.Products?.Select(p => p.LightSource).Distinct().FirstOrDefault()">
 							<div class="selectLightSourceProduct d-flex flex-column" id="selectLightSourceProduct">
 								@foreach (var lightSource in @Model.CollectionLightPage.Products.Select(p =>
 										p.LightSource).Distinct())
 								{
-									@if (lightSource == @Model.Products.Select(p => p.LightSource).Distinct().FirstOrDefault())
+									@if (lightSource == Model.Products?.Select(p => p.LightSource).Distinct().FirstOrDefault())
 									{
 										<button class="radio-btn active" type="button" data-value="@lightSource"
 											name="@lightSource">@lightSource</button>
@@ -416,7 +412,7 @@ page:@Model.CollectionLightPage.Name) });
 				}
 			</div>
 			<div class="col-12 col-xl-3 col-xxl-2 col-lg-4 mb-3">
-				@if (@Model.Products.Select(p => p.PowerW).Distinct().Count() >= 1 &&
+				@if (Model.Products.Select(p => p.PowerW).Distinct().Any() &&
 						@Model.CollectionLightPage.Products.Select(p => p.PowerW).Distinct().Count() != 1)
 				{
 					<div class="configurator__wrapper select-power-w-product">
@@ -428,14 +424,14 @@ page:@Model.CollectionLightPage.Name) });
 										p.PowerW).Distinct())
 								{
 
-									@if (@Model.Products.Select(p => p.PowerW).Distinct().Where(p => p == powerW).Any())
+									@if (Model.Products.Select(p => p.PowerW).Distinct().Any(p => p == powerW))
 									{
-										<button class="radio-btn" type="button" data-value="@powerW" name="@powerW">@powerW</button>
+										<button class="radio-btn" type="button" data-value="@powerW" name="@powerW">@powerW W</button>
 									}
 									else
 									{
 										<button class="radio-btn" disabled type="button" data-value="@powerW"
-											name="@powerW">@powerW</button>
+											name="@powerW">@powerW W</button>
 									}
 								}
 							</div>
@@ -457,12 +453,12 @@ page:@Model.CollectionLightPage.Name) });
 									@if (powerW == @Model.Products.Select(p => p.PowerW).Distinct().FirstOrDefault())
 									{
 										<button class="radio-btn active" type="button" data-value="@powerW"
-											name="@powerW">@powerW</button>
+											name="@powerW">@powerW W</button>
 									}
 									else
 									{
 										<button class="radio-btn" disabled type="button" data-value="@powerW"
-											name="@powerW">@powerW</button>
+											name="@powerW">@powerW W</button>
 									}
 								}
 							</div>
@@ -472,8 +468,8 @@ page:@Model.CollectionLightPage.Name) });
 			</div>
 
 			<div class="col-12 col-xl-3 col-xxl-2 col-lg-4 mb-3">
-				@if (@Model.Products.Select(p => p.AddControl).Distinct().Count() >= 1 &&
-						@Model.CollectionLightPage.Products.Select(p => p.AddControl).Distinct().Count() != 1)
+				@if (Model.Products.Select(p => p.AddControl).Distinct().Any() &&
+						Model.CollectionLightPage.Products.Select(p => p.AddControl).Distinct().Count() != 1)
 				{
 					<div class="configurator__wrapper select-dim-product">
 						<h4 class="configurator__caption">Управление:</h4>
@@ -483,7 +479,7 @@ page:@Model.CollectionLightPage.Name) });
 								@foreach (var dim in @Model.CollectionLightPage.Products.Select(p =>
 										p.AddControl).Distinct())
 								{
-									@if (@Model.Products.Select(p => p.AddControl).Distinct().Where(p => p == dim).Any())
+									@if (Model.Products.Select(p => p.AddControl).Distinct().Any(p => p == dim))
 									{
 										<button class="radio-btn" type="button" data-value="@dim" name="@dim">@dim</button>
 									}
@@ -522,8 +518,7 @@ page:@Model.CollectionLightPage.Name) });
 					</div>
 				}
 			</div>
-
-
+		
 			<div class="col-12 mt-2">
 				<button id="clearConfigurator" class="form-catalog__text cart__btn-checkout d-none"
 					type="button">Сбросить настройки</button>

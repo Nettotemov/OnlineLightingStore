@@ -1,9 +1,11 @@
-@page "/admin/collections/edit/{id:long}"
+@page "/admin/collections/edit/{id:int}"
 @page "/admin/collections/create"
 @using LampStore.Models.CollectionsLights
+@using LampStore.Models.MetaTags
 @inherits OwningComponentBase<ICollectionLight>
 @inject IPopupNotification PopupNotification
 @inject IFolderManager FolderManager
+@inject IMetaManager MetaManager
 
 <div class="admin-notification__wrapper">
 	<Popup ListNotifications="PopupNotification.ListNotifications" />
@@ -95,6 +97,18 @@
 						<input class="form-control" disabled value="@CollectionPage.Id" />
 					</div>
 				}
+				<div class="form-group mb-4">
+					<label>Title</label>
+					<InputText class="form-control" @bind-Value="MetaData.Title" />
+				</div>
+				<div class="form-group mb-4">
+					<label>Description</label>
+					<InputText class="form-control" @bind-Value="MetaData.Description" />
+				</div>	
+				<div class="form-group mb-4">
+					<label>Url для старницы</label>
+					<InputText class="form-control" @bind-Value="MetaData.Url" />
+				</div>
 				<div class="form-group mb-4">
 					<label>Заголовок</label>
 					<ValidationMessage For="@(() => CollectionPage.Name)" />
@@ -227,7 +241,6 @@
 						</div>
 						<div class="mt-2">
 							<button form="createAdditionalBlock" type="submit" class="btn btn-warning">Сохранить</button>
-							@* <a class="btn btn-secondary" @onclick="@(e => CancellationNewSetting())">Отмена</a> *@
 						</div>
 				</div>
 			</div>
@@ -243,25 +256,22 @@
 	public NavigationManager? NavManager { get; set; }
 
 	[Parameter]
-	public long Id { get; set; } = 0;
+	public int Id { get; set; }
 	private CollectionLight CollectionPage { get; set; } = new ();
-	private bool TabIsActive { get; set; } = false;
-
+	private bool TabIsActive { get; set; }
+	private MetaData MetaData { get; set; } = new();
+	private IList<string> OtherUrls { get; set; } = null!;
 
 	protected override async Task OnInitializedAsync()
 	{
-		if (Id != 0)
-		{
-			await UpdateDataAsync();
-			TabIsActive = true;
-		}
+		await UpdateDataAsync();
 	}
 
 	protected override async Task OnParametersSetAsync()
 	{
 		if (Id != 0)
 		{
-			CollectionPage = await Repository.CollectionLight.FirstOrDefaultAsync(с => с.Id == Id) ?? new();
+			CollectionPage = await Repository.CollectionLight.FirstOrDefaultAsync(с => с.Id == Id) ?? new CollectionLight();
 		}
 		StateHasChanged();
 	}
@@ -269,39 +279,42 @@
 	private const string UrlPath = "imegs/img-collections/";
 	private async Task SaveCollectionPage()
 	{
-		var isCheckName = await CheckNameAsync(CollectionPage.Name, (int)Id);
+		var isCheckName = await CheckNameAsync(CollectionPage.Name, Id);
 		if (isCheckName)
 		{
 			PopupNotification.CreateNotification("Ошибка", "Коллекция с таким названием уже существует. Измените название:", CollectionPage.Name);
 			return;
 		}
 		
+		CollectionPage.MetaData = MetaData;
+		if (string.IsNullOrEmpty(CollectionPage.MetaData.Url) || MetaManager.CheckUrl(CollectionPage.MetaData.Url, OtherUrls))
+		{
+			CollectionPage.MetaData.Url = MetaManager.UrlBuilder(CollectionPage.Name, OtherUrls);
+		}
+		
 		if (Id == 0)
 		{
 			await Repository.CreateCollectionAsync(CollectionPage);
-			await FolderManager.CeateDirectoryAsync(UrlPath, Convert.ToInt64(CollectionPage.Id));
+			await FolderManager.CeateDirectoryAsync(UrlPath, CollectionPage.Id);
 			if (CollectionPage.Id != 0)
 			{
 				TabIsActive = true;
-				GetEditUrl(Convert.ToInt64(CollectionPage.Id));
-				NavManager?.NavigateTo(GetEditUrl(Convert.ToInt64(CollectionPage.Id)));
-				Notification notification = new Notification(1, "Старница сохранена", "Страница коллекции добавлена", CollectionPage.Name);
-				PopupNotification.AddItem(notification);
+				NavManager?.NavigateTo(GetEditUrl(CollectionPage.Id));
+				PopupNotification.CreateNotification("Старница сохранена", "Страница коллекции добавлена", CollectionPage.Name);
 				StateHasChanged();
 			}
 		}
 		else
 		{
 			await Repository.SaveCollectionAsync(CollectionPage);
-			Notification notification = new Notification(1, "Изменения сохранены", "Запись отредактирована: Страница коллекции под ID", Id.ToString());
-			PopupNotification.AddItem(notification);
+			PopupNotification.CreateNotification("Изменения сохранены", "Запись отредактирована: Страница коллекции под ID", Id.ToString());
 			NavManager?.NavigateTo("/admin/collections");
 		}
 	}
-	public string GetEditUrl(long id) => $"/admin/collections/edit/{id}";
+	private string GetEditUrl(int id) => $"/admin/collections/edit/{id}";
 
-	public string ThemeColor => Id == 0 ? "primary" : "warning";
-	public string TitleText => Id == 0 ? "Создание" : "Редактирование";
+	private string ThemeColor => Id == 0 ? "primary" : "warning";
+	private string TitleText => Id == 0 ? "Создание" : "Редактирование";
 }
 
 
@@ -309,35 +322,35 @@
 
 	private async Task UpdateDataAsync()
 	{
-		AdditionalBlocksForCollectionData = await Repository.AdditionalBlocksInCollection.Where(b => b.CollectionLightId == Id).ToListAsync();
+		if (Id != 0)
+		{
+			AdditionalBlocksForCollectionData = await Repository.AdditionalBlocksInCollection.Where(b => b.CollectionLightId == Id).ToListAsync();
+			TabIsActive = true;
+		}
+		MetaData = await Repository.MetaData.FirstOrDefaultAsync(c => c.CollectionLightId == Id) ?? new MetaData();
+		OtherUrls = await Repository.CollectionLight.Where(c => c.Id != Id).Select(m => m.MetaData.Url).ToListAsync();
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private long IdAdditionalBlock { get; set; } = 0;
 	private IEnumerable<AdditionalBlocksForCollection> AdditionalBlocksForCollectionData { get; set; } = Enumerable.Empty<AdditionalBlocksForCollection>();
 	private AdditionalBlocksForCollection AdditionalBlock { get; set; } = new();
 	
 	private async Task CreateAdditionalBlockAsync()
 	{
-		if (IdAdditionalBlock == 0)
+		AdditionalBlock.CollectionLightId = Id;
+		if (AdditionalBlock.Id == 0)
 		{
-			AdditionalBlock.CollectionLightId = Convert.ToInt32(Id);
 			await Repository.CreateAdditionalBlocksForCollectionAsync(AdditionalBlock);
 			PopupNotification.CreateNotification("Блок сохранен", "Новый блок добавлен", AdditionalBlock.Caption);
-			AdditionalBlock = new();
-			await UpdateDataAsync();
 		}
 		else
 		{
-			AdditionalBlock.CollectionLightId = Convert.ToInt32(Id);
 			await Repository.SaveAdditionalBlocksForCollectionAsync(AdditionalBlock);
-			Notification notification = new Notification(1, "Изменения сохранены", "Дополнительное поле изменено", AdditionalBlock.Id.ToString());
-			PopupNotification.AddItem(notification);
+			PopupNotification.CreateNotification("Изменения сохранены", "Дополнительное поле изменено", AdditionalBlock.Id.ToString());
 			confirmation?.Hide();
-			IdAdditionalBlock = 0;
-			AdditionalBlock = new();
-			await UpdateDataAsync();
 		}
+		AdditionalBlock = new AdditionalBlocksForCollection();
+		await UpdateDataAsync();
 	}
 
 	private void DeleteAdditionalBlock(AdditionalBlocksForCollection additionalBlock)
@@ -365,8 +378,7 @@
 	private void OnCancel()
 	{
 		confirmation?.Hide();
-		IdAdditionalBlock = 0;
-		AdditionalBlock = new();
+		AdditionalBlock = new AdditionalBlocksForCollection();
 		if (AdditionalBlockToBeDelete == null) return;
 		if (confirmationCheckOnDelete)
 		{
@@ -388,7 +400,6 @@
 	private string confirmationTitle = string.Empty;
 	private async Task ChangeAdditionalBlock(AdditionalBlocksForCollection additionalBlock)
 	{
-		IdAdditionalBlock = additionalBlock.Id;
 		confirmationCheckOnDelete = false;
 		confirmationTitle = "Редактирование дополнительного блока";
 		AdditionalBlock = await Repository.AdditionalBlocksInCollection.FirstOrDefaultAsync(b => b.Id == additionalBlock.Id) ?? new();

@@ -1,0 +1,26 @@
+@inject IPageStateService PageStateService
+
+<ul class="pagination">
+	@for (var i = 1; i <= PageStateService.TotalPages; i++)
+	{
+		var page = i;
+		<li class="page-item @(PageStateService.CurrentPage == i ? "active" : "")">
+			<button class="page-link" @onclick="@(() => PageChange(page))">@i</button>
+		</li>
+	}
+</ul>
+
+@code {
+	
+	[Inject]
+	public NavigationManager? NavManager { get; set; }
+	
+	[Parameter]
+	public string Url { get; set; } = null!;
+
+	private void PageChange(int page)
+	{
+		NavManager?.NavigateTo(Url + page);
+		PageStateService.ChangePage(page);
+	}
+}

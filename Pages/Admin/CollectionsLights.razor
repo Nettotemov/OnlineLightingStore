@@ -109,7 +109,7 @@ else
 	private async Task UpdateData()
 	{
 		Products = await Repository.Products.Select(p => p).ToListAsync();
-		CollectionsData = await Repository.CollectionLight.ToListAsync();
+		CollectionsData = await Repository.CollectionLight.Select(c => c).ToListAsync();
 	}
 
 

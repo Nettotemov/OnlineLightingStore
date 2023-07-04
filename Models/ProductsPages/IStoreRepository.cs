@@ -1,5 +1,6 @@
 using LampStore.Models.CollectionsLights;
 using LampStore.Models.LightsModels;
+using LampStore.Models.MetaTags;
 
 namespace LampStore.Models.ProductsPages
 {
@@ -11,6 +12,7 @@ namespace LampStore.Models.ProductsPages
 		IQueryable<ProductType> Types { get; }
 		IQueryable<CollectionLight> CollectionsModels { get; }
 		IQueryable<ModelLight> LightsModels { get; }
+		IQueryable<MetaData> MetaData { get; }
 
 		Task SaveProductAsync(Product p);
 		Task CreateProductAsync(Product p);

@@ -2,7 +2,7 @@ namespace LampStore.Models
 {
 	public class EFSettingsRepository : ISettingsRepository
 	{
-		private StoreDbContext context;
+		private readonly StoreDbContext context;
 
 		public EFSettingsRepository(StoreDbContext ctx)
 		{
@@ -10,19 +10,19 @@ namespace LampStore.Models
 		}
 		public IQueryable<Settings> Settings => context.Settings;
 
-		public void CreateSettings(Settings s)
+		public async Task CreateSettingsAsync(Settings s)
 		{
 			context.Add(s);
-			context.SaveChanges();
+			await context.SaveChangesAsync();
 		}
-		public void DeleteSettings(Settings s)
+		public async Task DeleteSettingsAsync(Settings s)
 		{
 			context.Remove(s);
-			context.SaveChanges();
+			await context.SaveChangesAsync();		
 		}
-		public void SaveSettings(Settings s)
+		public async Task SaveSettingsAsync(Settings s)
 		{
-			context.SaveChanges();
+			await context.SaveChangesAsync();
 		}
 
 	}

@@ -121,8 +121,7 @@
 								<div id="input4" class="search-input__inline" style="display: none;">
 									<div id="materials" class="">
 										<ul class="">
-											@foreach (string material in Model.DisplayedMaterials ??
-													Enumerable.Empty<string>())
+											@foreach (string material in Model.DisplayedMaterials)
 											{
 												@if (!string.IsNullOrEmpty(material))
 												{
@@ -178,7 +177,7 @@
 				</div>
 				<div id="prod-view" class="search-result__wrapper">
 
-					@if (@Model.DisplayedProducts.Count() == 0)
+					@if (!Model.DisplayedProducts.Any())
 					{
 						<div class="row">
 							<div class="col text-center p-2">Нет товаров</div>
@@ -199,7 +198,7 @@
 									</div>
 									<div class="footer-card__wrapper">
 										<p class="footer-card__text">@pr.Name</p>
-										<p class="footer-card__price">@pr.Price.ToString("C", new CultureInfo("ru-RU"))</p>
+										<p class="footer-card__price">@pr.Price.ToString("C0", new CultureInfo("ru-RU"))</p>
 									</div>
 								</a>
 								<form id="ProductID=@pr.Id" class="addToCart" asp-page="/Cart" method="post">

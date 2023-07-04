@@ -44,6 +44,7 @@ builder.Services.AddHttpClient(); //отправка файлов на серв�
 builder.Services.AddSingleton<IPopupNotification, PopupNotification>(); //регистриуем сервис уведомлений 
 builder.Services.AddScoped<IFolderManager, FolderManager>(); //регистриуем сервис для создания/удаления папок
 builder.Services.AddScoped<IMetaManager, MetaManager>(); //регистриуем сервис для создания мета
+builder.Services.AddScoped<IPageStateService, PageStateService>(); //регистриуем сервис для сохранеия странциы
 
 var app = builder.Build();
 

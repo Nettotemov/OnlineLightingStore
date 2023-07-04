@@ -19,88 +19,92 @@ namespace LampStore.Pages
 		}
 
 		public CollectionLight CollectionLightPage = null!;
-		public List<Product> Products { get; set; } = new();
-		private CatalogServices catalogServices = new CatalogServices(); //ссылка на сервисы каталога
-		public List<ModelLight> LightsModelsPages { get; set; } = new();
-		public List<AdditionalBlocksForCollection> AdditionalBlocks { get; set; } = new();
-		public async Task<IActionResult> OnGetAsync(string collectionName, string colorProduct, string size, string lightSource, string powerW, string dim, string modelName) //инициализация категории
+		public IList<Product>? Products { get; private set; }
+		public IList<ModelLight>? LightsModelsPages { get; private set; }
+		
+		public async Task<IActionResult> OnGetAsync(string url, string colorProduct, string size, string lightSource, string powerW, string dim, string modelName)
 		{
 			try
 			{
-				List<CollectionLight> listCollectionLight = await repository.CollectionLight.Select(c => c).OrderBy(c => c.Id).ToListAsync();
-				foreach (var item in listCollectionLight)
+				var collectionPage = await repository.CollectionLight
+					.FirstOrDefaultAsync(c => c.MetaData.Url == url && c.IsAvailable);
+				
+				if (collectionPage is null) return StatusCode(404);
+				
+				Products = await GetProducts(collectionPage.Id);
+				LightsModelsPages = await GetLightsModels(collectionPage.Id);
+				
+				CollectionLightPage = new CollectionLight()
 				{
-					if (collectionName == item.Name.ToLower())
-					{
-						Products = await repository.Products.Where(p => p.CollectionLight!.Id == item.Id).ToListAsync();
-						LightsModelsPages = await repository.LightsModels.Where(l => l.CollectionLightId == item.Id).Distinct().ToListAsync();
-
-						AdditionalBlocks = await repository.AdditionalBlocksInCollection.Where(b => b.CollectionLightId == item.Id && b.IsAvailable == true).ToListAsync();
-
-						CollectionLightPage = new CollectionLight()
-						{
-							Name = item.Name,
-							Description = item.Description,
-							Img = item.Img,
-							ModelLights = LightsModelsPages,
-							AdditionalBlocks = AdditionalBlocks,
-							Products = Products
-						};
-
-						if (!string.IsNullOrEmpty(colorProduct))
-						{
-							Products = catalogServices.FilterForColor(colorProduct, Products);
-						}
-						if (!string.IsNullOrEmpty(lightSource))
-						{
-							Products = catalogServices.FilterForLightSource(lightSource, Products);
-						}
-						if (!string.IsNullOrEmpty(size))
-						{
-							Products = catalogServices.FilterForSize(size, Products);
-						}
-						if (!string.IsNullOrEmpty(modelName))
-						{
-							Products = catalogServices.FilterForModel(modelName, Products);
-						}
-						if (!string.IsNullOrEmpty(powerW))
-						{
-							Products = catalogServices.FilterForPower(powerW, Products);
-						}
-						if (!string.IsNullOrEmpty(dim))
-						{
-							Products = catalogServices.FilterForAddController(dim, Products);
-						}
-
-						if (Products.Count > 0)
-						{
-							Product = Products.Where(p => p?.Color == colorProduct && p?.Size == size && p?.LightSource == lightSource && p.ModelLight?.Name == modelName && p?.PowerW == powerW).FirstOrDefault();
-						}
-
-
-						if (Product != null)
-						{
-							ProductName = Product.Name;
-							ProductId = Product.Id;
-						}
-
-
-						return Page();
-					}
+					MetaData = collectionPage.MetaData,
+					Name = collectionPage.Name,
+					Description = collectionPage.Description,
+					Img = collectionPage.Img,
+					ModelLights = LightsModelsPages,
+					AdditionalBlocks = await GetAdditionalBlocks(collectionPage.Id),
+					Products = Products
+				};
+				
+				if (!string.IsNullOrEmpty(colorProduct))
+				{
+					Products = CatalogServices.FilterForColor(colorProduct, Products);
 				}
-				return StatusCode(404);
+				if (!string.IsNullOrEmpty(lightSource))
+				{
+					Products = CatalogServices.FilterForLightSource(lightSource, Products);
+				}
+				if (!string.IsNullOrEmpty(size))
+				{
+					Products = CatalogServices.FilterForSize(size, Products);
+				}
+				if (!string.IsNullOrEmpty(modelName))
+				{
+					Products = CatalogServices.FilterForModel(modelName, Products);
+				}
+				if (!string.IsNullOrEmpty(powerW))
+				{
+					Products = CatalogServices.FilterForPower(powerW, Products);
+				}
+				if (!string.IsNullOrEmpty(dim))
+				{
+					Products = CatalogServices.FilterForAddController(dim, Products);
+				}
+
+				if (Products.Count > 0)
+				{
+					Product = Products.FirstOrDefault(p => p.Color == colorProduct && p.Size == size && p.LightSource == lightSource && p.ModelLight?.Name == modelName && p.PowerW == powerW);
+				}
+
+				if (Product != null)
+				{
+					ProductName = Product.Name;
+					ProductId = Product.Id;
+				}
+
+				return Page();
 			}
 			catch (Exception)
 			{
 				return StatusCode(404);
 			}
 		}
+		
+		private async Task<IList<Product>> GetProducts(int collectionPageId)
+			=> await repository.Products.Where(p => p.CollectionLight != null 
+			                                        && p.CollectionLight.Id == collectionPageId).ToListAsync();
 
+		private async Task<IList<ModelLight>> GetLightsModels(int collectionPageId)
+			=> await repository.LightsModels.Where(l => l.CollectionLightId == collectionPageId)
+				.Distinct().ToListAsync();
+		
+		private async Task<IList<AdditionalBlocksForCollection>> GetAdditionalBlocks(int collectionPageId)
+			=> await repository.AdditionalBlocksInCollection.Where(b => b.CollectionLightId == collectionPageId
+			                                                            && b.IsAvailable == true).ToListAsync();
 		public Product? Product { get; set; }
 		public long? ProductId { get; set; }
 		public string ProductName { get; set; } = string.Empty;
 
-		public List<string> ModelsNames { get; set; } = new();
+		public IList<string> ModelsNames { get; set; } = null!;
 		public List<string> Colors { get; set; } = new();
 		public List<string> Sizes { get; set; } = new();
 		public List<string> LightSource { get; set; } = new();
@@ -109,13 +113,13 @@ namespace LampStore.Pages
 		private string ProductJson { get; set; } = string.Empty;
 
 		private List<Product> Dps { get; set; } = new();
-		public async Task<IActionResult> OnGetParams(string collectionName, string modelName, string colorProduct, string size, string lightSource, string powerW, string dim)
+		public async Task<IActionResult> OnGetParams(string url, string modelName, string colorProduct, string size, string lightSource, string powerW, string dim)
 		{
-			Dps = await repository.Products.Where(p => p.CollectionLight!.Name == collectionName).ToListAsync();
+			Dps = await repository.Products.Where(p => p.CollectionLight != null && p.CollectionLight.MetaData.Url == url).ToListAsync();
 
 			if (!string.IsNullOrEmpty(modelName))
 			{
-				Dps = catalogServices.FilterForModel(modelName, Dps).ToList();
+				Dps = CatalogServices.FilterForModel(modelName, Dps).ToList();
 				Sizes = Dps.Select(p => p.Size).Distinct().ToList();
 				Colors = Dps.Select(p => p.Color).Distinct().ToList();
 				LightSource = Dps.Select(p => p.LightSource).Distinct().ToList();
@@ -136,8 +140,8 @@ namespace LampStore.Pages
 				}
 				catch (Exception ex)
 				{
-					System.Console.WriteLine(ex.Message);
-					ModelsNames = new() { "-" };
+					Console.WriteLine(ex.Message);
+					ModelsNames.Add("-");
 				}
 				PowerWs = Dps.Select(p => p.PowerW).Distinct().ToList();
 				AddControls = Dps.Select(p => p.AddControl).Distinct().ToList();
@@ -152,12 +156,12 @@ namespace LampStore.Pages
 
 				try
 				{
-					ModelsNames = Dps.Select(p => p.ModelLight).Select(m => m.Name).Distinct().ToList();
+					ModelsNames = Dps.Select(p => p.ModelLight).Select(m => m!.Name).Distinct().ToList();
 				}
 				catch (Exception ex)
 				{
-					System.Console.WriteLine(ex.Message);
-					ModelsNames = new() { "-" };
+					Console.WriteLine(ex.Message);
+					ModelsNames.Add("-");
 				}
 				PowerWs = Dps.Select(p => p.PowerW).Distinct().ToList();
 				AddControls = Dps.Select(p => p.AddControl).Distinct().ToList();
@@ -176,8 +180,8 @@ namespace LampStore.Pages
 				}
 				catch (Exception ex)
 				{
-					System.Console.WriteLine(ex.Message);
-					ModelsNames = new() { "-" };
+					Console.WriteLine(ex.Message);
+					ModelsNames.Add("-");
 				}				
 				PowerWs = Dps.Select(p => p.PowerW).Distinct().ToList();
 				AddControls = Dps.Select(p => p.AddControl).Distinct().ToList();
@@ -193,10 +197,9 @@ namespace LampStore.Pages
 				{
 					ModelsNames = Dps.Select(p => p.ModelLight).Select(m => m!.Name).Distinct().ToList();
 				}
-				catch (Exception ex)
+				catch (Exception)
 				{
-					System.Console.WriteLine(ex.Message);
-					ModelsNames = new() { "-" };
+					ModelsNames.Add("-");
 				}
 				LightSource = Dps.Select(p => p.LightSource).Distinct().ToList();
 				AddControls = Dps.Select(p => p.AddControl).Distinct().ToList();
@@ -212,10 +215,9 @@ namespace LampStore.Pages
 				{
 					ModelsNames = Dps.Select(p => p.ModelLight).Select(m => m!.Name).Distinct().ToList();
 				}
-				catch (Exception ex)
+				catch (Exception)
 				{
-					System.Console.WriteLine(ex.Message);
-					ModelsNames = new() { "-" };
+					ModelsNames.Add("-");
 				}
 				LightSource = Dps.Select(p => p.LightSource).Distinct().ToList();
 				PowerWs = Dps.Select(p => p.PowerW).Distinct().ToList();
@@ -223,11 +225,11 @@ namespace LampStore.Pages
 
 			if (!string.IsNullOrEmpty(dim) && !string.IsNullOrEmpty(powerW) && !string.IsNullOrEmpty(lightSource) && !string.IsNullOrEmpty(size) && !string.IsNullOrEmpty(colorProduct) && !string.IsNullOrEmpty(modelName))
 			{
-				Product = Dps.Where(p => p.Color == colorProduct && p.Size == size && p.LightSource == lightSource && p.ModelLight?.Name == modelName && p.PowerW == powerW && p.AddControl == dim).FirstOrDefault();
+				Product = Dps.FirstOrDefault(p => p.Color == colorProduct && p.Size == size && p.LightSource == lightSource && p.ModelLight?.Name == modelName && p.PowerW == powerW && p.AddControl == dim);
 			}
 			else if (!string.IsNullOrEmpty(dim) && !string.IsNullOrEmpty(powerW) && !string.IsNullOrEmpty(lightSource) && !string.IsNullOrEmpty(size) && !string.IsNullOrEmpty(colorProduct) && string.IsNullOrEmpty(modelName))
 			{
-				Product = Dps.Where(p => p.Color == colorProduct && p.Size == size && p.LightSource == lightSource && p.PowerW == powerW && p.AddControl == dim).FirstOrDefault();
+				Product = Dps.FirstOrDefault(p => p.Color == colorProduct && p.Size == size && p.LightSource == lightSource && p.PowerW == powerW && p.AddControl == dim);
 			}
 
 			if (Product != null)
@@ -235,16 +237,11 @@ namespace LampStore.Pages
 				ProductJson = JsonConvert.SerializeObject(Product, Formatting.Indented);
 			}
 
-			string collectionNameJson = JsonConvert.SerializeObject(collectionName, Formatting.Indented);
+			string collectionNameJson = JsonConvert.SerializeObject(url, Formatting.Indented);
 			string defaultImgJson = JsonConvert.SerializeObject(Dps.FirstOrDefault()?.MainPhoto, Formatting.Indented);
 			string minPriceJson = JsonConvert.SerializeObject(Dps.Select(p => p.Price).Min(), Formatting.Indented);
 
 			string modelsJson = JsonConvert.SerializeObject(ModelsNames, Formatting.Indented);
-			System.Console.WriteLine("modelsJson: " + modelsJson);
-			// string modelsJson;
-			// if (ModelsNames.Count() > 0) modelsJson = JsonConvert.SerializeObject(ModelsNames, Formatting.Indented);
-			// else { modelsJson = JsonConvert.SerializeObject("", Formatting.Indented); }
-
 
 			var sizesJson = JsonConvert.SerializeObject(Sizes, Formatting.Indented);
 			var lightSourceJson = JsonConvert.SerializeObject(LightSource, Formatting.Indented);

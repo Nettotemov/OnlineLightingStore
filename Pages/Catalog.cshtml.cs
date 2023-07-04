@@ -213,55 +213,53 @@ namespace LampStore.Pages
 			string[] materials, 
 			string[] types)
 		{
-			CatalogServices catalogServices = new CatalogServices();
-			
 			if (!string.IsNullOrEmpty(name))
 			{
-				return catalogServices.ProductsByName(products, name);
+				products = CatalogServices.ProductsByName(products, name);
 			}
 			
 			if (!string.IsNullOrEmpty(category))
 			{
-				return catalogServices.ProductsByCategory(products, category);
+				products = CatalogServices.ProductsByCategory(products, category);
 			}
 			
 			if (tags.Any())
 			{
-				return catalogServices.ProductsByTags(products, tags);
+				products = CatalogServices.ProductsByTags(products, tags);
 			}
 			
 			if (color.Any())
 			{
-				return catalogServices.ProductsByColors(products, color);
+				products = CatalogServices.ProductsByColors(products, color);
 			}
 			
 			if (materials.Any())
 			{
-				return catalogServices.ProductsByMaterials(products, materials);
+				products = CatalogServices.ProductsByMaterials(products, materials);
 			}
 			
 			if (types.Any())
 			{
-				return catalogServices.ProductsByTypes(products, types);
+				products = CatalogServices.ProductsByTypes(products, types);
 			}
 			
 			if (!string.IsNullOrEmpty(maxPrice))
 			{
 				MaxPrice = Convert.ToInt64(maxPrice);
-				return catalogServices.ProductsUpMaxPrice(products, maxPrice);
+				products = CatalogServices.ProductsUpMaxPrice(products, maxPrice);
 			}
 			
 			if (!string.IsNullOrEmpty(minPrice))
 			{
 				MinPrice = Convert.ToInt64(minPrice);
-				return catalogServices.ProductsUpMinPrice(products, minPrice);
+				products = CatalogServices.ProductsUpMinPrice(products, minPrice);
 			}
 			
 			if (!string.IsNullOrEmpty(maxPrice) && !string.IsNullOrEmpty(minPrice))
 			{
 				MaxPrice = Convert.ToInt64(maxPrice);
 				MinPrice = Convert.ToInt64(minPrice);
-				return catalogServices.ProductsFromMinToMaxPrice(products, minPrice, maxPrice);
+				products = CatalogServices.ProductsFromMinToMaxPrice(products, minPrice, maxPrice);
 			}
 
 			return products;

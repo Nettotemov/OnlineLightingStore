@@ -22,9 +22,7 @@ namespace LampStore.Pages
 
 		public string CollectionName { get; set; } = string.Empty;
 		public ModelLight? LightModelPage;
-		public List<Product> Products { get; set; } = new();
-		private CatalogServices catalogServices = new CatalogServices(); //ссылка на сервисы каталога
-
+		public IList<Product>? Products { get; set; }
 		public Product? Product { get; set; }
 		public long? ProductID { get; set; }
 		public string ProductName { get; set; } = string.Empty;
@@ -60,23 +58,23 @@ namespace LampStore.Pages
 
 						if (!string.IsNullOrEmpty(colorProduct))
 						{
-							Products = catalogServices.FilterForColor(colorProduct, Products);
+							Products = CatalogServices.FilterForColor(colorProduct, Products);
 						}
 						if (!string.IsNullOrEmpty(lightSource))
 						{
-							Products = catalogServices.FilterForLightSource(lightSource, Products);
+							Products = CatalogServices.FilterForLightSource(lightSource, Products);
 						}
 						if (!string.IsNullOrEmpty(size))
 						{
-							Products = catalogServices.FilterForSize(size, Products);
+							Products = CatalogServices.FilterForSize(size, Products);
 						}
 						if (!string.IsNullOrEmpty(powerW))
 						{
-							Products = catalogServices.FilterForPower(powerW, Products);
+							Products = CatalogServices.FilterForPower(powerW, Products);
 						}
 						if (!string.IsNullOrEmpty(dim))
 						{
-							Products = catalogServices.FilterForAddController(dim, Products);
+							Products = CatalogServices.FilterForAddController(dim, Products);
 						}
 
 						if (Products.Count == 1)
@@ -185,7 +183,7 @@ namespace LampStore.Pages
 			return new JsonResult(new { ProductJson, modelsJson, sizesJson, lightSourceJson, colorsJson, powerWsJson, addControlsJson, defaultImgJson, minPriceJson, collectionNameJson });
 		}
 
-		public bool IsCheckNumberOfProperties(List<Product> products)
+		public bool IsCheckNumberOfProperties(IList<Product> products)
 		{
 			var countColors = products.Select(p => p.Color).Distinct().ToList();
 			var countSizes = products.Select(p => p.Size).Distinct().ToList();

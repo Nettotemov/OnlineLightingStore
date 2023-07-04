@@ -247,12 +247,12 @@ function loadProductView(ev) {
 		.then((response) => response.json())
 		.then(data => {
 			let pagingJson = JSON.parse(data.pagingInfoJson)
-			// window.history.pushState({}, '', getUrl); // устанавливаем URL в строку браузера
+			window.history.pushState({}, '', getUrl); // устанавливаем URL в строку браузера
 			let paging = document.getElementById('pagingbuttons');
-			const page = document.location.pathname.slice(-1);
+			let page = document.location.pathname.slice(-1);
 			$('#pagingbuttons').empty();
 
-			pagingButtons = document.createElement("li");
+			let pagingButtons = document.createElement("li");
 			pagingButtons.classList.add("page-item");
 			if (pagingJson.CurrentPage <= 1) {
 				pagingButtons.innerHTML = `<button form="catalogForm" class="pagination-btn page-link" type="submit" value="1" formaction="/1">Назад</button>`
@@ -264,6 +264,7 @@ function loadProductView(ev) {
 			if (pagingJson.CurrentPage <= 1) {
 				pagingButtons.classList.add("disabled");
 			}
+			console.log(pagingJson.TotalPages);
 			for (let i = 1; i <= pagingJson.TotalPages; i++) {
 				pagingButtons = document.createElement("li");
 				pagingButtons.classList.add("page-item");
@@ -287,9 +288,8 @@ function loadProductView(ev) {
 			placeholderMaxPrice.placeholder = pagingJson.PlaceholderMaxPrice;
 
 			let productJson = JSON.parse(data.json);
-			// console.log(productJson);
 			let postWrp;
-			if (productJson.length == 0) {
+			if (productJson.length === 0) {
 				$('#prod-view').empty();
 				postWrp = document.createElement("div");
 				postWrp.classList.add("col-12");
@@ -402,26 +402,6 @@ function GetAntiForgeryToken() {
 		};
 	}
 }
-
-// $(function () {
-// 	var header = $(".header");
-// 	let scroll = $(window).scrollTop();
-// 	if (scroll > 1) {
-// 		header.addClass("scrolled");
-// 	} else {
-// 		header.removeClass("scrolled");
-// 	}
-// 	$(window).scroll(function () {
-// 		scroll = $(window).scrollTop();
-
-// 		if (scroll > 1) {
-// 			header.addClass("scrolled");
-// 		}
-// 		else {
-// 			header.removeClass("scrolled");
-// 		}
-// 	});
-// });
 
 jQuery(document).ready(function () {
 	let check;

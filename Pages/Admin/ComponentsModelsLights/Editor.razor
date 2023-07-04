@@ -5,6 +5,7 @@
 @inherits OwningComponentBase<IModelLight>
 @inject IPopupNotification PopupNotification
 @inject IFolderManager FolderManager
+@inject IPageStateService PageStateService
 
 <div class="admin-notification__wrapper">
 	<Popup ListNotifications="PopupNotification.ListNotifications" />
@@ -147,7 +148,7 @@
 		</EditForm>
 		<div class="mt-2">
 			<button form="creatModelLightForm" type="submit" class="btn btn-@ThemeColor">Сохранить</button>
-			<NavLink class="btn btn-secondary" href="/admin/models-lights">Отмена</NavLink>
+			<NavLink class="btn btn-secondary" href="@PreviousUrl">Отмена</NavLink>
 		</div>
 	</TabPage>
 	<TabPage Text="Дополнительные блоки" IsActive="@true">
@@ -260,6 +261,7 @@
 	public bool TabIsActive { get; set; } = false;
 
 	public IEnumerable<CollectionLight> CollectionsModelsData { get; set; } = Enumerable.Empty<CollectionLight>();
+	private string PreviousUrl => $"/admin/models-lights/{PageStateService.CurrentPage}";
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -311,7 +313,7 @@
 			await Repository.SaveModelLightAsync(ModelLightPage);
 			Notification notification = new Notification(1, "Изменения сохранены", "Запись отредактирована: Страница о компании под номером", Id.ToString());
 			PopupNotification.AddItem(notification);
-			NavManager?.NavigateTo("/admin/models-lights");
+			NavManager?.NavigateTo(PreviousUrl);
 		}
 	}
 	public string GetEditUrl(long id) => $"/admin/models-lights/edit/{id}";

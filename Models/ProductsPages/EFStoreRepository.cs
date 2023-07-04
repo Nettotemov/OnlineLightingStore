@@ -1,5 +1,6 @@
 using LampStore.Models.CollectionsLights;
 using LampStore.Models.LightsModels;
+using LampStore.Models.MetaTags;
 using Microsoft.EntityFrameworkCore;
 
 namespace LampStore.Models.ProductsPages
@@ -22,6 +23,7 @@ namespace LampStore.Models.ProductsPages
 		public IQueryable<ProductType> Types => context.TypeProducts;
 		public IQueryable<CollectionLight> CollectionsModels => context.CollectionLights;
 		public IQueryable<ModelLight> LightsModels => context.LightsModels;
+		public IQueryable<MetaData> MetaData => context.MetaDatas;
 
 		public async Task CreateProductAsync(Product p)
 		{

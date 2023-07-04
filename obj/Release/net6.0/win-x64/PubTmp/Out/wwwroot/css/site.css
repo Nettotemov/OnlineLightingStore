@@ -382,10 +382,10 @@ html {
 	height: 25em;
 	box-shadow: -17px 14px 13px 3px rgb(120 120 118);
 	display: flex;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
 	justify-content: center;
-	align-content: end;
-	padding-bottom: 3%;
+	align-items: center;
+	flex-direction: column;
 }
 
 .black-img-h {
@@ -480,13 +480,13 @@ html {
 .search-form__wrapper {
 	display: grid;
 	grid-template-columns: 20% 1fr;
-	grid-gap: 4%;
+	grid-gap: 25px;
 }
 
 .search-left-panel__wrapper {
 	position: sticky;
 	max-height: 78vh;
-	top: 12%;
+	top: 145px;
 	overflow: scroll;
 	z-index: 150;
 	overflow-x: hidden;
@@ -1568,13 +1568,6 @@ a.arrow-3.disabled .arrow-3-iconcircle {
 	}
 }
 
-@media (min-width: 1600px) and (max-width: 1879px) {
-	.catalog-list__wrapper {
-		grid-template: repeat(1, 1fr)/repeat(3, 1fr);
-		grid-column-gap: 24px;
-	}
-}
-
 @media (min-width: 1200px) and (max-width: 1599px) {
 
 	.header {
@@ -1657,7 +1650,7 @@ a.arrow-3.disabled .arrow-3-iconcircle {
 	}
 
 	.search-card__image {
-		min-height: 215px;
+		min-height: 200px;
 		height: auto;
 	}
 
@@ -1721,8 +1714,17 @@ a.arrow-3.disabled .arrow-3-iconcircle {
 		grid-template-columns: 28% 1fr;
 	}
 
+	.catalog-list__wrapper {
+		grid-template: repeat(1, 1fr)/repeat(3, 1fr);
+		grid-column-gap: 24px;
+	}
+
+	.search-result__wrapper {
+		grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	}
+
 	.search-card__image {
-		height: 300px;
+		height: 250px;
 	}
 }
 
@@ -2017,7 +2019,7 @@ a.arrow-3.disabled .arrow-3-iconcircle {
 	}
 }
 
-@media screen and (max-width: 428px) {
+@media screen and (max-width: 439px) {
 
 	.mt-per-header-5 {
 		margin-top: 30%;
@@ -2211,7 +2213,7 @@ a.arrow-3.disabled .arrow-3-iconcircle {
 
 	.search-form__wrapper {
 		grid-template-columns: 1fr;
-		grid-gap: 1%;
+		grid-gap: 20px;
 	}
 
 	.black-img__wrapper {
@@ -2219,14 +2221,7 @@ a.arrow-3.disabled .arrow-3-iconcircle {
 	}
 
 	.black-img {
-		background: linear-gradient(to top right, #0c0c0c, #3d3e3e);
 		height: 17em;
-		box-shadow: -17px 14px 13px 3px rgb(120 120 118);
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		align-content: end;
-		padding-bottom: 4%;
 		margin-bottom: 10%;
 	}
 
@@ -2439,7 +2434,7 @@ a.arrow-3.disabled .arrow-3-iconcircle {
 	}
 
 	.img-responsive {
-		height: 240px;
+		max-height: 240px;
 	}
 
 	.search-card__image {

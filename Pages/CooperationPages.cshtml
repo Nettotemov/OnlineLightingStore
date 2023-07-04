@@ -9,7 +9,7 @@
 
 
 <div class="col-12 mb-per-15 mt-10 pt-per-5" data-color-section="dark">
-	@if (@Model.DisplayCooperationPages.Count() > 0)
+	@if (Model.DisplayCooperationPages.Any())
 	{
 		@foreach (var cooperationPage in @Model.DisplayCooperationPages)
 		{
@@ -17,7 +17,7 @@
 				<div class="col-12 col-xl-5">
 					<div class="img-cooperation__wrapper">
 						<div class="img-center__wrapper">
-							<img class="img-responsive" src="@cooperationPage.CooperationImg">
+							<img class="img-responsive" src="@cooperationPage.CooperationImg" alt="">
 						</div>
 					</div>
 				</div>

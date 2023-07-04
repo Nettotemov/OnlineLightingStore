@@ -1,4 +1,5 @@
 using LampStore.Models.LightsModels;
+using LampStore.Models.MetaTags;
 using LampStore.Models.ProductsPages;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,7 +14,8 @@ namespace LampStore.Models.CollectionsLights
 			this.context = ctx;
 		}
 
-		public IQueryable<CollectionLight> CollectionLight => context.CollectionLights;
+		public IQueryable<CollectionLight> CollectionLight => context.CollectionLights
+			.Include(c => c.MetaData);
 		public IQueryable<Product> Products => context.Products
 			.Include(p => p.ModelLight);
 
@@ -21,6 +23,8 @@ namespace LampStore.Models.CollectionsLights
 
 		public IQueryable<AdditionalBlocksForCollection> AdditionalBlocksInCollection 
 			=> context.AdditionalBlocksForCollection;
+		
+		public IQueryable<MetaData> MetaData => context.MetaDatas;
 
 		public async Task CreateAdditionalBlocksForCollectionAsync(AdditionalBlocksForCollection a)
 		{

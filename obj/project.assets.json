@@ -10401,26 +10401,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\konstantinermakov\\.nuget\\packages\\": {}
+    "/Users/konstantinermakov/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "\\\\Mac\\Home\\Downloads\\LS\\LampStore\\LampStore\\LampStore.csproj",
+      "projectUniqueName": "/Users/konstantinermakov/Downloads/LS/LampStore/LampStore/LampStore.csproj",
       "projectName": "LampStore",
-      "projectPath": "\\\\Mac\\Home\\Downloads\\LS\\LampStore\\LampStore\\LampStore.csproj",
-      "packagesPath": "C:\\Users\\konstantinermakov\\.nuget\\packages\\",
-      "outputPath": "\\\\Mac\\Home\\Downloads\\LS\\LampStore\\LampStore\\obj\\",
+      "projectPath": "/Users/konstantinermakov/Downloads/LS/LampStore/LampStore/LampStore.csproj",
+      "packagesPath": "/Users/konstantinermakov/.nuget/packages/",
+      "outputPath": "/Users/konstantinermakov/Downloads/LS/LampStore/LampStore/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\konstantinermakov\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/konstantinermakov/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -10509,7 +10507,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.406/RuntimeIdentifierGraph.json"
       }
     }
   }

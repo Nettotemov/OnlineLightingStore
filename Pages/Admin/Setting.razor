@@ -1,6 +1,7 @@
 @page "/admin/settings"
+@using System.ComponentModel.DataAnnotations
 @inherits OwningComponentBase<ISettingsRepository>
-@inject IPopupNotification popupNotification
+@inject IPopupNotification PopupNotification
 
 <Confirmation @ref="confirmation" OnCancel="OnCancel" OnConfirm="OnConfirm" IsConfirm="true"
 	Title="Удаление страницы о компании...">
@@ -13,7 +14,7 @@
 	</div>
 </Confirmation>
 <div class="admin-notification__wrapper">
-	<Popup ListNotifications="popupNotification.ListNotifications" />
+	<Popup ListNotifications="PopupNotification.ListNotifications" />
 </div>
 
 
@@ -48,21 +49,21 @@ else
 		</tr>
 	</thead>
 	<tbody>
-		@if (SettingsData.Count() > 0)
+		@if (SettingsData.Any())
 			{
-				@foreach (Settings s in SettingsData)
+				@foreach (var s in SettingsData)
 				{
 					<tr>
-						<td>@s.ID</td>
-						<td>@EnumExtensions.GetDisplayName(@s.Setting)</td>
+						<td>@s.Id</td>
+						<td>@s.Setting.GetDisplayName()</td>
 						<td>@s.NameSettings</td>
 						<td>@s.Value</td>
 						<td>@s.IsVisible</td>
 						<td class="text-center">
-							<button class="btn btn-info btn-sm" @onclick="@(e => ChangeSetting(s))">
+							<button class="btn btn-info btn-sm" @onclick="@(() => ChangeSetting(s))">
 								Изменить
 							</button>
-							<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteSetting(s))">
+							<button class="btn btn-danger btn-sm" @onclick="@(() => DeleteSetting(s))">
 								Удалить
 							</button>
 						</td>
@@ -78,111 +79,110 @@ else
 		</tbody>
 	</table>
 }
-<EditForm Model="NewSetting" OnValidSubmit="CreateNewSetting">
+<EditForm Model="TemporarySettingsData" OnValidSubmit="SaveSetting">
 	<DataAnnotationsValidator />
-	@if (NewSetting.ID != 0)
+	@if (TemporarySettingsData.Id != 0)
 	{
 		<div class="form-group">
 			<label>ID</label>
-			<input class="form-control" disabled value="@NewSetting.ID" />
+			<input class="form-control" disabled value="@TemporarySettingsData.Id" />
 		</div>
 	}
 	<div class="form-group">
 		<label>Тип Настройки</label>
-		<InputSelect class="form-select" @bind-Value="NewSetting.Setting">
+		<InputSelect class="form-select" @bind-Value="TemporarySettingsData.Setting">
 			@foreach (var setting in Enum.GetValues<TypeSettings>())
 			{
-				<option value="@setting">@EnumExtensions.GetDisplayName(setting)</option>
+				<option value="@setting">@setting.GetDisplayName()</option>
 			}
 		</InputSelect>
 	</div>
 	<div class="form-group">
 		<label>Название</label>
-		<ValidationMessage For="@(() => NewSetting.NameSettings)" />
-		<InputText class="form-control" @bind-Value="NewSetting.NameSettings" />
+		<ValidationMessage For="@(() => TemporarySettingsData.NameSettings)" />
+		<InputText class="form-control" @bind-Value="TemporarySettingsData.NameSettings" />
 	</div>
 	<div class="form-group">
 		<label>Значение</label>
-		<ValidationMessage For="@(() => NewSetting.Value)" />
-		<InputTextArea class="form-control" @bind-Value="NewSetting.Value" />
+		<ValidationMessage For="@(() => TemporarySettingsData.Value)" />
+		<InputTextArea class="form-control" @bind-Value="TemporarySettingsData.Value" />
 	</div>
 	<div class="form-group">
 		<label>Используется</label>
-		<ValidationMessage For="@(() => NewSetting.IsVisible)" />
-		<InputCheckbox class="" @bind-Value="NewSetting.IsVisible" />
+		<ValidationMessage For="@(() => TemporarySettingsData.IsVisible)" />
+		<InputCheckbox class="" @bind-Value="TemporarySettingsData.IsVisible" />
 	</div>
 	<div class="mt-2">
 		<button type="submit" class="btn btn-warning">Сохранить</button>
-		<a class="btn btn-secondary" @onclick="@(e => CancellationNewSetting())">Отмена</a>
+		<button class="btn btn-secondary" @onclick="@(CancellationNewSetting)">Отмена</button>
 	</div>
 </EditForm>
 
 @code {
-	public ISettingsRepository Repository => Service;
-	public IEnumerable<Settings> SettingsData { get; set; } = Enumerable.Empty<Settings>();
-	public Settings NewSetting { get; set; } = new Settings();
-	public int Id { get; set; } = 0;
+	private ISettingsRepository Repository => Service;
+	private IEnumerable<Settings> SettingsData { get; set; } = Enumerable.Empty<Settings>();
+	private TemporarySettingsDataModel TemporarySettingsData { get; set; } = new();
+	private Settings NewSetting { get; set; } = new();
 
-	public string? value;
-	private bool loading = false;
-	
-	public async Task UpdateData()
+	private bool loading;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await UpdateDataAsync();
+	}
+
+	private async Task UpdateDataAsync()
 	{
 		loading = true;
-		SettingsData = await Repository.Settings.ToListAsync();
+		SettingsData = await Repository.Settings.Select(s => s).ToListAsync();
 		loading = false;
 		await InvokeAsync(StateHasChanged);
 	}
 
-	public void DeleteSetting(Settings settings)
+	private void DeleteSetting(Settings settings)
 	{
 		SettingToBeDelete = settings;
 		confirmation?.Show();
 	}
 
-	public async Task CreateNewSetting()
+	private async Task SaveSetting()
 	{
-		if (Id == 0)
+		NewSetting.Id = TemporarySettingsData.Id;
+		NewSetting.NameSettings = TemporarySettingsData.NameSettings;
+		NewSetting.Value = TemporarySettingsData.Value;
+		NewSetting.IsVisible = TemporarySettingsData.IsVisible;
+		NewSetting.Setting = TemporarySettingsData.Setting;
+		await CreateNewSetting();
+	}
+
+	private async Task CreateNewSetting()
+	{
+		if (NewSetting.Id == 0)
 		{
-			Repository.CreateSettings(NewSetting);
-			Notification notification = new Notification(1, "Настройка сохранена", "Запись настройки добавлена",
-			NewSetting.NameSettings);
-			popupNotification.AddItem(notification);
-			await UpdateData();
-			CancellationNewSetting();
+			await Repository.CreateSettingsAsync(NewSetting);
+			PopupNotification.CreateNotification("Настройка сохранена", "Запись настройки добавлена",
+				NewSetting.NameSettings);
 		}
 		else
 		{
-			Repository.SaveSettings(NewSetting);
-			Notification notification = new Notification(1, "Изменения сохранены", "Настройка изменена", NewSetting.ID.ToString());
-			popupNotification.AddItem(notification);
-			await UpdateData();
-			CancellationNewSetting();
+			await Repository.SaveSettingsAsync(NewSetting);
+			PopupNotification.CreateNotification("Изменения сохранены", "Настройка изменена", NewSetting.Id.ToString());
 		}
-
+		CancellationNewSetting();
+		await UpdateDataAsync();
 	}
 
-	public void ChangeSetting(Settings settings)
+	private void ChangeSetting(Settings setting)
 	{
-		Id = settings.ID;
-		NewSetting = Repository.Settings.FirstOrDefault(s => s.ID == Id) ?? new();
+		NewSetting = Repository.Settings.FirstOrDefault(s => s.Id == setting.Id) ?? new Settings();
+		TemporarySettingsData.Id = NewSetting.Id;
+		TemporarySettingsData.NameSettings = NewSetting.NameSettings;
+		TemporarySettingsData.Value = NewSetting.Value;
+		TemporarySettingsData.IsVisible = NewSetting.IsVisible;
+		TemporarySettingsData.Setting = NewSetting.Setting;
 	}
 
-	public void CancellationNewSetting()
-	{
-		if (Id == 0)
-		{
-			NewSetting.NameSettings = string.Empty;
-			NewSetting.Value = string.Empty;
-			NewSetting.IsVisible = false;
-			NewSetting = new();
-		}
-		else
-		{
-			Id = 0;
-			NewSetting = new();
-		}
-	}
+	private void CancellationNewSetting() => TemporarySettingsData = new TemporarySettingsDataModel();
 }
 
 @code {
@@ -190,24 +190,41 @@ else
 	private Settings? SettingToBeDelete { get; set; }
 	private async Task OnConfirm()
 	{
-		if (SettingToBeDelete != null)
+		if (SettingToBeDelete is not null)
 		{
-			Repository.DeleteSettings(SettingToBeDelete);
+			await Repository.DeleteSettingsAsync(SettingToBeDelete);
 			confirmation?.Hide();
-			Notification notification = new Notification(1, "Удаление записи", "Удалена настройка",
-			SettingToBeDelete.NameSettings);
-			popupNotification.AddItem(notification);
+			PopupNotification.CreateNotification("Удаление записи", "Удалена настройка",
+				SettingToBeDelete.NameSettings);
 			SettingToBeDelete = null;
-			await UpdateData();
+			CancellationNewSetting();
+			await UpdateDataAsync();
 		}
 	}
 
 	private void OnCancel()
 	{
 		confirmation?.Hide();
-		Notification notification = new Notification(1, "Отмена удаления", "Отменено удаление настройки",
-		SettingToBeDelete!.NameSettings);
-		popupNotification.AddItem(notification);
+		if (SettingToBeDelete is null) return;
+		PopupNotification.CreateNotification("Отмена удаления", "Отменено удаление настройки", 
+			SettingToBeDelete.NameSettings);
 		SettingToBeDelete = null;
 	}
 }
+
+@code {
+	public class TemporarySettingsDataModel
+	{
+		public int Id { get; set; }
+
+		[Required(ErrorMessage = "Пожалуйста, введите название")]
+		public string NameSettings { get; set; } = null!;
+
+		[Required(ErrorMessage = "Пожалуйста, укажите информацию")]
+		public string Value { get; set; } = null!;
+		
+		public bool IsVisible { get; set; }
+		public TypeSettings Setting { get; set; }
+	}
+}
+

@@ -4,8 +4,8 @@ namespace LampStore.Models
 	{
 		IQueryable<Settings> Settings { get; }
 
-		void SaveSettings(Settings s);
-		void CreateSettings(Settings s);
-		void DeleteSettings(Settings s);
+		Task SaveSettingsAsync(Settings s);
+		Task CreateSettingsAsync(Settings s);
+		Task DeleteSettingsAsync(Settings s);
 	}
 }

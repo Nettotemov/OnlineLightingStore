@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using LampStore.Models.LightsModels;
+using LampStore.Models.MetaTags;
 using LampStore.Models.ProductsPages;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -18,6 +19,8 @@ namespace LampStore.Models.CollectionsLights
 		public string? Img { get; set; }
 		public bool IsAvailable { get; set; }
 		public bool IsHomePage { get; set; }
+		
+		public MetaData MetaData { get; set; } = null!;
 
 		[BindNever]
 		public ICollection<AdditionalBlocksForCollection>? AdditionalBlocks { get; init; }

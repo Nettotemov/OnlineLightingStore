@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using LampStore.Models.CollectionsLights;
 using LampStore.Models.LightsModels;
+using LampStore.Models.MetaTags;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
 
@@ -81,5 +82,6 @@ namespace LampStore.Models.ProductsPages
 		[Required(ErrorMessage = "Пожалуйста, укажите управление")]
 		public string AddControl { get; set; } = null!;
 		public bool IsPublished { get; set; }
+		public MetaData MetaData { get; set; } = null!;
 	}
 }

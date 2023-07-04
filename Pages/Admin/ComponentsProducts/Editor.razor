@@ -3,9 +3,12 @@
 @using LampStore.Models.ProductsPages
 @using LampStore.Models.LightsModels
 @using LampStore.Models.CollectionsLights
+@using LampStore.Models.MetaTags
 @inherits OwningComponentBase<IStoreRepository>
 @inject IPopupNotification PopupNotification
 @inject IFolderManager FolderManager
+@inject IMetaManager MetaManager
+@inject IPageStateService PageStateService
 
 <div class="admin-notification__wrapper">
 	<Popup ListNotifications="PopupNotification.ListNotifications" />
@@ -37,6 +40,18 @@
 						<InputText class="form-control" @bind-Value="Product.Artikul" />
 					</div>
 					<div class="form-group mb-4">
+						<label>Title</label>
+						<InputText class="form-control" @bind-Value="MetaData.Title" />
+					</div>
+					<div class="form-group mb-4">
+						<label>Description</label>
+						<InputText class="form-control" @bind-Value="MetaData.Description" />
+					</div>	
+					<div class="form-group mb-4">
+						<label>Url для старницы</label>
+						<InputText class="form-control" @bind-Value="MetaData.Url" />
+					</div>
+					<div class="form-group mb-4">
 						<label>Коллекция</label>
 						@* <ValidationMessage For="@(() => Product.CollectionLightID)" /> *@
 						<select class="form-select" value="@Product.CollectionLightId"
@@ -62,7 +77,7 @@
 				</div>
 				<div class="col">
 					<div class="form-group">
-						<img class="img-fluid" style="height: 250px;" src=@Product.MainPhoto>
+						<img class="img-fluid" style="height: 250px;" src=@Product.MainPhoto alt="">
 					</div>
 				</div>
 			</div>
@@ -173,7 +188,7 @@
 				@foreach (var (tag, check) in listIsChecked.Distinct())
 				{
 					<input type="checkbox" checked="@check" class="btn-check" id="@tag.Value" autocomplete="@check"
-					@onclick="@(e => AddTagsForProduct(tag, check))">
+					@onclick="@(() => AddTagsForProduct(tag, check))">
 					<label class="btn btn-outline-primary" for="@tag.Value">@tag.Value</label>
 				}
 			</div>
@@ -183,7 +198,7 @@
 		<EditForm Model="Product" OnValidSubmit="SaveProductAsync" id="creatProductForm">
 			<DataAnnotationsValidator />
 			<div class="form-group mb-4">
-				<img class="img-fluid" style="height: 250px;" src="@Product.MainPhoto">
+				<img class="img-fluid" style="height: 250px;" src="@Product.MainPhoto" alt="">
 				<label>Изображение</label>
 				<ImgManagerControl @bind-ChildName="Product.MainPhoto" PathFolder="@UrlPath"
 					FolderName="@Product.Id.ToString()" IsSlider="false" />
@@ -275,7 +290,7 @@
 							   @*<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(p.Id)">
     							Изменить тип
     						</NavLink>*@
-    						<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteTypeProduct(p))">
+    						<button class="btn btn-danger btn-sm" @onclick="@(() => DeleteTypeProduct(p))">
     							Удалить тип
     						</button>
     					</td>
@@ -315,7 +330,7 @@
 </TabControl>
 <div class="mt-2">
 	<button form="creatProductForm" type="submit" class="btn btn-@ThemeColor">Сохранить</button>
-	<NavLink class="btn btn-secondary" href="/admin/products">Отмена</NavLink>
+	<NavLink class="btn btn-secondary" href="@PreviousUrl">Отмена</NavLink>
 </div>
 
 @code {
@@ -326,13 +341,16 @@
 	public NavigationManager? NavManager { get; set; }
 
 	[Parameter]
-	public long Id { get; set; } = 0;
+	public long Id { get; set; }
 	private Product Product { get; set; } = new Product();
 	private List<Category> DisplayedCategories { get; set; } = new();
-	private bool TabIsActive { get; set; } = false;
+	private bool TabIsActive { get; set; }
 	private IEnumerable<Product> ProductsData { get; set; } = Enumerable.Empty<Product>();
+	private MetaData MetaData { get; set; } = new();
+	private IList<string> OtherUrls { get; set; } = null!;
 	
 	private const string UrlPath = "imegs/img-products/";
+	private string PreviousUrl => $"/admin/products/{PageStateService.CurrentPage}";
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -341,7 +359,7 @@
 			TabIsActive = true;
 			Product = await Repository.Products.FirstOrDefaultAsync(p => p.Id == Id) ?? new();
 		}
-		DisplayedCategories = await Repository.Category.Select(c => c).Distinct().ToListAsync(); //получение категорий
+		DisplayedCategories = await Repository.Category.Select(c => c).Distinct().ToListAsync();
 		await UpdateDataAsync();
 	}
 
@@ -356,6 +374,12 @@
 
 	private async Task SaveProductAsync()
 	{
+		Product.MetaData = MetaData;
+		if (string.IsNullOrEmpty(Product.MetaData.Url) || MetaManager.CheckUrl(Product.MetaData.Url, OtherUrls))
+		{
+			Product.MetaData.Url = MetaManager.UrlBuilder(Product.Name, OtherUrls);
+		}
+		
 		if (Id == 0)
 		{
 			await Repository.CreateProductAsync(Product);
@@ -372,7 +396,7 @@
 		{
 			await Repository.SaveProductAsync(Product);
 			PopupNotification.CreateNotification("Изменения сохранены", "Запись отредактирована", Id.ToString());
-			NavManager?.NavigateTo("/admin/products");
+			NavManager?.NavigateTo(PreviousUrl);
 		}
 	}
 
@@ -389,7 +413,6 @@
 }
 
 @code {
-	public long IdTag { get; set; } = 0;
 	private Tag NewTag { get; set; } = new ();
 	
 	private IEnumerable<Tag> TagsData { get; set; } = Enumerable.Empty<Tag>();
@@ -408,6 +431,8 @@
 			ModelsLightsData = await Repository.LightsModels.Where(m => m.CollectionLightId ==
 			Product.CollectionLightId).ToListAsync();
 		}
+		MetaData = await Repository.MetaData.FirstOrDefaultAsync(c => c.ProductId == Id) ?? new MetaData();
+		OtherUrls = await Repository.Products.Where(c => c.Id != Id).Select(m => m.MetaData.Url).ToListAsync();
 
 		CheckTags(Product.ProductTags?.ToList());
 		await InvokeAsync(StateHasChanged);
@@ -499,7 +524,7 @@
 	private int CountProductsForProductType(IEnumerable<Product> productsData, ProductType productType)
 		=> productsData.Count(prod => prod.ProductType == productType);
 
-	private bool isModelsLightsSelectDisabled = false;
+	private bool isModelsLightsSelectDisabled;
 	private async Task OnModelsLightsSelectChangeAsync(ChangeEventArgs e)
 	{
 		if (e.Value != null && e.Value.ToString() != "")

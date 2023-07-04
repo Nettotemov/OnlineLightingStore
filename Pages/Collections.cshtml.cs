@@ -12,7 +12,7 @@ public class Collections : PageModel
 		collectionsRepository = collectionsRepo;
 	}
 
-	public List<CollectionLight> DisplayCollectionsPages { get; private set; } = new();
+	public IList<CollectionLight>? DisplayCollectionsPages { get; private set; }
 	public async Task OnGetAsync()
 	{
 		DisplayCollectionsPages = await collectionsRepository.CollectionLight

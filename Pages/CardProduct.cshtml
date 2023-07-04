@@ -13,7 +13,7 @@
 {
 	<section class="product-card-slider__wrapper mt-10 pt-per-5">
 		<div class="variable-width">
-			@foreach (var img in Model.DisplayedPhotos)
+			@foreach (var img in Model.DisplayedPhotos!)
 			{
 				<div class="">
 					<img class="slick-slider-card-img" src="@img" title="Светильник @Model.ProductCard?.Name" alt="Купить светильник @Model.ProductCard?.Name">
@@ -31,12 +31,13 @@
 				<p calss="h6">@Model.ProductCard?.Artikul</p>
 			</div>
 			<div class="product-card__price-info">
-				<p id="product-price" class="h5" price-value="@Model.ProductCard?.Price.ToString()">Цена:
-					@Model.ProductCard?.Price.ToString("c", new CultureInfo("ru-RU"))</p>
-				@if (@Model.ProductCard?.Discount != null && @Model.ProductCard.OldPrice != null)
+				<p id="product-price" class="h5" price-value="@Model.ProductCard?.Price.ToString()">
+					Цена: @Model.ProductCard?.Price.ToString("C0", new CultureInfo("ru-RU"))
+				</p>
+				@if (Model.ProductCard is { Discount: not null, OldPrice: not null })
 				{
 					<p class="h6">Скидка: @Model.ProductCard.Discount%</p>
-					<p class="h6">Cтрая цена: <s>@Model.ProductCard?.OldPrice?.ToString("c", new CultureInfo("ru-RU"))</s></p>
+					<p class="h6">Cтрая цена: <s>@Model.ProductCard.OldPrice?.ToString("C0", new CultureInfo("ru-RU"))</s></p>
 				}
 			</div>
 		</div>
@@ -56,7 +57,7 @@
 			<div class="gray-line"></div>
 			<div class="product-card__total">
 				<p class="h5">Total</p>
-				<p id="total-price" class="h5">@Model.ProductCard?.Price.ToString("c", new CultureInfo("ru-RU"))</p>
+				<p id="total-price" class="h5">@Model.ProductCard?.Price.ToString("C0", new CultureInfo("ru-RU"))</p>
 			</div>
 		</div>
 	</div>
@@ -115,10 +116,10 @@
 				<p class="product-card__characteristic">@Model.ProductCard?.PowerW</p>
 			</div>
 			<div class="product-card__tl">
-				@if (@Model.ProductCard?.ProductTags.Count() > 0)
+				@if (Model.ProductCard?.ProductTags is not null)
 				{
 					<p class="product-card__characteristic">Теги</p>
-					@foreach (var item in @Model.ProductCard.ProductTags)
+					@foreach (var item in Model.ProductCard.ProductTags)
 					{
 						<p class="product-card__characteristic">@item.Value</p>
 					}
@@ -126,7 +127,7 @@
 			</div>
 			<div class="product-card__tl">
 				<p class="product-card__characteristic">Наличие</p>
-				@if (@Model.ProductCard?.Availability == true)
+				@if (Model.ProductCard?.Availability == true)
 				{
 					<p class="product-card__characteristic">В наличие</p>
 				}
@@ -142,7 +143,7 @@
 	</div>
 </section>
 
-@if (Model.SimilarProducts.Any())
+@if (Model.SimilarProducts is not null)
 {
 	<section class="similar-product__wrapper">
 	<h2 class="h1__caption ">Похожие товары</h2>

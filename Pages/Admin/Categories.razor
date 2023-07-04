@@ -116,7 +116,7 @@ else
 	public async Task UpdateData()
 	{
 		Products = await Repository.Products.Select(p => p).ToListAsync();
-		CategoryData = await Repository.Category.ToListAsync();
+		CategoryData = await Repository.Category.Select(c => c).ToListAsync();
 	}
 
 	public void DeleteCategory(Category category)

@@ -1,4 +1,3 @@
-using LampStore.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc;
 using LampStore.Models.ProductsPages;

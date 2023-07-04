@@ -1,10 +1,11 @@
-@page "/admin/products"
+@page "/admin/products/{CurrentPage:int?}"
 @page "/admin"
+@using System.Globalization
+@using LampStore.Models.ProductsPages
 @inherits OwningComponentBase<IStoreRepository>
 @inject IPopupNotification PopupNotification
 @inject IFolderManager FolderManager
-@using System.Globalization
-@using LampStore.Models.ProductsPages
+@inject IPageStateService PageStateService
 
 <Confirmation @ref="confirmation" OnCancel="OnCancel" OnConfirm="OnConfirm" IsConfirm="true" Title="Удаление товара...">
 	<div class="toast-body">
@@ -40,7 +41,7 @@
 else
 {
 	<table class="table table-sm table-striped table-bordered">
-	<thead>
+		<thead>
 		<tr>
 			<th>ID</th>
 			<th>Изображение</th>
@@ -53,62 +54,65 @@ else
 			<th>Опубликован</th>
 			<td />
 		</tr>
-	</thead>
-	<tbody>
-		@if (ProductData?.Count() > 0)
-			{
-				@foreach (Product p in ProductData)
-				{
-					<tr>
-						<td>@p.Id</td>
-						<td><img class="img-fluid" style="height: 80px;" src="@p.MainPhoto"></td>
-						<td>@p.Name</td>
-						<td>@p.Artikul</td>
-						<td>@p.Category.CategoryName</td>
-						<td>@p.Price.ToString("c", new CultureInfo("ru-RU"))</td>
-						<td>@p.Discount</td>
-						<td>@p.OldPrice?.ToString("C", new CultureInfo("ru-RU"))</td>
-						@{
-							var isPublished = p.IsPublished ? "Да" : "Нет";
-						}
-						<td>@isPublished</td>
-						<td class="text-center">
-							<NavLink class="btn btn-info btn-sm" href="@GetDetailsUrl(p.Id)">
-								Подробнее
-							</NavLink>
-							<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(p.Id)">
-								Изменить
-							</NavLink>
-							<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteProduct(p))">
-								Удалить
-							</button>
-						</td>
-					</tr>
-				}
-			}
-			else
+		</thead>
+		<tbody>
+		@if (PageStateService.DisplayedNodes?.Count() > 0)
+		{
+			@foreach (var p in PageStateService.DisplayedNodes.Cast<Product>())
 			{
 				<tr>
-					<td colspan="5" class="text-center">Товары, не найдены.</td>
+					<td>@p.Id</td>
+					<td>
+						<img class="img-fluid" style="height: 80px;" src="@p.MainPhoto" alt=""></td>
+					<td>@p.Name</td>
+					<td>@p.Artikul</td>
+					<td>@p.Category.CategoryName</td>
+					<td>@p.Price.ToString("c", new CultureInfo("ru-RU"))</td>
+					<td>@p.Discount</td>
+					<td>@p.OldPrice?.ToString("C", new CultureInfo("ru-RU"))</td>
+					@{
+						var isPublished = p.IsPublished ? "Да" : "Нет";
+					}
+					<td>@isPublished</td>
+					<td class="text-center">
+						<NavLink class="btn btn-info btn-sm" href="@GetDetailsUrl(p.Id)">
+							Подробнее
+						</NavLink>
+						<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(p.Id)">
+							Изменить
+						</NavLink>
+						<button class="btn btn-danger btn-sm" @onclick="@(() => DeleteProduct(p))">
+							Удалить
+						</button>
+					</td>
 				</tr>
 			}
+		}
+		else
+		{
+			<tr>
+				<td colspan="5" class="text-center">Товары, не найдены.</td>
+			</tr>
+		}
 		</tbody>
 	</table>
+	<Pagination Url="@UrlPage" />
 }
-
-<button class="btn btn-primary" @onclick="@(e => CreateNewProduct())">
-	Добавить
-</button>
+<button class="btn btn-primary" @onclick="@(() => CreateNewProduct())">Добавить</button>
 
 
 @code {
-	public IStoreRepository Repository => Service;
-	public IEnumerable<Product> ProductData { get; set; } = Enumerable.Empty<Product>();
+	[Parameter]
+	public int CurrentPage { get; set; } = 1;
+	
+	private const string UrlPath = "wwwroot/imegs/img-products/";
+	private const string UrlPage = "/admin/products/";
+	
+	private IStoreRepository Repository => Service;
+	private IList<Product>? ProductData { get; set; }
+	private IList<Category>? DisplayedCategories { get; set; }
 
-	public IList<Category>? DisplayedCategories { get; set; }
-
-	private bool loading = false;
-
+	private bool loading;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -129,29 +133,35 @@ else
 
 	private bool AllowNewProductToBeCreated { get; set; }
 
-	public async Task UpdateData()
+	private async Task UpdateData()
 	{
 		DisplayedCategories = await Repository.Category.Select(c => c).Distinct().ToListAsync();
 		if (DisplayedCategories is not null && DisplayedCategories.Count > 0)
 		{
 			AllowNewProductToBeCreated = true;
 		}
-		ProductData = await Repository.Products.ToListAsync();
+		ProductData = await Repository.Products.Select(p => p).ToListAsync();
+		PageStateServiceBuilder();
 	}
 
-	public void DeleteProduct(Product p)
+	private void PageStateServiceBuilder()
 	{
-		ProductToBeDelete = p;
-		confirmation?.Show();
+		if (ProductData is null) return;
+		PageStateService.Data = ProductData.Cast<object>().ToList();
+		PageStateService.ChangePage(CurrentPage);
 	}
 
-	public string GetDetailsUrl(long id) => $"/admin/products/details/{id}";
-	public string GetEditUrl(long id) => $"/admin/products/edit/{id}";
+	private string GetDetailsUrl(long id) => $"/admin/products/details/{id}";
+	private string GetEditUrl(long id) => $"/admin/products/edit/{id}";
 
 	Confirmation? confirmation;
 	private Product? ProductToBeDelete { get; set; }
 	
-	private const string UrlPath = "wwwroot/imegs/img-products/";
+	private void DeleteProduct(Product p)
+	{
+		ProductToBeDelete = p;
+		confirmation?.Show();
+	}
 	
 	private async Task OnConfirm()
 	{
@@ -160,8 +170,7 @@ else
 			FolderManager.DeleteDirectory(UrlPath + ProductToBeDelete.Id);
 			await Repository.DeleteProductAsync(ProductToBeDelete);
 			confirmation?.Hide();
-			Notification notification = new Notification(1, "Товар удалён", "Удалён товар", ProductToBeDelete!.Name);
-			PopupNotification.AddItem(notification);
+			PopupNotification.CreateNotification("Товар удалён", "Удалён товар", ProductToBeDelete.Name);
 			ProductToBeDelete = null;
 			await UpdateData();
 		}
@@ -169,9 +178,9 @@ else
 
 	private void OnCancel()
 	{
+		if (ProductToBeDelete is null) return;
 		confirmation?.Hide();
-		Notification notification = new Notification(1, "Отмена удаления", "Отменено удаление товара", ProductToBeDelete!.Name);
-		PopupNotification.AddItem(notification);
+		PopupNotification.CreateNotification("Отмена удаления", "Отменено удаление товара", ProductToBeDelete.Name);
 		ProductToBeDelete = null;
 	}
 	
@@ -192,3 +201,6 @@ else
 		}
 	}
 }
+
+
+

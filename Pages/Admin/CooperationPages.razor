@@ -1,7 +1,8 @@
-@page "/admin/cooperation"
+@page "/admin/cooperation/{CurrentPage:int?}"
 @inherits OwningComponentBase<ICooperationRepository>
-@inject IPopupNotification popupNotification
-@inject IFolderManager folderManager
+@inject IPopupNotification PopupNotification
+@inject IFolderManager FolderManager
+@inject IPageStateService PageStateService
 
 <Confirmation @ref="confirmation" OnCancel="OnCancel" OnConfirm="OnConfirm" IsConfirm="true"
 	Title="Удаление страницы сотрудничество...">
@@ -14,7 +15,7 @@
 	</div>
 </Confirmation>
 <div class="admin-notification__wrapper">
-	<Popup ListNotifications="popupNotification.ListNotifications" />
+	<Popup ListNotifications="PopupNotification.ListNotifications" />
 </div>
 
 @if (loading)
@@ -37,7 +38,7 @@
 else
 {
 	<table class="table table-sm table-striped table-bordered">
-	<thead>
+		<thead>
 		<tr>
 			<th>ID</th>
 			<th>Заголовок</th>
@@ -46,46 +47,54 @@ else
 			<th>Опубликовано</th>
 			<td />
 		</tr>
-	</thead>
-	<tbody>
-		@if (CooperationData?.Count() > 0)
-			{
-				@foreach (Cooperation c in CooperationData)
-				{
-					<tr>
-						<td>@c.ID</td>
-						<td>@c.NameCooperation</td>
-						<td><img class="img-fluid" style="height: 80px;" src="@c.CooperationImg"></td>
-						<td>@c.MinDescription</td>
-						<td>@c.IsVisible</td>
-						<td class="text-center">
-							<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(c.ID)">
-								Изменить
-							</NavLink>
-							<button class="btn btn-danger btn-sm" @onclick="@(e => DeleteAboutPage(c))">
-								Удалить
-							</button>
-						</td>
-					</tr>
-				}
-			}
-			else
+		</thead>
+		<tbody>
+		@if (PageStateService.DisplayedNodes?.Count() > 0)
+		{
+			@foreach (var c in PageStateService.DisplayedNodes.Cast<Cooperation>())
 			{
 				<tr>
-					<td colspan="5" class="text-center">Записи, не найдены.</td>
+					<td>@c.ID</td>
+					<td>@c.NameCooperation</td>
+					<td>
+						<img class="img-fluid" style="height: 80px;" src="@c.CooperationImg" alt=""></td>
+					<td>@c.MinDescription</td>
+					<td>@c.IsVisible</td>
+					<td class="text-center">
+						<NavLink class="btn btn-warning btn-sm" href="@GetEditUrl(c.ID)">
+							Изменить
+						</NavLink>
+						<button class="btn btn-danger btn-sm" @onclick="@(() => DeleteAboutPage(c))">
+							Удалить
+						</button>
+					</td>
 				</tr>
 			}
+		}
+		else
+		{
+			<tr>
+				<td colspan="5" class="text-center">Записи, не найдены.</td>
+			</tr>
+		}
 		</tbody>
 	</table>
+	<Pagination Url="@UrlPage" />
 }
 <NavLink class="btn btn-primary" href="/admin/cooperation/create">Добавить</NavLink>
 
 @code {
-	public ICooperationRepository Repository => Service;
-	public IEnumerable<Cooperation> CooperationData { get; set; } = Enumerable.Empty<Cooperation>();
-	private bool loading = false;
+	[Parameter]
+	public int CurrentPage { get; set; } = 1;
+	
+	private const string UrlPage = "/admin/cooperation/";
+	private const string UrlPath = "wwwroot/imegs/img-cooperation/";
+	
+	private ICooperationRepository Repository => Service;
+	private IList<Cooperation>? CooperationData { get; set; }
+	private bool loading;
 
-	protected async override Task OnInitializedAsync()
+	protected override async Task OnInitializedAsync()
 	{
 		try
 		{
@@ -102,34 +111,41 @@ else
 		}
 	}
 
-	public async Task UpdateData()
+	private async Task UpdateData()
 	{
 		CooperationData = await Repository.Cooperations.ToListAsync();
+		PageStateServiceBuilder();
+	}
+	
+	private void PageStateServiceBuilder()
+	{
+		if (CooperationData is null) return;
+		PageStateService.Data = CooperationData.Cast<object>().ToList();
+		PageStateService.ChangePage(CurrentPage);
 	}
 
-	public void DeleteAboutPage(Cooperation сooperation)
+	private void DeleteAboutPage(Cooperation сooperation)
 	{
 		CooperationPageToBeDelete = сooperation;
 		confirmation?.Show();
 	}
 
-	public string GetEditUrl(long id) => $"/admin/cooperation/edit/{id}";
+	private string GetEditUrl(long id) => $"/admin/cooperation/edit/{id}";
 }
 
 @code {
 	Confirmation? confirmation;
 	private Cooperation? CooperationPageToBeDelete { get; set; }
-	private string urlPath = "wwwroot/imegs/img-cooperation/";
 	private async Task OnConfirm()
 	{
 		if (CooperationPageToBeDelete != null)
 		{
-			folderManager.DeleteDirectory(urlPath + CooperationPageToBeDelete.ID);
+			FolderManager.DeleteDirectory(UrlPath + CooperationPageToBeDelete.ID);
 			Repository.DeleteCooperations(CooperationPageToBeDelete);
 			confirmation?.Hide();
 			Notification notification = new Notification(1, "Удаление записи", "Удалена страница сотрудничества",
 			CooperationPageToBeDelete.NameCooperation);
-			popupNotification.AddItem(notification);
+			PopupNotification.AddItem(notification);
 			CooperationPageToBeDelete = null;
 			await UpdateData();
 		}
@@ -140,7 +156,7 @@ else
 		confirmation?.Hide();
 		Notification notification = new Notification(1, "Отмена удаления", "Отменено удаление страницы сотрудничество",
 		CooperationPageToBeDelete!.NameCooperation);
-		popupNotification.AddItem(notification);
+		PopupNotification.AddItem(notification);
 		CooperationPageToBeDelete = null;
 	}
 }
