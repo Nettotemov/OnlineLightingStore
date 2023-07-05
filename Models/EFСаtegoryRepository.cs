@@ -10,7 +10,9 @@ namespace LampStore.Models
 
 		public EFCategoryRepository(StoreDbContext ctx) => context = ctx;
 
-		public IQueryable<Product> Products => context.Products.Include(p => p.ProductType);
+		public IQueryable<Product> Products => context.Products
+			.Include(p => p.ProductType)
+			.Include(p => p.MetaData);
 		public IQueryable<Category> Category => context.Categorys.Include(c => c.MetaData);
 		public IQueryable<MetaData> MetaData => context.MetaDatas;
 

@@ -29,6 +29,7 @@ namespace LampStore.Pages
 			
 			ProductCard = new Product()
 			{
+				MetaData = product.MetaData,
 				Artikul = product.Artikul,
 				MainPhoto = product.MainPhoto,
 				Photos = product.Photos,

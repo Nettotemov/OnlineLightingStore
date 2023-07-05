@@ -170,7 +170,7 @@ $(document).on("click", ".pagination-btn", function (ev) {
 						let oldPrice = productJson[i].OldPrice;
 						postWrp = document.createElement("div");
 						postWrp.classList.add("search-card__wrapper");
-						postWrp.innerHTML = `<a class="search-card__info" href="/catalog/${productJson[i].Name}/${productJson[i].Id}">
+						postWrp.innerHTML = `<a class="search-card__info" href="/catalog/${productJson[i].MetaData.Url}/${productJson[i].Id}">
 							<div id="img-container">
     							<div class="search-card__image-wrapper">
     								<img class="search-card__image" src="${productJson[i].MainPhoto}">
@@ -305,7 +305,7 @@ function loadProductView(ev) {
 					let oldPrice = productJson[i].OldPrice;
 					postWrp = document.createElement("div");
 					postWrp.classList.add("search-card__wrapper");
-					postWrp.innerHTML = `<a class="search-card__info" href="/catalog/${productJson[i].Name}/${productJson[i].Id}">
+					postWrp.innerHTML = `<a class="search-card__info" href="/catalog/${productJson[i].MetaData.Url}/${productJson[i].Id}">
 						<div id="img-container">
     						<div class="search-card__image-wrapper">
     							<img class="search-card__image" src="${productJson[i].MainPhoto}">

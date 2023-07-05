@@ -17,7 +17,8 @@ namespace LampStore.Models.ProductsPages
 		public IQueryable<Product> Products => context.Products
 			.Include(p => p.Category)
 			.Include(p => p.ProductTags)
-			.Include(p => p.ProductType);
+			.Include(p => p.ProductType)
+			.Include(p => p.MetaData);
 		public IQueryable<Category> Category => context.Categorys;
 		public IQueryable<Tag> Tags => context.Tags;
 		public IQueryable<ProductType> Types => context.TypeProducts;

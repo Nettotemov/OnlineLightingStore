@@ -11,12 +11,12 @@ namespace LampStore.Controllers
 {
     public class SitemapController : Controller
     {
-        private readonly ICatalogRepository repository;
+        private readonly IStoreRepository repository;
         private readonly IInfoRepository infoRepository;
         private readonly ICooperationRepository cooperationRepository;
         private readonly ICollectionLight collectionRepository;
         private readonly IModelLight modelLightRepository;
-        public SitemapController(ICatalogRepository repo, IInfoRepository infoRepo, ICooperationRepository cooperationRepo, ICollectionLight collectionRepo, IModelLight modelLightRepo)
+        public SitemapController(IStoreRepository repo, IInfoRepository infoRepo, ICooperationRepository cooperationRepo, ICollectionLight collectionRepo, IModelLight modelLightRepo)
         {
             repository = repo;
             cooperationRepository = cooperationRepo;
@@ -49,7 +49,7 @@ namespace LampStore.Controllers
             
             foreach (var product in products)
             {
-                nodes.Add(new SitemapNode($"/catalog/{product.Name.ToLower()}/{product.Id}")
+                nodes.Add(new SitemapNode($"/catalog/{product.MetaData.Url.ToLower()}/{product.Id}")
                 {
                     ChangeFrequency = ChangeFrequency.Monthly,
                     Priority = 0.5M
@@ -106,12 +106,12 @@ namespace LampStore.Controllers
         }
         private async Task<List<Product>> GetProductsAsync()
         {
-            return await repository.Products.ToListAsync();
+            return await repository.Products.Where(p => p.IsPublished && p.Category.IsPublished).ToListAsync();
         }
 
         private async Task<List<string>> GetCategoryAsync()
         {
-            return await repository.Category.Where(c => c.DisplayHomePage == true)
+            return await repository.Category.Where(c => c.DisplayHomePage == true && c.IsPublished)
                 .Select(c => c.MetaData.Url).ToListAsync();
         }
 

@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using LampStore.Infrastructure;
 using LampStore.Models;
 using LampStore.Models.ProductsPages;
 using Microsoft.EntityFrameworkCore;

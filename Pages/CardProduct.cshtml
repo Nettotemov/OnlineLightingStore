@@ -1,12 +1,13 @@
-@page "/catalog/{Name}/{ProductID}"
+@page "/catalog/{Url}/{ProductID}"
 @model CardProduct
 @using System.Globalization
 
 @{
-	ViewData["Title"] = "Светильник " + @Model.ProductCard.Name + " купить";
+	ViewData["Title"] = Model.ProductCard.MetaData.Title;
+	ViewData["Description"] = Model.ProductCard.MetaData.Description;
 	Layout = "_Layout";
 	ViewData["Breadcrumb"] = await Component.InvokeAsync("BreadcrumbSummary", new[] { (url: "/", page: "Главная"), (url:
-"/catalog", page: "Каталог"), (url: "/catalog/{CategoryName}/{Name}/{ProductID}", page:@Model.ProductCard.Name) });
+"/catalog", page: "Каталог"), (url: "/catalog/{CategoryName}/{Url}/{ProductID}", page: Model.ProductCard.Name) });
 }
 
 @if (Model.ImagesFound)

@@ -9,14 +9,15 @@
 <h1 class="h1__caption mt-per-8">Корзина</h1>
 <section class="container-cart__wrapper">
 	<div class="cart-left__wrapper">
-		@if (Model?.Cart?.Lines.Count() != 0)
+		@if (Model?.Cart.Lines.Count() != 0)
 		{
-			@foreach (var line in Model?.Cart?.Lines ?? Enumerable.Empty<CartLine>())
+			@foreach (var line in Model?.Cart.Lines ?? Enumerable.Empty<CartLine>())
 			{
 				<div class="product-cart__wrapper">
 					<a class="product-cart-img__wrapper" asp-page="CardProduct"
-				asp-route-CategoryName="@line.Product.Artikul" asp-route-ProductID="@line.Product.Id" asp-route-Name="@line.Product.Name">
-						<img class="product-cart-img" src="@line.Product.MainPhoto">
+					   asp-route-ProductID="@line.Product.Id" 
+					   asp-route-Url="@line.Product.Name.ToLower()">
+						<img class="product-cart-img" src="@line.Product.MainPhoto" alt="">
 					</a>
 					<div class="product-cart-decript__wrapper">
 						<p class="product-card__description-p">@line.Product.Name</p>

@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using LampStore.Models.AboutPages;
 using LampStore.Models.CollectionsLights;
 using LampStore.Models.ProductsPages;
+using Newtonsoft.Json;
 
 namespace LampStore.Models.MetaTags;
 
@@ -14,6 +15,8 @@ public class MetaData
     public string Url { get; set; } = null!;
 
     public long? ProductId { get; set; }
+    
+    [JsonIgnore]
     public Product? Product { get; set; }
     public long? CategoryId { get; set; }
     public Category? Category { get; set; }

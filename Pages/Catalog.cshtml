@@ -185,11 +185,11 @@
 					}
 					else
 					{
-						@foreach (Product pr in @Model!.DisplayedProducts)
+						@foreach (Product pr in Model.DisplayedProducts)
 						{
 							<div class="search-card__wrapper">
 								<a class="search-card__info" asp-page="CardProduct" asp-route-ProductID="@pr.Id"
-							asp-route-Name="@pr.Name.ToLower()">
+							asp-route-Url="@pr.MetaData.Url">
 									<div id="img-container">
 										<div class="search-card__image-wrapper">
 											<img class="search-card__image" src="@pr.MainPhoto" alt="Купить светильник @pr.Name"

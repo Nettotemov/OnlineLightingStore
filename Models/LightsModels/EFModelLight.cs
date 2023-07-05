@@ -1,5 +1,6 @@
 using LampStore.Models.CollectionsLights;
 using LampStore.Models.ProductsPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace LampStore.Models.LightsModels
 {
@@ -12,7 +13,7 @@ namespace LampStore.Models.LightsModels
 			this.context = ctx;
 		}
 
-		public IQueryable<Product> Products => context.Products;
+		public IQueryable<Product> Products => context.Products.Include(p => p.MetaData);
 		public IQueryable<CollectionLight> CollectionLight => context.CollectionLights;
 		public IQueryable<ModelLight> LightsModels => context.LightsModels;
 

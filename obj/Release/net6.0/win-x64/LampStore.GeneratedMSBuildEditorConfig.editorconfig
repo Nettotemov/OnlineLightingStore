@@ -47,6 +47,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5cQ29tcG9uZW50c0FwcFxJbWdNYW5hZ2VyQ29udHJvbC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
+[//Mac/Home/Downloads/LS/LampStore/LampStore/Pages/Admin/ComponentsApp/Pagination.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5cQ29tcG9uZW50c0FwcFxQYWdpbmF0aW9uLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
 [//Mac/Home/Downloads/LS/LampStore/LampStore/Pages/Admin/ComponentsApp/Popup.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5cQ29tcG9uZW50c0FwcFxQb3B1cC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 

@@ -24,8 +24,8 @@ namespace LampStore.Models.LightsModels
 
 		[BindNever]
 		public ICollection<Product>? Products { get; init; }
-
-		[Required(ErrorMessage = "Пожалуйста, укажите коллекцию")]
+		
+		[Range(1, int.MaxValue, ErrorMessage = "Пожалуйста, укажите коллекцию")]
 		public int CollectionLightId { get; set; }
 		public CollectionLight CollectionModel { get; set; } = null!;
 

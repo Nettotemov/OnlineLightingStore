@@ -44,7 +44,7 @@ namespace LampStore.Models.ProductsPages
 		[Required(ErrorMessage = "Пожалуйста, укажите материал")]
 		public string Material { get; set; } = null!;
 
-		[Required(ErrorMessage = "Пожалуйста, укажите категорию")]
+		[Range(1, int.MaxValue, ErrorMessage = "Пожалуйста, укажите категорию")]
 		public long CategoryId { get; set; }
 		public Category Category { get; init; } = null!;
 		public int? Discount { get; set; }
@@ -69,7 +69,7 @@ namespace LampStore.Models.ProductsPages
 		[BindNever]
 		public ICollection<Tag>? ProductTags { get; init; }
 
-		[Required(ErrorMessage = "Пожалуйста, укажите тип продукта")]
+		[Range(1, int.MaxValue, ErrorMessage = "Пожалуйста, укажите тип")]
 		public int ProductTypeId { get; set; }
 		public ProductType ProductType { get; init; } = null!;
 		public int? CollectionLightId { get; set; }

@@ -17,7 +17,8 @@ namespace LampStore.Models.CollectionsLights
 		public IQueryable<CollectionLight> CollectionLight => context.CollectionLights
 			.Include(c => c.MetaData);
 		public IQueryable<Product> Products => context.Products
-			.Include(p => p.ModelLight);
+			.Include(p => p.ModelLight)
+			.Include(p => p.MetaData);
 
 		public IQueryable<ModelLight> LightsModels => context.LightsModels;
 

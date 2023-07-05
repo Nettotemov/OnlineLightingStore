@@ -119,7 +119,7 @@
 				@foreach (var pr in type)
 				{
 					<a asp-page="CardProduct" class="product__wrapper" asp-route-ProductID="@pr.Id"
-					   asp-route-Name="@pr.Name">
+					   asp-route-Url="@pr.MetaData.Url">
 						<div class="">
 							<div class="product-img__wrapper">
 								<img class="img-center" src="@pr.MainPhoto" alt="@pr.Name">

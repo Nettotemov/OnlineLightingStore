@@ -859,8 +859,7 @@ $(document).ready(function () {
 		if (isCheckedModel == true && isCheckedColor == true && isCheckedSize == true && isCheckedSourceLight == true && isCheckedPowerW == true && isCheckedDim == true) {
 			$("div.configurator__wrapper").addClass("checked");
 			let productJson = JSON.parse(commits.productJson);
-			console.log(productJson);
-
+			
 			if (JSON.stringify(productJson) !== '{}') {
 				try {
 					captionProduct.classList.remove("text-muted");
@@ -874,7 +873,7 @@ $(document).ready(function () {
 				priceProduct.classList.remove("text-muted");
 				priceProduct.innerText = "Цена: " + productJson.Price.toLocaleString('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 });
 
-				btnArrow3.setAttribute("href", "/catalog/" + productJson.Name.toLowerCase() + "/" + productJson.Id);
+				btnArrow3.setAttribute("href", "/catalog/" + productJson.MetaData.Url + "/" + productJson.Id);
 				btnArrow3.classList.remove("disabled");
 
 				idProduct.value = productJson.Id;
