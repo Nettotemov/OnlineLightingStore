@@ -28,5 +28,6 @@ packages.config
 .nuget/
 wwwroot/dist/
 appsettings.json
+.DS_Store
 
 !Web.config
