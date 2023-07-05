@@ -5,7 +5,6 @@ using LampStore.Models.ProductsPages;
 using Microsoft.AspNetCore.Mvc;
 using SimpleMvcSitemap;
 using Microsoft.EntityFrameworkCore;
-using LampStore.Services;
 
 namespace LampStore.Controllers
 {
