@@ -24,10 +24,10 @@ node_modules/
 _ReSharper.*
 packages.config
 *.csproj.user
+appsettings.json
+.DS_Store
 .vs/
 .nuget/
 wwwroot/dist/
-appsettings.json
-.DS_Store
 
 !Web.config
